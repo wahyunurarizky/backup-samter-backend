@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-dotenv.config({
-  path: './config.env',
-});
 
 process.on('uncaughtException', (err) => {
-  console.log('UNCAUGHT EXCEPTION!!! shutting down...');
+  console.log('UNCAUGHT EXCEPTION!!! 💥 shutting down...');
   console.log(err.name, err.message);
   process.exit(1);
 });
 
+dotenv.config({
+  path: './config.env',
+});
 const app = require('./app');
 
 const database = process.env.DATABASE.replace(
@@ -23,13 +23,14 @@ mongoose
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
+    useUnifiedTopology: true,
   })
   .then((con) => {
     console.log('DB connection Successfully!');
   });
 
 // Start the server
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Application is running on port ${port}`);
 });
