@@ -8,7 +8,7 @@ const kendaraanSchema = new mongoose.Schema({
   plat_nomor: {
     type: String,
     required: [true, 'plat_nomor is required'],
-    unique: true,
+    unique: [true, 'plat_nomor is unique'],
   },
 });
 

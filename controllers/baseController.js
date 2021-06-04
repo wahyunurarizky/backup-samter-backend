@@ -56,9 +56,7 @@ exports.createOne = (Model) => async (req, res, next) => {
 
     res.status(201).json({
       status: 'success',
-      data: {
-        doc,
-      },
+      data: doc,
     });
   } catch (error) {
     next(error);
