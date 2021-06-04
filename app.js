@@ -52,10 +52,11 @@ app.use(hpp());
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/kendaraan', kendaraanRoutes);
 
-// handle undefined Routes
-app.use('*', (req, res, next) => {
-  const err = new AppError(404, 'fail', 'undefined route');
-  next(err, req, res, next);
+// handling unhandled routes
+app.all('*', (req, res, next) => {
+  // if the next(args) recieve arguments, express assume that is an error,
+  // and will be pass all middleware stack and go straight to middleware error in below
+  next(new AppError(`Cant find ${req.originalUrl} on this server`, 404));
 });
 
 app.use(globalErrHandler);
