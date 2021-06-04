@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const kendaraanSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: [true, 'name is required'],
   },
   plat_nomor: {
     type: String,
-    unique: true,
-    required: true,
+    required: [true, 'plat_nomor is required'],
+    unique: [true, 'plat_nomor is unique'],
   },
 });
 

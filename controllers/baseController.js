@@ -55,9 +55,7 @@ exports.createOne =
 
       res.status(201).json({
         status: 'success',
-        data: {
-          doc,
-        },
+        data: doc,
       });
     } catch (error) {
       next(error);
