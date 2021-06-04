@@ -8,10 +8,10 @@ router
   .get(kendaraanController.getAllKendaraan)
   .post(kendaraanController.createKendaraan);
 
-// router
-// .route('/:id')
-// .get(userController.getUser)
-// .patch(userController.updateUser)
-// .delete(userController.deleteUser);
+router
+  .route('/:id')
+  .get(kendaraanController.getKendaraan)
+  .patch(kendaraanController.updateKendaraan)
+  .delete(kendaraanController.deleteKendaraan);
 
 module.exports = router;
