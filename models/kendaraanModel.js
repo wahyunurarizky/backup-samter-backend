@@ -1,14 +1,23 @@
 const mongoose = require('mongoose');
 
 const kendaraanSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'name is required'],
-  },
   plat_nomor: {
     type: String,
-    required: [true, 'plat_nomor is required'],
-    unique: [true, 'plat_nomor is unique'],
+    required: true,
+    unique: true,
+  },
+  unit_kerja: {
+    type: String,
+    required: true,
+  },
+  tahun: {
+    type: Number,
+    required: true,
+  },
+  jenis_kendaraan_id: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'JenisKendaraan',
+    required: true,
   },
 });
 

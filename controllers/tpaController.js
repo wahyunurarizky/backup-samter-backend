@@ -20,8 +20,8 @@ exports.createTpa = async function createTpas(req, res, next) {
         luas_tpa: doc.luas_tpa,
         kapasitas: doc.kapasitas,
         tonase: doc.tonase,
-        nama_koordinator: doc.nama_koordinator
-      }
+        nama_koordinator: doc.nama_koordinator,
+      },
     });
   } catch (error) {
     next(error);
@@ -56,8 +56,8 @@ exports.getTpa = async function getTpas(req, res, next) {
         luas_tpa: doc.luas_tpa,
         kapasitas: doc.kapasitas,
         tonase: doc.tonase,
-        nama_koordinator: doc.nama_koordinator
-      }
+        nama_koordinator: doc.nama_koordinator,
+      },
     });
   } catch (error) {
     next(error);
@@ -66,9 +66,7 @@ exports.getTpa = async function getTpas(req, res, next) {
 
 exports.getAllTpa = async function getAllTpas(req, res, next) {
   try {
-    const features = new APIFeatures(Tpa.find(), req.query)
-      .sort()
-      .paginate();
+    const features = new APIFeatures(Tpa.find(), req.query).sort().paginate();
 
     const doc = await features.query;
     const newFeatures = [];
@@ -85,14 +83,14 @@ exports.getAllTpa = async function getAllTpas(req, res, next) {
         luas_tpa: doc.luas_tpa,
         kapasitas: doc.kapasitas,
         tonase: doc.tonase,
-        nama_koordinator: doc.nama_koordinator
+        nama_koordinator: doc.nama_koordinator,
       });
     });
     res.status(200).json({
       status: 200,
       message: 'Successfully get data',
       results: doc.length,
-      data: newFeatures
+      data: newFeatures,
     });
   } catch (error) {
     next(error);
@@ -103,7 +101,7 @@ exports.updateTpa = async function updateTpas(req, res, next) {
   try {
     const doc = await Tpa.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-      runValidators: true
+      runValidators: true,
     });
 
     if (!doc) {
@@ -130,7 +128,7 @@ exports.updateTpa = async function updateTpas(req, res, next) {
         luas_tpa: doc.luas_tpa,
         kapasitas: doc.kapasitas,
         tonase: doc.tonase,
-        nama_koordinator: doc.nama_koordinator
+        nama_koordinator: doc.nama_koordinator,
       },
     });
   } catch (error) {
@@ -152,7 +150,7 @@ exports.deleteTpa = async function deleteTpas(req, res, next) {
 
     res.status(204).json({
       status: 204,
-      message: 'Data successfully deleted'
+      message: 'Data successfully deleted',
     });
   } catch (error) {
     next(error);

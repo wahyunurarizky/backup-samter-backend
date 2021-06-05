@@ -8,46 +8,46 @@ const tpaSchema = new mongoose.Schema({
   plat_nomor: {
     type: String,
     required: [true, 'plat_nomor is required'],
-    unique: [true, 'plat_nomor is unique']
+    unique: [true, 'plat_nomor is unique'],
   },
-  location:{
-    type: "Point",
+  location: {
+    type: 'Point',
     coordinates: [0, 0],
     required: [true, 'tpa must have physical location'],
-    unique: [true, 'location must be unique']
+    unique: [true, 'location must be unique'],
   },
-  kecamatan:{
+  kecamatan: {
     type: String,
-    requred: [true, 'tpa must be located in a kecamatan']
+    requred: [true, 'tpa must be located in a kecamatan'],
   },
-  kelurahan:{
+  kelurahan: {
     type: String,
-    requred: [true, 'tpa must be located in a keluaran']
+    requred: [true, 'tpa must be located in a keluaran'],
   },
-  kota:{
+  kota: {
     type: String,
-    requred: [true, 'tpa must be located in a kota']
+    requred: [true, 'tpa must be located in a kota'],
   },
-  jenis_tpa:{
+  jenis_tpa: {
     type: String,
-    requred: [true, 'tpa must be have type']
+    requred: [true, 'tpa must be have type'],
   },
-  luas_tpa:{
+  luas_tpa: {
     type: Number,
-    requred: [true, 'tpa must have area']
+    requred: [true, 'tpa must have area'],
   },
-  kapasitas:{
+  kapasitas: {
     type: Number,
-    requred: [true, 'tpa must have capacity']
+    requred: [true, 'tpa must have capacity'],
   },
-  tonase:{
+  tonase: {
     type: String,
-    requred: [true, 'tpa must have current tonnage']
+    requred: [true, 'tpa must have current tonnage'],
   },
-  nama_koordinator:{
+  nama_koordinator: {
     type: String,
-    requred: [true, 'tpa must have a coordinator']
-  }
+    requred: [true, 'tpa must have a coordinator'],
+  },
 });
 
 const Tpa = mongoose.model('Tpa', tpaSchema);
