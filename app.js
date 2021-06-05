@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const userRoutes = require('./routes/userRoutes');
+const tpsRoutes = require('./routes/tpsRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -51,6 +52,7 @@ app.use(hpp());
 // Routes
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/kendaraan', kendaraanRoutes);
+app.use('/api/v1/tps', tpsRoutes);
 
 // handling unhandled routes
 app.all('*', (req, res, next) => {
