@@ -1,5 +1,5 @@
 // inherits/extends Error which means AppError = Error
-// app error digunakan untuk operational error, which means that important dor client, ngasal cok
+// app error digunakan untuk operational error, which means that important for client, ngasal cok
 class AppError extends Error {
   constructor(message, statusCode) {
     // we should calling super, just like calling new Error(message)

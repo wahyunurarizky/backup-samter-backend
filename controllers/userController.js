@@ -1,6 +1,11 @@
 const User = require('../models/userModel');
 const base = require('./baseController');
 
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 exports.deleteMe = async (req, res, next) => {
   try {
     await User.findByIdAndUpdate(req.user.id, {
@@ -17,7 +22,7 @@ exports.deleteMe = async (req, res, next) => {
 };
 
 exports.getAllUsers = base.getAll(User);
-exports.getUser = base.getOne(User);
+exports.getUser = base.getOne(User, [{ path: 'tps' }, { path: 'tpa' }]);
 
 // Don't update password on this
 exports.updateUser = base.updateOne(User);

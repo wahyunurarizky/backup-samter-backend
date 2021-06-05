@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -37,13 +38,37 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'pegawai', 'driver', 'user'],
-    default: 'user',
+    enum: ['admin', 'tps', 'tpa', 'petugas'],
+    default: 'petugas',
   },
   active: {
     type: Boolean,
     default: true,
     select: false,
+  },
+  NIP: {
+    type: String,
+    trim: true,
+  },
+  phone: {
+    type: String,
+    trim: true,
+  },
+  photo: {
+    type: String,
+    default: 'user.jpg',
+  },
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  jumlah_penarikan: Number,
+  tpa: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Tpa',
+  },
+  tps: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Tps',
   },
 });
 
@@ -63,12 +88,49 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.pre('save', function (next) {
+  // jika password tidak berubah atau dokumen baru dibuat, tidak usah jalankan lanjutan / return next()
+  if (!this.isModified('password') || this.isNew) return next();
+
+  // supaya dibuat tidak berbarengan dengan jwt
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 // This is Instance Method that is gonna be available on all documents in a certain collection
 userSchema.methods.correctPassword = async function (
   typedPassword,
   originalPassword
 ) {
   return await bcrypt.compare(typedPassword, originalPassword);
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  console.log(resetToken, this.passwordResetToken);
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    // changed 2021-04-30T00:00:00.000Z to ms | bagi 1000 karna jwttimestamp dalam second. base 10
+    const changedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return JWTTimestamp < changedTimeStamp; //misal token waktu 2 jan < waktu ganti password 3jan return true
+  }
+
+  // kalo belom pernah changed password
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);
