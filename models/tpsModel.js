@@ -6,10 +6,8 @@ const tpsSchema = new mongoose.Schema({
     required: true,
   },
   lokasi: {
-    type: 'Point',
-    coordinates: [0, 0],
-    required: true,
-    unique: true,
+    type: { type: String },
+    coordinates: [Number],
   },
   alamat: {
     type: String,

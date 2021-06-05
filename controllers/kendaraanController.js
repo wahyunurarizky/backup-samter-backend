@@ -5,14 +5,16 @@ const APIFeatures = require('../utils/apiFeatures');
 exports.createKendaraan = async function createKendaraans(req, res, next) {
   try {
     const doc = await Kendaraan.create(req.body);
+    const data = {
+      id: doc._id,
+      name: doc.name,
+      plat_nomor: doc.plat_nomor,
+    };
+
     res.status(201).json({
       status: 201,
       message: 'data successfully saved!',
-      data: {
-        id: doc._id,
-        name: doc.name,
-        plat_nomor: doc.plat_nomor,
-      },
+      data: data,
     });
   } catch (error) {
     next(error);
