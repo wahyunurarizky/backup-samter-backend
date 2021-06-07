@@ -36,9 +36,7 @@ exports.updateOne = (Model) => async (req, res, next) => {
     }
     res.status(200).json({
       status: 'success',
-      data: {
-        data: updatedDoc,
-      },
+      data: updatedDoc,
     });
   } catch (error) {
     next(error);
@@ -75,9 +73,7 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      data: {
-        doc,
-      },
+      data: doc,
     });
   } catch (error) {
     next(error);
@@ -101,9 +97,7 @@ exports.getAll = (Model, popOptions) => async (req, res, next) => {
     res.status(200).json({
       status: 'succcess',
       results: docs.length,
-      data: {
-        docs,
-      },
+      data: docs,
     });
   } catch (error) {
     next(error);

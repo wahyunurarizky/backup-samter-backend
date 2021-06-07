@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const userRoutes = require('./routes/userRoutes');
+const jenisKendaraanRoutes = require('./routes/jenisKendaraanRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
 const tpsRoutes = require('./routes/tpsRoutes');
 const globalErrHandler = require('./controllers/errorController');
@@ -51,6 +52,7 @@ app.use(hpp());
 
 // Routes
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/jenis-kendaraan', jenisKendaraanRoutes);
 app.use('/api/v1/kendaraan', kendaraanRoutes);
 app.use('/api/v1/tps', tpsRoutes);
 
