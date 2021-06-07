@@ -6,6 +6,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const compression = require('compression');
 
 const userRoutes = require('./routes/userRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
@@ -48,6 +49,8 @@ app.use(xss());
 
 // Prevent parameter pollution
 app.use(hpp());
+
+app.use(compression());
 
 // Routes
 app.use('/api/v1/users', userRoutes);
