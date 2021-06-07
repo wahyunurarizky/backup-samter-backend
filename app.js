@@ -6,11 +6,13 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const compression = require('compression');
 
 const userRoutes = require('./routes/userRoutes');
 const jenisKendaraanRoutes = require('./routes/jenisKendaraanRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
 const tpsRoutes = require('./routes/tpsRoutes');
+const tpaRoutes = require('./routes/tpaRoutes');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -50,11 +52,14 @@ app.use(xss());
 // Prevent parameter pollution
 app.use(hpp());
 
+app.use(compression());
+
 // Routes
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/jenis-kendaraan', jenisKendaraanRoutes);
 app.use('/api/v1/kendaraan', kendaraanRoutes);
 app.use('/api/v1/tps', tpsRoutes);
+app.use('/api/v1/tpa', tpaRoutes);
 
 // handling unhandled routes
 app.all('*', (req, res, next) => {
