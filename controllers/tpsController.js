@@ -1,8 +1,18 @@
 const Tps = require('../models/tpsModel');
 const base = require('./baseController');
 
-exports.createOne = base.createOne(Tps);
+exports.create = base.createOne(
+  Tps,
+  'nama',
+  'lokasi',
+  'alamat',
+  'kecamatan',
+  'kelurahan',
+  'kapasitas',
+  'koordinator',
+  'total_berat'
+);
 exports.getAll = base.getAll(Tps);
-exports.getOne = base.getOne(Tps);
-exports.updateOne = base.updateOne(Tps);
-exports.deleteOne = base.deleteOne(Tps);
+exports.get = base.getOne(Tps);
+exports.update = base.updateOne(Tps);
+exports.delete = base.deleteOne(Tps);

@@ -6,32 +6,31 @@ const tpsSchema = new mongoose.Schema({
     required: true,
   },
   lokasi: {
-    type: { type: String },
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point'],
+    },
     coordinates: [Number],
+    address: String,
   },
   alamat: {
     type: String,
-    required: true,
   },
   kecamatan: {
     type: String,
-    required: true,
   },
   kelurahan: {
     type: String,
-    required: true,
   },
   kapasitas: {
     type: Number,
-    required: true,
   },
   koordinator: {
     type: String,
-    required: true,
   },
   total_berat: {
     type: Number,
-    required: true,
   },
 });
 
