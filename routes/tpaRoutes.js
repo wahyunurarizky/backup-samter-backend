@@ -1,17 +1,14 @@
 const express = require('express');
 
 const router = express.Router();
-const kendaraanController = require('../controllers/kendaraanController');
+const tpaController = require('../controllers/tpaController');
 
-router
-  .route('/')
-  .get(kendaraanController.getAllTpa)
-  .post(kendaraanController.createKendaraan);
+router.route('/').get(tpaController.getAllTpa).post(tpaController.createTpa);
 
 router
   .route('/:id')
-  .get(kendaraanController.getTpa)
-  .patch(kendaraanController.updateTpa)
-  .delete(kendaraanController.deleteTpa);
+  .get(tpaController.getTpa)
+  .patch(tpaController.updateTpa)
+  .delete(tpaController.deleteTpa);
 
 module.exports = router;

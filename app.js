@@ -9,6 +9,7 @@ const cors = require('cors');
 
 const userRoutes = require('./routes/userRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
+const tpaRoutes = require('./routes/tpaRoutes');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -51,6 +52,7 @@ app.use(hpp());
 // Routes
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/kendaraan', kendaraanRoutes);
+app.use('/api/v1/tpa', tpaRoutes);
 
 // handling unhandled routes
 app.all('*', (req, res, next) => {
