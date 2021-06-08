@@ -21,6 +21,10 @@ exports.deleteMe = async (req, res, next) => {
   }
 };
 
+exports.updateMe = async (req, res, next) => {
+  // perlu kah?
+};
+
 exports.getAllUsers = base.getAll(User);
 exports.getUser = base.getOne(User, [{ path: 'tps' }, { path: 'tpa' }]);
 

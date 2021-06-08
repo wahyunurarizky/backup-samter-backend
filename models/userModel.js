@@ -70,6 +70,7 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Tps',
   },
+  pns: Boolean,
 });
 
 // encrypt the password using 'bcryptjs'
