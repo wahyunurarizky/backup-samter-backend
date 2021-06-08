@@ -8,6 +8,8 @@ router
   .get(kendaraanController.getAll)
   .post(kendaraanController.create);
 
+router.route('/:id/generate-qr-code').get(kendaraanController.generateQr);
+
 router
   .route('/:id')
   .get(kendaraanController.get)
