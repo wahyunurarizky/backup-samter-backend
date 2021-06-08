@@ -5,13 +5,13 @@ const kendaraanController = require('../controllers/kendaraanController');
 
 router
   .route('/')
-  .get(kendaraanController.getAllKendaraan)
-  .post(kendaraanController.createKendaraan);
+  .get(kendaraanController.getAll)
+  .post(kendaraanController.create);
 
 router
   .route('/:id')
-  .get(kendaraanController.getKendaraan)
-  .patch(kendaraanController.updateKendaraan)
-  .delete(kendaraanController.deleteKendaraan);
+  .get(kendaraanController.get)
+  .patch(kendaraanController.update)
+  .delete(kendaraanController.delete);
 
 module.exports = router;
