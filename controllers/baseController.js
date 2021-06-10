@@ -73,6 +73,7 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
+      message: 'data successfully get',
       data: doc,
     });
   } catch (error) {

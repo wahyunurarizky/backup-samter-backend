@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'tps', 'tpa', 'petugas'],
+    enum: ['pegawai', 'koordinator tps', 'operator tpa', 'petugas', 'pimpinan'],
     default: 'petugas',
   },
   active: {
@@ -61,7 +61,10 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
-  jumlah_penarikan: Number,
+  jumlah_penarikan: {
+    type: Number,
+    default: 0,
+  },
   tpa: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tpa',
@@ -71,6 +74,7 @@ const userSchema = new mongoose.Schema({
     ref: 'Tps',
   },
   pns: Boolean,
+  qr_id: String,
 });
 
 // encrypt the password using 'bcryptjs'

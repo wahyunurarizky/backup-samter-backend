@@ -21,7 +21,7 @@ router.delete('/deleteMe', userController.deleteMe);
 router.patch('/updateMyPassword', authController.updatePassword);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo('admin'));
+router.use(authController.restrictTo('pegawai'));
 
 router.route('/').get(userController.getAllUsers);
 
@@ -30,5 +30,7 @@ router
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
+
+// router.route('/qr/:qrid').get(userController.getPetugasByQrId);
 
 module.exports = router;

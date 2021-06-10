@@ -30,7 +30,7 @@ exports.generateQr = async function generate(req, res, next) {
       const data = {
         tpsId: doc._id,
         imgUrl: imgUrl,
-      }
+      };
       if (err) return console.log('error occurred');
       res.status(200).json({
         status: 'success',
