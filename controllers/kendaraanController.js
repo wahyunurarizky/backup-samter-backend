@@ -9,7 +9,7 @@ exports.create = base.createOne(
   'tahun',
   'jenis_kendaraan_id'
 );
-exports.getAll = base.getAll(Kendaraan);
+exports.getAll = base.getAll(Kendaraan, { path: 'jenis_kendaraan_id' });
 exports.get = base.getOne(Kendaraan);
 exports.update = base.updateOne(Kendaraan);
 exports.delete = base.deleteOne(Kendaraan);
