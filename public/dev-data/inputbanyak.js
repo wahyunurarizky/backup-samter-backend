@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 // const User = require('../../models/userModel');
 const Kendaraan = require('../../models/kendaraanModel');
 
-dotenv.config({ path: '../../config.env' });
+dotenv.config({ path: 'config.env' });
 
 const database = process.env.DATABASE.replace(
   '<PASSWORD>',
