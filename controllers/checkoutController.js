@@ -1,5 +1,3 @@
-const moment = require('moment');
-const numeral = require('numeral');
 const Checkout = require('../models/checkoutModel');
 
 exports.createCheckout = async (req, res, next) => {
@@ -19,8 +17,11 @@ exports.createCheckout = async (req, res, next) => {
     });
 
     res.status(201).json({
-      status: 'success',
-      data: checkout,
+      success: true,
+      code: '201',
+      data: {
+        checkout,
+      },
     });
   } catch (err) {
     next(err);

@@ -24,14 +24,18 @@ exports.generateQr = async function generate(req, res, next) {
       console.log(QRcode);
     });
     QRCode.toDataURL(stringdata, (err, imgUrl) => {
-      const data = {
+      const docs = {
         kendaraanId: doc._id,
         imgUrl: imgUrl,
       };
       if (err) return console.log('error occurred');
-      res.status(200).json({
-        status: 'success',
-        data: data,
+      res.status(201).json({
+        success: true,
+        code: '201',
+        message: 'OK',
+        data: {
+          docs,
+        },
       });
     });
   } catch (error) {
