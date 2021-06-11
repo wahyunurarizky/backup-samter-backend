@@ -7,7 +7,7 @@ const kendaraanSchema = new mongoose.Schema({
   plat_nomor: {
     type: String,
     required: true,
-    // unique: true,
+    unique: true,
   },
   unit_kerja: {
     type: String,
@@ -25,9 +25,6 @@ const kendaraanSchema = new mongoose.Schema({
   qr_id: {
     type: String,
     unique: true,
-  },
-  inc: {
-    type: Number,
   },
 });
 
