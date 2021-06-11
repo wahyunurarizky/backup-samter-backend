@@ -7,7 +7,8 @@ exports.create = base.createOne(
   'plat_nomor',
   'unit_kerja',
   'tahun',
-  'jenis_kendaraan_id'
+  'jenis_kendaraan_id',
+  'qr_id'
 );
 exports.getAll = base.getAll(Kendaraan, { path: 'jenis_kendaraan_id' });
 exports.get = base.getOne(Kendaraan);
