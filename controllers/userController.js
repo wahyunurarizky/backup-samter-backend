@@ -118,9 +118,11 @@ exports.resizeUserPhoto = async (req, res, next) => {
       user = req.body;
     } else {
       user = await User.findById(req.params.id);
-      fs.unlink(`public/img/users/${user.photo}`, (err) => {
-        console.error(err);
-      });
+      if (user.photo !== 'default-user-image.png') {
+        fs.unlink(`public/img/users/${user.photo}`, (err) => {
+          console.error(err);
+        });
+      }
       if (req.body.NIP) {
         user.NIP = req.body.NIP;
       }

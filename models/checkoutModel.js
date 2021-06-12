@@ -41,5 +41,9 @@ const checkoutSchema = new mongoose.Schema({
   },
 });
 
+checkoutSchema.pre('save', function (next) {
+  console.log(this._id);
+});
+
 const Checkout = mongoose.model('Checkout', checkoutSchema);
 module.exports = Checkout;
