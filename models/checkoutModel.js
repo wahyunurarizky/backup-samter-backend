@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const checkoutSchema = new mongoose.Schema({
-  qr_id: String,
+  qr_id: {
+    type: String,
+    unique: true,
+  },
   petugas: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
@@ -16,7 +19,7 @@ const checkoutSchema = new mongoose.Schema({
   },
   tps: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Kendaraan',
+    ref: 'Tps',
   },
   waktu_ambil: Date,
   waktu_checkout: Date,
@@ -42,7 +45,11 @@ const checkoutSchema = new mongoose.Schema({
 });
 
 checkoutSchema.pre('save', function (next) {
-  console.log(this._id);
+  const date = this._id;
+  const str = date.toString().toUpperCase();
+
+  this.qr_id = `CHCKT${str.substr(str.length - 6)}`;
+  next();
 });
 
 const Checkout = mongoose.model('Checkout', checkoutSchema);

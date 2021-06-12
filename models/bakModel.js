@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const bakSchema = new mongoose.Schema({
   kapasitas: {
     type: Number,
-    required: true
+    required: true,
   },
   qr_id: {
     type: String,
@@ -14,7 +14,7 @@ const bakSchema = new mongoose.Schema({
   },
 });
 
- bakSchema.pre('save', function (next) {
+bakSchema.pre('save', function (next) {
   const date = this._id;
   const str = date.toString().toUpperCase();
 

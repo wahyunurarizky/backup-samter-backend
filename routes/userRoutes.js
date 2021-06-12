@@ -12,12 +12,6 @@ router.patch('/resetPassword/:token', authController.resetPassword);
 
 // Protect all routes after this middleware
 // potect artinya harus login dan membawa data user yg login
-router.post(
-  '/signup',
-  userController.uploadUserPhoto,
-  userController.resizeUserPhoto,
-  authController.signup
-);
 router.use(authController.protect);
 
 router.get('/me', userController.getMe, userController.getUser);
@@ -29,6 +23,12 @@ router.patch('/updateMyPassword', authController.updatePassword);
 router.use(authController.restrictTo('pegawai'));
 
 router.route('/').get(userController.getAllUsers);
+router.post(
+  '/signup',
+  userController.uploadUserPhoto,
+  userController.resizeUserPhoto,
+  authController.signup
+);
 
 router
   .route('/:id')

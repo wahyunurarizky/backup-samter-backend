@@ -32,6 +32,18 @@ const tpsSchema = new mongoose.Schema({
   total_berat: {
     type: Number,
   },
+  qr_id: {
+    type: String,
+    unique: true,
+  },
+});
+
+tpsSchema.pre('save', function (next) {
+  const date = this._id;
+  const str = date.toString().toUpperCase();
+
+  this.qr_id = `TPS${str.substr(str.length - 6)}`;
+  next();
 });
 
 const Tps = mongoose.model('Tps', tpsSchema);
