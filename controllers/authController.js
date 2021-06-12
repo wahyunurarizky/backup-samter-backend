@@ -1,4 +1,4 @@
-const fs = require('fs');
+// const fs = require('fs');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -55,16 +55,16 @@ const createSendToken = (user, statusCode, req, res) => {
 
 exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     // 1) check if email and password exist
-    if (!email || !password) {
+    if (!username || !password) {
       return next(new AppError('NIP dan password wajib diisi', 400));
     }
 
     // 2) check if user exist and password is correct
     const user = await User.findOne({
-      email,
+      NIP: username,
     }).select('+password');
 
     if (!user || !(await user.correctPassword(password, user.password))) {
@@ -103,13 +103,6 @@ exports.signup = async (req, res, next) => {
 
     createSendToken(newUser, 201, req, res);
   } catch (err) {
-    fs.unlink(`public/img/users/${req.file.filename}`, (e) => {
-      if (e) {
-        console.error(e);
-      }
-      //file removed
-    });
-
     next(err);
   }
 };
