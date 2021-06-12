@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const tpaSchema = new mongoose.Schema({
-  name: {
+  nama: {
     type: String,
     required: [true, 'name is required'],
   },
@@ -47,7 +47,15 @@ const tpaSchema = new mongoose.Schema({
   nama_koordinator: {
     type: String,
     // required: [true, 'tpa must have a coordinator'],
-  },
+  }
+});
+
+tpaSchema.pre('save', function (next) {
+  const date = this._id;
+  const str = date.toString().toUpperCase();
+
+  this.qr_id = `TPA${str.substr(str.length - 6)}`;
+  next();
 });
 
 const Tpa = mongoose.model('Tpa', tpaSchema);
