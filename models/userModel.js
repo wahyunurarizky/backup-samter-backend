@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['pegawai', 'koordinator tps', 'operator tpa', 'petugas', 'pimpinan'],
-    default: 'petugas',
+    required: [true, 'Please fill role user'],
   },
   active: {
     type: Boolean,
@@ -49,6 +49,8 @@ const userSchema = new mongoose.Schema({
   NIP: {
     type: String,
     trim: true,
+    unique: true,
+    required: [true, 'Please fill NIP'],
   },
   phone: {
     type: String,
@@ -56,7 +58,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: 'user.jpg',
+    default: 'default-user-image.png',
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
@@ -73,8 +75,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Tps',
   },
-  pns: Boolean,
-  qr_id: String,
+  pns: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // encrypt the password using 'bcryptjs'
@@ -99,6 +103,12 @@ userSchema.pre('save', function (next) {
 
   // supaya dibuat tidak berbarengan dengan jwt
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
   next();
 });
 

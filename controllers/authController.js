@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -102,6 +103,13 @@ exports.signup = async (req, res, next) => {
 
     createSendToken(newUser, 201, req, res);
   } catch (err) {
+    fs.unlink(`public/img/users/${req.file.filename}`, (e) => {
+      if (e) {
+        console.error(e);
+      }
+      //file removed
+    });
+
     next(err);
   }
 };

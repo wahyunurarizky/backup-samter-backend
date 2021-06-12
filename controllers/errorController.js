@@ -7,10 +7,9 @@ const handleCastErrorDB = (err) => {
 
 const handleDuplicateFieldsDB = (err) => {
   // untuk mendapatkan string didalam quotes wkwkw
-  const keys = Object.keys(err.keyValue);
+  const keys = Object.keys(err.keyValue)[0];
   // const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
-  // console.log(Object.keys(err.keyValue).join(','));
-  return new AppError(`${keys.join(',')} telah digunakan`, 400);
+  return new AppError(`${keys} telah digunakan`, 400);
 };
 
 const handleValidationErrorDB = (err) => {
