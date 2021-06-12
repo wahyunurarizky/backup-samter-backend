@@ -47,7 +47,11 @@ const tpaSchema = new mongoose.Schema({
   nama_koordinator: {
     type: String,
     // required: [true, 'tpa must have a coordinator'],
-  }
+  },
+  qr_id: {
+    type: String,
+    unique: true,
+  },
 });
 
 tpaSchema.pre('save', function (next) {

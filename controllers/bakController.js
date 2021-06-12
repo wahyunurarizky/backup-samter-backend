@@ -1,31 +1,19 @@
 const QRCode = require('qrcode');
-const Tpa = require('../models/tpaModel');
-const AppError = require('../utils/appError');
-const APIFeatures = require('../utils/apiFeatures');
+const Bak = require('../models/bakModel');
 const base = require('./baseController');
 
 exports.create = base.createOne(
-  Tpa,
-  'nama',
-  'location',
-  'kecamatan',
-  'kelurahan',
-  'kota',
-  'jenis_tpa',
-  'luas_tpa',
+  Bak,
   'kapasitas',
-  'tonase',
-  'nama_koordinator',
   'qr_id'
 );
-exports.getAll = base.getAll(Tpa);
-exports.get = base.getOne(Tpa);
-exports.update = base.updateOne(Tpa);
-exports.delete = base.deleteOne(Tpa);
-
+exports.getAll = base.getAll(Bak);
+exports.get = base.getOne(Bak);
+exports.update = base.updateOne(Bak);
+exports.delete = base.deleteOne(Bak);
 exports.generateQr = async function generate(req, res, next) {
   try {
-    const doc = await Tpa.findById(req.params.id);
+    const doc = await Bak.findById(req.params.id);
     const stringdata = JSON.stringify(doc._id);
 
     QRCode.toString(stringdata, { type: 'terminal' }, (err, QRcode) => {
@@ -34,8 +22,8 @@ exports.generateQr = async function generate(req, res, next) {
     });
     QRCode.toDataURL(stringdata, (err, imgUrl) => {
       const docs = {
-        TpaId: doc._id,
-        imgUrl: imgUrl
+        kendaraanId: doc._id,
+        imgUrl: imgUrl,
       };
       if (err) return console.log('error occurred');
       res.status(201).json({
@@ -44,7 +32,7 @@ exports.generateQr = async function generate(req, res, next) {
         message: 'OK',
         data: {
           docs,
-        }
+        },
       });
     });
   } catch (error) {
