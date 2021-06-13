@@ -1,12 +1,21 @@
 const QRCode = require('qrcode');
-const Checkout = require('../models/checkoutModel');
+// const moment = require('moment-timezone');
+const Pickup = require('../models/pickupModel');
 const Tps = require('../models/tpsModel');
 const Bak = require('../models/bakModel');
 const Kendaraan = require('../models/kendaraanModel');
 const AppError = require('../utils/appError');
 
-exports.createCheckout = async (req, res, next) => {
+exports.createPickup = async (req, res, next) => {
   try {
+    if (!req.user.allowedPick)
+      return next(
+        new AppError(
+          'tidak bisa pick up, selesaikan dulu pick up anda sebelumnya',
+          400
+        )
+      );
+
     const kendaraan = await Kendaraan.findOne({ qr_id: req.body.kendaraan });
     if (!kendaraan)
       return next(
@@ -28,17 +37,17 @@ exports.createCheckout = async (req, res, next) => {
         new AppError('TPS Tidak Ditemukan, harap masukan ID yg benar', 404)
       );
 
-    const checkout = await Checkout.create({
+    const pickup = await Pickup.create({
       // qr_id,
       petugas: req.user._id,
       bak: bak._id,
       kendaraan: kendaraan._id,
       tps: tps._id,
-
-      waktu_ambil: new Date(Date.now()),
+      pickup_time: new Date(Date.now()),
+      arrival_time: null,
     });
 
-    const stringdata = JSON.stringify(checkout.qr_id);
+    const stringdata = JSON.stringify(pickup.qr_id);
 
     QRCode.toDataURL(stringdata, (err, imgUrl) => {
       const qrdata = {
@@ -50,7 +59,7 @@ exports.createCheckout = async (req, res, next) => {
         code: '201',
         message: 'OK',
         data: {
-          checkout,
+          pickup,
           qrdata,
         },
       });
@@ -59,3 +68,23 @@ exports.createCheckout = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getMyPickup = async (req, res, next) => {
+  try {
+    const pickup = await Pickup.find({ petugas: req.user._id });
+    if (!pickup)
+      return next(new AppError('tidak ada data pickup untukmu', 404));
+    res.status(201).json({
+      success: true,
+      code: '201',
+      message: 'OK',
+      data: {
+        pickup,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// exports.getALL();

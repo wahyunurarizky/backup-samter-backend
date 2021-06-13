@@ -4,14 +4,11 @@ const base = require('./baseController');
 
 exports.create = base.createOne(
   Tps,
-  'nama',
-  'lokasi',
-  'alamat',
-  'kecamatan',
-  'kelurahan',
-  'kapasitas',
+  'name',
+  'location',
+  'capacity',
   'koordinator',
-  'total_berat'
+  'tps_type'
 );
 exports.getAll = base.getAll(Tps);
 exports.get = base.getOne(Tps);

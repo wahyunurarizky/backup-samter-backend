@@ -5,10 +5,10 @@ const base = require('./baseController');
 
 exports.create = base.createOne(
   Kendaraan,
-  'plat_nomor',
-  'unit_kerja',
-  'tahun',
-  'jenis_kendaraan_id',
+  'plat',
+  'work_unit',
+  'year',
+  'kendaraan_type',
   'qr_id'
 );
 exports.getAll = base.getAll(Kendaraan, { path: 'jenis_kendaraan_id' });

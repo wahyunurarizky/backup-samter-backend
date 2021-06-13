@@ -3,30 +3,35 @@ const mongoose = require('mongoose');
 
 // const moment = require('moment');
 
-const kendaraanSchema = new mongoose.Schema({
-  plat_nomor: {
-    type: String,
-    required: true,
-    unique: true,
+const kendaraanSchema = new mongoose.Schema(
+  {
+    plat: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    work_unit: {
+      type: String,
+      required: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    },
+    kendaraan_type: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'JenisKendaraan',
+      required: true,
+    },
+    qr_id: {
+      type: String,
+      unique: true,
+    },
   },
-  unit_kerja: {
-    type: String,
-    required: true,
-  },
-  tahun: {
-    type: Number,
-    required: true,
-  },
-  jenis_kendaraan_id: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'JenisKendaraan',
-    required: true,
-  },
-  qr_id: {
-    type: String,
-    unique: true,
-  },
-});
+  {
+    collection: 'kendaraan',
+  }
+);
 
 kendaraanSchema.pre('save', function (next) {
   const date = this._id;

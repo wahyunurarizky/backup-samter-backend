@@ -1,62 +1,42 @@
 const mongoose = require('mongoose');
 
-const tpaSchema = new mongoose.Schema({
-  nama: {
-    type: String,
-    required: [true, 'name is required'],
-  },
-  location: {
-    type: {
+const tpaSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
-      default: 'Point',
-      enum: ['Point'],
+      required: [true, 'name is required'],
     },
-    coordinates: [Number],
-    address: String,
-    // required: [true, 'tpa must have physical location'],
-    // unique: [true, 'location must be unique'],
+    location: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      city: String,
+      kecamatan: String,
+      kelurahan: String,
+    },
+
+    tpa_type: String,
+    tpa_area: Number,
+    capacity: Number,
+    tonase: Number,
+    koordinator: String,
+    qr_id: {
+      type: String,
+      unique: true,
+    },
   },
-  kecamatan: {
-    type: String,
-    // required: [true, 'tpa must be located in a kecamatan'],
-  },
-  kelurahan: {
-    type: String,
-    // required: [true, 'tpa must be located in a keluaran'],
-  },
-  kota: {
-    type: String,
-    // required: [true, 'tpa must be located in a kota'],
-  },
-  jenis_tpa: {
-    type: String,
-    // required: [true, 'tpa must be have type'],
-  },
-  luas_tpa: {
-    type: Number,
-    // required: [true, 'tpa must have area'],
-  },
-  kapasitas: {
-    type: Number,
-    // required: [true, 'tpa must have capacity'],
-  },
-  tonase: {
-    type: String,
-    // required: [true, 'tpa must have current tonnage'],
-  },
-  nama_koordinator: {
-    type: String,
-    // required: [true, 'tpa must have a coordinator'],
-  },
-  qr_id: {
-    type: String,
-    unique: true,
-  },
-});
+  {
+    collection: 'tpa',
+  }
+);
 
 tpaSchema.pre('save', function (next) {
-  const date = this._id;
-  const str = date.toString().toUpperCase();
+  const id = this._id;
+  const str = id.toString().toUpperCase();
 
   this.qr_id = `TPA${str.substr(str.length - 6)}`;
   next();

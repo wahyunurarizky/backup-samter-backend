@@ -167,7 +167,7 @@ exports.restrictTo =
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError(
-          'kamu tidak memiliki izin untuk melakukan tindakan ini',
+          'role kamu tidak memiliki izin untuk melakukan tindakan ini',
           403
         )
       );

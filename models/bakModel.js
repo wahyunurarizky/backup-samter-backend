@@ -3,16 +3,25 @@ const mongoose = require('mongoose');
 
 // const moment = require('moment');
 
-const bakSchema = new mongoose.Schema({
-  kapasitas: {
-    type: Number,
-    required: true,
+const bakSchema = new mongoose.Schema(
+  {
+    empty_weight: {
+      type: Number,
+      required: true,
+    },
+    max_weight: {
+      type: Number,
+      required: true,
+    },
+    qr_id: {
+      type: String,
+      unique: true,
+    },
   },
-  qr_id: {
-    type: String,
-    unique: true,
-  },
-});
+  {
+    collection: 'bak',
+  }
+);
 
 bakSchema.pre('save', function (next) {
   const date = this._id;

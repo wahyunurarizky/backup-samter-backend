@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 // const Tour = require('../../models/tourModel');
 // const User = require('../../models/userModel');
-const Kendaraan = require('../models/kendaraanModel');
+const Bak = require('../models/bakModel');
 
 dotenv.config({ path: 'config.env' });
 
@@ -24,132 +24,92 @@ mongoose
     console.log('DB connection Successfully!');
   });
 
-const kendaraan = [
+const bak = [
   {
-    plat_nomor: 'A BCD 19',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDQ 1234229',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDW 12342349',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDE 19234',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCD 19234',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDQ 19345',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDW 1900',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDE 196',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCD 197',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDQ 198',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDW 159',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDE 149',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCD 139',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDQ 12',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDW 149',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDE 195',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCD 194',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDQ 191',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDW 192',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
   {
-    plat_nomor: 'A BCDE 193',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    empty_weight: 100,
+    max_weight: 3000,
   },
 ];
 
 const importData = async () => {
   try {
-    await Kendaraan.create(kendaraan, { validateBeforeSave: false });
+    await Bak.create(bak, { validateBeforeSave: false });
     console.log('data successfully loaded');
   } catch (e) {
     console.log(e);
@@ -159,7 +119,7 @@ const importData = async () => {
 
 const deleteData = async () => {
   try {
-    await Kendaraan.deleteMany();
+    await Bak.deleteMany();
     console.log('data successfully deleted');
   } catch (e) {
     console.log(e);

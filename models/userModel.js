@@ -54,6 +54,7 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
+    required: true,
     trim: true,
   },
   photo: {
@@ -63,7 +64,7 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
-  jumlah_penarikan: {
+  jumlahPenarikan: {
     type: Number,
     default: 0,
   },
@@ -77,7 +78,11 @@ const userSchema = new mongoose.Schema({
   },
   pns: {
     type: Boolean,
-    default: false,
+    default: true,
+  },
+  allowedPick: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -117,7 +122,7 @@ userSchema.methods.correctPassword = async function (
   typedPassword,
   originalPassword
 ) {
-  console.log(await bcrypt.compare(typedPassword, originalPassword));
+  // console.log(await bcrypt.compare(typedPassword, originalPassword));
   return await bcrypt.compare(typedPassword, originalPassword);
 };
 
@@ -129,7 +134,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest('hex');
 
-  console.log(resetToken, this.passwordResetToken);
+  // console.log(resetToken, this.passwordResetToken);
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;

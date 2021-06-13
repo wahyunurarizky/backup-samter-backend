@@ -14,7 +14,7 @@ const jenisKendaraanRoutes = require('./routes/jenisKendaraanRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
 const tpsRoutes = require('./routes/tpsRoutes');
 const tpaRoutes = require('./routes/tpaRoutes');
-const checkoutRoutes = require('./routes/checkoutRoutes');
+const pickupRoutes = require('./routes/pickupRoutes');
 const bakRoutes = require('./routes/bakRoutes');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -65,7 +65,7 @@ app.use('/api/v1/jenis-kendaraan', jenisKendaraanRoutes);
 app.use('/api/v1/kendaraan', kendaraanRoutes);
 app.use('/api/v1/tps', tpsRoutes);
 app.use('/api/v1/tpa', tpaRoutes);
-app.use('/api/v1/checkout', checkoutRoutes);
+app.use('/api/v1/pickup', pickupRoutes);
 app.use('/api/v1/bak', bakRoutes);
 
 // handling unhandled routes

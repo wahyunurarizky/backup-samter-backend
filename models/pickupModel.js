@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const checkoutSchema = new mongoose.Schema({
+const pickupSchema = new mongoose.Schema({
   qr_id: {
     type: String,
     unique: true,
@@ -21,15 +21,15 @@ const checkoutSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Tps',
   },
-  waktu_ambil: Date,
-  waktu_checkout: Date,
+  pickup_time: Date,
+  arrival_time: Date,
   status: {
     type: String,
     enum: ['menuju tpa', 'selesai'],
     default: 'menuju tpa',
   },
-  muatan: Number,
-  metode_pembayaran: {
+  load: Number,
+  payment_method: {
     type: String,
     enum: ['perbulan', 'perorder'],
     default: 'perbulan',
@@ -44,13 +44,13 @@ const checkoutSchema = new mongoose.Schema({
   },
 });
 
-checkoutSchema.pre('save', function (next) {
+pickupSchema.pre('save', function (next) {
   const date = this._id;
   const str = date.toString().toUpperCase();
 
-  this.qr_id = `CHCKT${str.substr(str.length - 6)}`;
+  this.qr_id = `PCKP${str.substr(str.length - 6)}`;
   next();
 });
 
-const Checkout = mongoose.model('Checkout', checkoutSchema);
-module.exports = Checkout;
+const Pickup = mongoose.model('Pickup', pickupSchema);
+module.exports = Pickup;

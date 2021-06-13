@@ -2,7 +2,7 @@ const QRCode = require('qrcode');
 const Bak = require('../models/bakModel');
 const base = require('./baseController');
 
-exports.create = base.createOne(Bak, 'kapasitas');
+exports.create = base.createOne(Bak, 'empty_weight', 'max_weight');
 exports.getAll = base.getAll(Bak);
 exports.get = base.getOne(Bak);
 exports.update = base.updateOne(Bak);

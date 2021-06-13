@@ -22,13 +22,13 @@ router.patch('/updateMyPassword', authController.updatePassword);
 // Only admin have permission to access for the below APIs
 router.use(authController.restrictTo('pegawai'));
 
-router.route('/').get(userController.getAllUsers);
 router.post(
   '/signup',
   userController.uploadUserPhoto,
   userController.resizeUserPhoto,
   authController.signup
 );
+router.route('/').get(userController.getAllUsers);
 
 router
   .route('/:id')

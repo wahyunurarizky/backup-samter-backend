@@ -1,21 +1,18 @@
 const QRCode = require('qrcode');
 const Tpa = require('../models/tpaModel');
-const AppError = require('../utils/appError');
-const APIFeatures = require('../utils/apiFeatures');
+// const AppError = require('../utils/appError');
+// const APIFeatures = require('../utils/apiFeatures');
 const base = require('./baseController');
 
 exports.create = base.createOne(
   Tpa,
-  'nama',
+  'name',
   'location',
-  'kecamatan',
-  'kelurahan',
-  'kota',
-  'jenis_tpa',
-  'luas_tpa',
-  'kapasitas',
+  'tpa_type',
+  'tpa_area',
+  'capacity',
   'tonase',
-  'nama_koordinator',
+  'koordinator',
   'qr_id'
 );
 exports.getAll = base.getAll(Tpa);
@@ -35,7 +32,7 @@ exports.generateQr = async function generate(req, res, next) {
     QRCode.toDataURL(stringdata, (err, imgUrl) => {
       const docs = {
         TpaId: doc._id,
-        imgUrl: imgUrl
+        imgUrl: imgUrl,
       };
       if (err) return console.log('error occurred');
       res.status(201).json({
@@ -44,7 +41,7 @@ exports.generateQr = async function generate(req, res, next) {
         message: 'OK',
         data: {
           docs,
-        }
+        },
       });
     });
   } catch (error) {
