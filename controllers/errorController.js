@@ -7,16 +7,16 @@ const handleCastErrorDB = (err) => {
 
 const handleDuplicateFieldsDB = (err) => {
   // untuk mendapatkan string didalam quotes wkwkw
-  const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
-
-  return new AppError(`duplicates value ${value}`, 400);
+  const keys = Object.keys(err.keyValue)[0];
+  // const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
+  return new AppError(`${keys} telah digunakan`, 400);
 };
 
 const handleValidationErrorDB = (err) => {
   // membuat array yg berisi err.message
   const errors = Object.values(err.errors).map((el) => el.message);
 
-  const message = `Invalid input data: ${errors.join(', ')}`;
+  const message = `Data input tidak valid: ${errors.join(', ')}`;
   return new AppError(message, 400);
 };
 
@@ -30,23 +30,25 @@ const sendErrorDev = (err, req, res) => {
   if (req.originalUrl.startsWith('/api')) {
     console.error('ERROR', err);
     res.status(err.statusCode).json({
-      status: err.status,
+      success: false,
+      code: `${err.statusCode}`,
       message: err.message,
       stack: err.stack,
     });
   } else {
-    console.error('ERROR', err);
-    res.status(err.statusCode).render('main/error', {
-      title: 'something went wrong',
-      message: err.message,
-    });
+    // console.error('ERROR', err);
+    // res.status(err.statusCode).render('main/error', {
+    //   title: 'something went wrong',
+    //   message: err.message,
+    // });
   }
 };
 const sendErrorProd = (err, req, res) => {
   if (req.originalUrl.startsWith('/api')) {
     if (err.isOperational) {
       return res.status(err.statusCode).json({
-        status: err.status,
+        success: false,
+        code: `${err.statusCode}`,
         message: err.message,
       });
     }
@@ -54,7 +56,8 @@ const sendErrorProd = (err, req, res) => {
 
     // programming or other unknown error
     return res.status(500).json({
-      status: 'error',
+      success: false,
+      code: `${err.statusCode}`,
       message: 'something went very wrong',
     });
   }
@@ -78,7 +81,7 @@ const sendErrorProd = (err, req, res) => {
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
-  console.log('eeee', err);
+  console.log('ERROORR COKKKK', err);
 
   if (process.env.NODE_ENV === 'development') {
     // error yang tampil saat development

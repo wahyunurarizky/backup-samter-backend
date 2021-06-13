@@ -3,9 +3,9 @@ const base = require('./baseController');
 
 exports.create = base.createOne(
   JenisKendaraan,
-  'jenis',
-  'berat_kosong',
-  'berat_muatan_maksimal'
+  'type',
+  'empty_weight',
+  'max_load_weight'
 );
 exports.getAll = base.getAll(JenisKendaraan);
 exports.get = base.getOne(JenisKendaraan);

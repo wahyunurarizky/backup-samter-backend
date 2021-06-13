@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -13,7 +14,8 @@ const jenisKendaraanRoutes = require('./routes/jenisKendaraanRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
 const tpsRoutes = require('./routes/tpsRoutes');
 const tpaRoutes = require('./routes/tpaRoutes');
-const checkoutRoutes = require('./routes/checkoutRoutes');
+const pickupRoutes = require('./routes/pickupRoutes');
+const bakRoutes = require('./routes/bakRoutes');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -21,6 +23,8 @@ const app = express();
 
 // Allow Cross-Origin requests
 app.use(cors());
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security HTTP headers
 app.use(helmet());
@@ -61,7 +65,8 @@ app.use('/api/v1/jenis-kendaraan', jenisKendaraanRoutes);
 app.use('/api/v1/kendaraan', kendaraanRoutes);
 app.use('/api/v1/tps', tpsRoutes);
 app.use('/api/v1/tpa', tpaRoutes);
-app.use('/api/v1/checkout', checkoutRoutes);
+app.use('/api/v1/pickup', pickupRoutes);
+app.use('/api/v1/bak', bakRoutes);
 
 // handling unhandled routes
 app.all('*', (req, res, next) => {

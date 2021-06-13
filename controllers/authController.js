@@ -1,9 +1,18 @@
+// const fs = require('fs');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
+
+const filterObj = (obj, allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
 
 // mereturn sebuah jwt token
 const createToken = (id) =>
@@ -34,30 +43,32 @@ const createSendToken = (user, statusCode, req, res) => {
   user.password = undefined;
 
   res.status(statusCode).json({
-    status: 'success',
-    token,
+    success: true,
+    code: `${statusCode}`,
+    message: 'OK',
     data: {
       user,
+      token,
     },
   });
 };
 
 exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     // 1) check if email and password exist
-    if (!email || !password) {
-      return next(new AppError('please provide email and password', 400));
+    if (!username || !password) {
+      return next(new AppError('NIP dan password wajib diisi', 400));
     }
 
     // 2) check if user exist and password is correct
     const user = await User.findOne({
-      email,
+      NIP: username,
     }).select('+password');
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError('incorrect email or password', 401)); //401 is unauthorized
+      return next(new AppError('NIP atau password salah', 401)); //401 is unauthorized
     }
 
     // 3) All correct, send jwt to client
@@ -69,21 +80,26 @@ exports.login = async (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
   try {
-    const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      passwordConfirm: req.body.passwordConfirm,
-      passwordChangedAt: req.body.passwordChangedAt,
-      role: req.body.role,
-      address: req.body.address,
-      NIP: req.body.NIP,
-      phone: req.body.phone,
-      photo: req.body.photo,
-      tpa: req.body.tpa,
-      tps: req.body.tps,
-      jumlah_penarikan: req.body.jumlah_penarikan,
-    });
+    const filteredBody = filterObj(req.body, [
+      'name',
+      'email',
+      'password',
+      'passwordConfirm',
+      'passwordChangedAt',
+      'role',
+      'address',
+      'NIP',
+      'phone',
+      'photo',
+      'tpa',
+      'tps',
+      'jumlah_penarikan',
+    ]);
+    console.log(filteredBody);
+
+    if (req.file) filteredBody.photo = req.file.filename;
+
+    const newUser = await User.create(filteredBody);
 
     createSendToken(newUser, 201, req, res);
   } catch (err) {
@@ -96,7 +112,12 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
-  res.status(200).json({ status: 'success' });
+  res.status(200).json({
+    success: true,
+    code: '200',
+    message: 'OK',
+    data: null,
+  });
 };
 
 exports.protect = async (req, res, next) => {
@@ -112,9 +133,7 @@ exports.protect = async (req, res, next) => {
     }
 
     if (!token) {
-      return next(
-        new AppError('you are not logged in, please login to get access', 401)
-      );
+      return next(new AppError('silahkan login untuk mendapatkan akses', 401));
     }
 
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -122,7 +141,7 @@ exports.protect = async (req, res, next) => {
     const user = await User.findById(decoded.id);
     if (!user) {
       return next(
-        new AppError('the user belonging to this token does not exist', 401)
+        new AppError('tidak ada user yang cocok dengan token ini', 401)
       );
     }
 
@@ -147,7 +166,10 @@ exports.restrictTo =
   (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(
-        new AppError('you do not have a permission to perform this action', 403)
+        new AppError(
+          'role kamu tidak memiliki izin untuk melakukan tindakan ini',
+          403
+        )
       );
     }
     next();
@@ -158,9 +180,7 @@ exports.forgotPassword = async (req, res, next) => {
     // 1) get user based on posted email
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      return next(
-        new AppError('there is no users with that email address', 404)
-      );
+      return next(new AppError('email tidak terdaftar', 404));
     }
 
     // 2) generate the random reset token
@@ -183,7 +203,8 @@ exports.forgotPassword = async (req, res, next) => {
       });
 
       res.status(200).json({
-        status: 'success',
+        success: true,
+        code: '200',
         message: 'token sent to email',
       });
     } catch (err) {
@@ -193,7 +214,7 @@ exports.forgotPassword = async (req, res, next) => {
 
       return next(
         new AppError(
-          'there was an error while sending the email. Try Again later',
+          'terjadi kesalahan saat mengirim email, coba lagi beberapa saat',
           500
         )
       );
@@ -220,7 +241,7 @@ exports.resetPassword = async (req, res, next) => {
 
     // if token has not expired, and there is use, set the new Password
     if (!user) {
-      return next(new AppError('Token is invalid or has expired', 400));
+      return next(new AppError('Token invalid atau telah expired', 400));
     }
     user.password = req.body.password;
     user.passwordConfirm = req.body.passwordConfirm;
@@ -246,7 +267,7 @@ exports.updatePassword = async (req, res, next) => {
     if (
       !(await user.correctPassword(req.body.passwordCurrent, user.password))
     ) {
-      return next(new AppError('Your current password is wrong.', 401));
+      return next(new AppError('Password Saat ini kamu salah', 401));
     }
 
     // 3) If so, update password

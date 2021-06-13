@@ -1,37 +1,44 @@
 const mongoose = require('mongoose');
 
-const tpsSchema = new mongoose.Schema({
-  nama: {
-    type: String,
-    required: true,
-  },
-  lokasi: {
-    type: {
+const tpsSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
-      default: 'Point',
-      enum: ['Point'],
+      required: true,
     },
-    coordinates: [Number],
-    address: String,
+    location: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      city: String,
+      kecamatan: String,
+      kelurahan: String,
+    },
+    capacity: Number,
+    koordinator: {
+      type: String,
+    },
+    tps_type: String,
+    qr_id: {
+      type: String,
+      unique: true,
+    },
   },
-  alamat: {
-    type: String,
-  },
-  kecamatan: {
-    type: String,
-  },
-  kelurahan: {
-    type: String,
-  },
-  kapasitas: {
-    type: Number,
-  },
-  koordinator: {
-    type: String,
-  },
-  total_berat: {
-    type: Number,
-  },
+  {
+    collection: 'tps',
+  }
+);
+
+tpsSchema.pre('save', function (next) {
+  const id = this._id;
+  const str = id.toString().toUpperCase();
+
+  this.qr_id = `TPS${str.substr(str.length - 6)}`;
+  next();
 });
 
 const Tps = mongoose.model('Tps', tpsSchema);

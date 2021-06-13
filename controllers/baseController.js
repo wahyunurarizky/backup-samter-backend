@@ -13,10 +13,14 @@ exports.deleteOne = (Model) => async (req, res, next) => {
   try {
     const doc = await Model.findByIdAndDelete(req.params.id);
     if (!doc) {
-      return next(new AppError('no docs found with that id', 404));
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
     }
     res.status(204).json({
-      status: 'success',
+      success: true,
+      code: '204',
+      message: 'OK',
       data: null,
     });
   } catch (error) {
@@ -32,11 +36,17 @@ exports.updateOne = (Model) => async (req, res, next) => {
       runValidators: true,
     });
     if (!updatedDoc) {
-      return next(new AppError('no docs found with that id', 404));
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
     }
     res.status(200).json({
-      status: 'success',
-      data: updatedDoc,
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        updatedDoc,
+      },
     });
   } catch (error) {
     next(error);
@@ -52,8 +62,12 @@ exports.createOne =
       const doc = await Model.create(filteredBody);
 
       res.status(201).json({
-        status: 'success',
-        data: doc,
+        success: true,
+        code: '201',
+        message: 'OK',
+        data: {
+          doc,
+        },
       });
     } catch (error) {
       next(error);
@@ -68,13 +82,18 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
     const doc = await query;
 
     if (!doc) {
-      return next(new AppError('no docs found with that id', 404));
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
     }
 
     res.status(200).json({
-      status: 'success',
-      message: 'data successfully get',
-      data: doc,
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        doc,
+      },
     });
   } catch (error) {
     next(error);
@@ -96,9 +115,13 @@ exports.getAll = (Model, popOptions) => async (req, res, next) => {
     // const docs = await features.query.explain();
 
     res.status(200).json({
-      status: 'succcess',
-      results: docs.length,
-      data: docs,
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        docs,
+        results: docs.length,
+      },
     });
   } catch (error) {
     next(error);
