@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 // const Tour = require('../../models/tourModel');
 // const User = require('../../models/userModel');
 const Bak = require('../models/bakModel');
+const Pickup = require('../models/pickupModel');
 
 dotenv.config({ path: 'config.env' });
 
@@ -119,7 +120,7 @@ const importData = async () => {
 
 const deleteData = async () => {
   try {
-    await Bak.deleteMany();
+    await Pickup.deleteMany();
     console.log('data successfully deleted');
   } catch (e) {
     console.log(e);

@@ -5,6 +5,7 @@ const Tps = require('../models/tpsModel');
 const Bak = require('../models/bakModel');
 const Kendaraan = require('../models/kendaraanModel');
 const AppError = require('../utils/appError');
+const base = require('./baseController');
 
 exports.createPickup = async (req, res, next) => {
   try {
@@ -45,7 +46,13 @@ exports.createPickup = async (req, res, next) => {
       tps: tps._id,
       pickup_time: new Date(Date.now()),
       arrival_time: null,
+      metode: req.body.metode,
     });
+
+    const newPickup = {
+      ...pickup._doc,
+      pick_time: pickup.pickup_time.toLocaleString(),
+    };
 
     const stringdata = JSON.stringify(pickup.qr_id);
 
@@ -87,4 +94,5 @@ exports.getMyPickup = async (req, res, next) => {
   }
 };
 
-// exports.getALL();
+exports.getAll = base.getAll(Pickup);
+exports.get = base.getOne(Pickup);

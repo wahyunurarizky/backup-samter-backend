@@ -52,5 +52,14 @@ pickupSchema.pre('save', function (next) {
   next();
 });
 
+pickupSchema.post('save', function (next) {
+  this._doc.pick_time = this.pickup_time.toLocaleString();
+});
+
+// pickupSchema.pre(/^find/, function (next) {
+
+//   next();
+// });
+
 const Pickup = mongoose.model('Pickup', pickupSchema);
 module.exports = Pickup;

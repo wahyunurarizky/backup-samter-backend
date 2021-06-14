@@ -55,7 +55,7 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // Prevent parameter pollution
-app.use(hpp());
+app.use(hpp({ whitelist: ['pickup_time, arrival_time'] }));
 
 app.use(compression());
 

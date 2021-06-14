@@ -86,7 +86,9 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
         new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
       );
     }
-
+    // if (doc.pickup_time) {
+    //   console.log(new Date(doc.pickup_time));
+    // }
     res.status(200).json({
       success: true,
       code: '200',
@@ -114,6 +116,11 @@ exports.getAll = (Model, popOptions) => async (req, res, next) => {
     const docs = await features.query.populate(popOptions);
     // const docs = await features.query.explain();
 
+    // docs.forEach((e) => {
+    //   if (e.pickup_time) {
+    //     console.log(e.pickup_time.toLocaleString());
+    //   }
+    // });
     res.status(200).json({
       success: true,
       code: '200',

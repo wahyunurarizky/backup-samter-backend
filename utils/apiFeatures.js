@@ -19,7 +19,17 @@ class APIFeatures {
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     // \b\b artinya specific untuk misal kata 'gte' tidak akan berubah jika 'agtek'
     // /g artinya global. akan merubah semua kata bukan hanya kata pertama yang ditemukan
+    console.log(queryStr);
+    const pars = JSON.parse(queryStr);
 
+    if (pars.pickup_time) {
+      // eslint-disable-next-line no-restricted-syntax
+      Object.keys(pars.pickup_time).forEach((key) => {
+        pars.pickup_time[key] = new Date(pars.pickup_time[key]);
+      });
+    }
+
+    console.log(pars);
     this.query = this.query.find(JSON.parse(queryStr));
     return this;
   }
