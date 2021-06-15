@@ -12,16 +12,21 @@ router
 router
   .route('/getMyPickup')
   .get(authController.restrictTo('petugas'), pickupController.getMyPickup);
+router
+  .route('/qr/:qr_id')
+  .get(authController.restrictTo('petugas'), pickupController.getByQr);
 
-router.use(authController.restrictTo('pegawai'));
+router
+  .route('/:id')
+  .get(authController.restrictTo('pegawai'), pickupController.get);
 
-router.route('/:id').get(pickupController.get);
-// .patch(pickupController.update)
-// .delete(pickupController.delete);
+router
+  .route('/')
+  .get(authController.restrictTo('pegawai'), pickupController.getAll);
 
-router.route('/').get(pickupController.getAll);
-
-// router.route('/:id/generate-qr-code').get(kendaraanController.generateQr);
+router
+  .route('/inputLoad/:id')
+  .patch(authController.restrictTo('operator tpa'), pickupController.inputLoad);
 // belom belom buat
 
 module.exports = router;

@@ -45,7 +45,7 @@ exports.updateOne = (Model) => async (req, res, next) => {
       code: '200',
       message: 'OK',
       data: {
-        updatedDoc,
+        doc: updatedDoc,
       },
     });
   } catch (error) {
@@ -83,7 +83,7 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
 
     if (!doc) {
       return next(
-        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+        new AppError('tidak ada dokumen yang ditemukan dengan id tersebut', 404)
       );
     }
     // if (doc.pickup_time) {
@@ -126,8 +126,8 @@ exports.getAll = (Model, popOptions) => async (req, res, next) => {
       code: '200',
       message: 'OK',
       data: {
-        docs,
         results: docs.length,
+        docs,
       },
     });
   } catch (error) {

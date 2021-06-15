@@ -25,13 +25,13 @@ const pickupSchema = new mongoose.Schema({
   arrival_time: Date,
   status: {
     type: String,
-    enum: ['menuju tpa', 'selesai'],
+    enum: ['menuju tpa', 'selesai', 'terlambat'],
     default: 'menuju tpa',
   },
   load: Number,
   payment_method: {
     type: String,
-    enum: ['perbulan', 'perorder'],
+    enum: ['perbulan', 'peangkut'],
     default: 'perbulan',
   },
   operator_tpa: {
@@ -53,13 +53,55 @@ pickupSchema.pre('save', function (next) {
 });
 
 pickupSchema.post('save', function (next) {
-  this._doc.pick_time = this.pickup_time.toLocaleString();
+  this._doc.pickup_time_local = this.pickup_time.toLocaleString();
 });
 
-// pickupSchema.pre(/^find/, function (next) {
+pickupSchema.post(/^find/, (result) => {
+  console.log(!this.pickup_time);
+  if (Array.isArray(result)) {
+    result.forEach((e) => {
+      if (e.pickup_time)
+        e._doc.pickup_time_local = e.pickup_time.toLocaleString();
+      if (e.arrival_time)
+        e._doc.arrival_time_local = e.arrival_time.toLocaleString();
+    });
+  } else {
+    if (result.pickup_time)
+      result._doc.pickup_time_local = result.pickup_time.toLocaleString();
+    if (result.arrival_time)
+      result._doc.arrival_time_local = result.arrival_time.toLocaleString();
+  }
+});
 
-//   next();
-// });
+pickupSchema.pre(/^find/, function (next) {
+  this.populate([
+    {
+      path: 'petugas',
+      select: ['name', 'NIP', 'photo'],
+    },
+    {
+      path: 'bak',
+      select: 'qr_id',
+    },
+    {
+      path: 'kendaraan',
+      select: ['plat', 'qr_id'],
+    },
+    {
+      path: 'tps',
+      select: ['qr_id', 'name'],
+    },
+    {
+      path: 'operator_tpa',
+      select: ['name'],
+    },
+    {
+      path: 'tpa',
+      select: ['name'],
+    },
+  ]);
+  next();
+});
 
 const Pickup = mongoose.model('Pickup', pickupSchema);
 module.exports = Pickup;
