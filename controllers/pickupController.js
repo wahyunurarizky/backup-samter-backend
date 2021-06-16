@@ -125,6 +125,10 @@ exports.getByQr = async (req, res, next) => {
 
 exports.inputLoad = async (req, res, next) => {
   try {
+    const checkPickup = await Pickup.findById(req.params.id);
+    if (checkPickup.status === 'selesai')
+      return next(new AppError('id pickup telah selesai digunakan', 400));
+
     const updatedPickup = await Pickup.findByIdAndUpdate(
       req.params.id,
       {
@@ -136,16 +140,25 @@ exports.inputLoad = async (req, res, next) => {
       },
       { new: true, runValidators: true }
     );
-
-    await User.findByIdAndUpdate(updatedPickup.petugas, {
-      allowedPick: true,
-    });
-
     if (!updatedPickup) {
       return next(
         new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
       );
     }
+    await User.findByIdAndUpdate(updatedPickup.petugas, {
+      allowedPick: true,
+    });
+
+    if (checkPickup.payment_method === 'perangkut') {
+      await Tagihan.create({
+        pickup: checkPickup._id,
+        status: 'belum dibayar',
+        payment_method: 'perangkut',
+        price: updatedPickup.load * process.env.DEFAULT_PRICE_PER_KG,
+        tps: checkPickup.tps,
+      });
+    }
+
     res.status(200).json({
       success: true,
       code: '200',

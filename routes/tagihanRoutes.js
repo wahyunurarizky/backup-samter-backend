@@ -2,13 +2,28 @@ const express = require('express');
 
 const router = express.Router();
 const tagihanController = require('../controllers/tagihanController');
+const authController = require('../controllers/authController');
 
-router.route('/').get(tagihanController.getAll).post(tagihanController.create);
+router.use(authController.protect);
+
+router.route('/').get(tagihanController.getAll);
+router
+  .route('/getMyTagihan')
+  .get(
+    authController.restrictTo('koordinatortps'),
+    tagihanController.getMyTagihan
+  );
 
 router
   .route('/:id')
   .get(tagihanController.get)
-  .patch(tagihanController.update)
+  .patch(
+    authController.restrictTo('operator tpa'),
+    tagihanController.updateStatus
+  )
   .delete(tagihanController.delete);
 
+router
+  .route('/pay/:id')
+  .patch(authController.restrictTo('koordinator tps'), tagihanController.pay);
 module.exports = router;

@@ -31,7 +31,7 @@ const pickupSchema = new mongoose.Schema({
   load: Number,
   payment_method: {
     type: String,
-    enum: ['perbulan', 'peangkut'],
+    enum: ['perbulan', 'perangkut'],
     default: 'perbulan',
   },
   operator_tpa: {

@@ -28,30 +28,40 @@ exports.deleteOne = (Model) => async (req, res, next) => {
   }
 };
 
-exports.updateOne = (Model) => async (req, res, next) => {
-  try {
-    const updatedDoc = await Model.findByIdAndUpdate(req.params.id, req.body, {
-      // jangan lupa run validators pada update
-      new: true,
-      runValidators: true,
-    });
-    if (!updatedDoc) {
-      return next(
-        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+exports.updateOne =
+  (Model, ...fields) =>
+  async (req, res, next) => {
+    try {
+      const filteredBody = filterObj(req.body, fields);
+      const updatedDoc = await Model.findByIdAndUpdate(
+        req.params.id,
+        filteredBody,
+        {
+          // jangan lupa run validators pada update
+          new: true,
+          runValidators: true,
+        }
       );
+      if (!updatedDoc) {
+        return next(
+          new AppError(
+            'tidak ada dokumen yang ditemukan dengan di tersebut',
+            404
+          )
+        );
+      }
+      res.status(200).json({
+        success: true,
+        code: '200',
+        message: 'OK',
+        data: {
+          doc: updatedDoc,
+        },
+      });
+    } catch (error) {
+      next(error);
     }
-    res.status(200).json({
-      success: true,
-      code: '200',
-      message: 'OK',
-      data: {
-        doc: updatedDoc,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  };
 
 exports.createOne =
   (Model, ...fields) =>
