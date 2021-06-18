@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Kendaraan = require('./models/kendaraanModel');
+const Tagihan = require('./models/tagihanModel');
 const schedule = require('node-schedule');
 const dotenv = require('dotenv');
 
@@ -33,13 +33,10 @@ mongoose
 
 // create new payment
 
-schedule.scheduleJob('* * * 1 * *', async () => {
+schedule.scheduleJob('* * * 19 * *', async () => {
   try {
-    await Kendaraan.create({
-      plat_nomor: 'A BCD 19',
-      unit_kerja: 'Ciputat',
-      tahun: 2021,
-      jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
+    await Tagihan.create({
+      price: 23425324232,
     });
   } catch (err) {
     console.log(err);

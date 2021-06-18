@@ -112,12 +112,8 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
   }
 };
 
-exports.getAll = (Model, popOptions) => async (req, res, next) => {
+exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
   try {
-    let filter = {};
-    if (req.params.teamId) {
-      filter = { team: req.params.teamId };
-    }
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()

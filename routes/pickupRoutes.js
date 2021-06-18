@@ -14,7 +14,10 @@ router
   .get(authController.restrictTo('petugas'), pickupController.getMyPickup);
 router
   .route('/qr/:qr_id')
-  .get(authController.restrictTo('petugas'), pickupController.getByQr);
+  .get(
+    authController.restrictTo('petugas', 'operator tpa'),
+    pickupController.getByQr
+  );
 
 router
   .route('/:id')

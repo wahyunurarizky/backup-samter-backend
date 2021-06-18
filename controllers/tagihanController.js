@@ -1,5 +1,9 @@
+const multer = require('multer');
+const sharp = require('sharp');
 const Tagihan = require('../models/tagihanModel');
 const base = require('./baseController');
+const APIFeatures = require('../utils/apiFeatures');
+const AppError = require('../utils/appError');
 
 // exports.create = base.createOne(Tagihan, 'total', 'bukti', 'waktu', 'status');
 exports.getAll = base.getAll(Tagihan);
@@ -9,7 +13,15 @@ exports.delete = base.deleteOne(Tagihan);
 
 exports.getMyTagihan = async (req, res, next) => {
   try {
-    const tagihan = await Tagihan.find({ tps: req.user.tps });
+    const features = new APIFeatures(
+      Tagihan.find({ tps: req.user.tps }),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limit()
+      .paginate();
+    const tagihan = await features.query;
 
     res.status(200).json({
       success: true,
@@ -25,4 +37,61 @@ exports.getMyTagihan = async (req, res, next) => {
   }
 };
 
-exports.pay = async (req, res, next) => {};
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(
+      new AppError('Bukan gambar!, mohon hanya upload file gambar', 400),
+      false
+    );
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadPaymentPhoto = upload.single('payment_photo');
+
+exports.resizePaymentPhoto = async (req, res, next) => {
+  try {
+    if (!req.file) return next();
+
+    req.file.filename = `bukti-${req.user.id}-${Date.now()}.jpeg`;
+
+    await sharp(req.file.buffer)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/bukti/${req.file.filename}`);
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+exports.pay = async (req, res, next) => {
+  if (req.file) req.body.payment_photo = req.file.filename;
+  const payment = await Tagihan.findByIdAndUpdate(
+    req.params.id,
+    {
+      payment_photo: req.body.payment_photo,
+      status: 'menunggu konfirmasi',
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.status(200).json({
+    success: true,
+    code: '200',
+    message: 'OK',
+    data: {
+      user: payment,
+    },
+  });
+};

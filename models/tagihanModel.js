@@ -23,7 +23,6 @@ const tagihanSchema = new mongoose.Schema(
     pickup: {
       type: mongoose.Schema.ObjectId,
       ref: 'Pickup',
-      default: null,
     },
     tps: {
       type: mongoose.Schema.ObjectId,
