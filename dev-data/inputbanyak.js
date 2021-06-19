@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 // const Tour = require('../../models/tourModel');
 // const User = require('../../models/userModel');
+const Tagihan = require('../models/tagihanModel');
 const Bak = require('../models/bakModel');
 const Pickup = require('../models/pickupModel');
 
@@ -120,7 +121,7 @@ const importData = async () => {
 
 const deleteData = async () => {
   try {
-    await Pickup.deleteMany();
+    await Tagihan.deleteMany();
     console.log('data successfully deleted');
   } catch (e) {
     console.log(e);

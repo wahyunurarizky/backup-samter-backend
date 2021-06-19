@@ -33,7 +33,7 @@ mongoose
 
 // create new payment
 
-schedule.scheduleJob('* * * 19 * *', async () => {
+schedule.scheduleJob('1 1 * * * *', async () => {
   try {
     await Tagihan.create({
       price: 23425324232,
