@@ -5,6 +5,9 @@ const Tps = require('../models/tpsModel');
 const Bak = require('../models/bakModel');
 const Kendaraan = require('../models/kendaraanModel');
 const AppError = require('../utils/appError');
+const User = require('../models/userModel');
+const base = require('./baseController');
+const Tagihan = require('../models/tagihanModel');
 
 exports.createPickup = async (req, res, next) => {
   try {
@@ -34,7 +37,7 @@ exports.createPickup = async (req, res, next) => {
     const bak = await Bak.findOne({ qr_id: req.body.bak });
     if (!bak)
       return next(
-        new AppError('TPS Tidak Ditemukan, harap masukan ID yg benar', 404)
+        new AppError('BAK Tidak Ditemukan, harap masukan ID yg benar', 404)
       );
 
     const pickup = await Pickup.create({
@@ -45,7 +48,11 @@ exports.createPickup = async (req, res, next) => {
       tps: tps._id,
       pickup_time: new Date(Date.now()),
       arrival_time: null,
+      payment_method: req.body.payment_method,
     });
+
+    await User.findByIdAndUpdate(req.user._id, { allowedPick: false });
+    // await Tagihan.create({});
 
     const stringdata = JSON.stringify(pickup.qr_id);
 
@@ -71,7 +78,7 @@ exports.createPickup = async (req, res, next) => {
 
 exports.getMyPickup = async (req, res, next) => {
   try {
-    const pickup = await Pickup.find({ petugas: req.user._id });
+    const pickup = await Pickup.find({ petugas: req.user._id }).populate();
     if (!pickup)
       return next(new AppError('tidak ada data pickup untukmu', 404));
     res.status(201).json({
@@ -79,6 +86,7 @@ exports.getMyPickup = async (req, res, next) => {
       code: '201',
       message: 'OK',
       data: {
+        results: pickup.length,
         pickup,
       },
     });
@@ -87,4 +95,79 @@ exports.getMyPickup = async (req, res, next) => {
   }
 };
 
-// exports.getALL();
+exports.getAll = base.getAll(Pickup);
+exports.get = base.getOne(Pickup);
+
+exports.getByQr = async (req, res, next) => {
+  try {
+    const pickup = await Pickup.findOne({ qr_id: req.params.qr_id });
+
+    if (!pickup) {
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan id tersebut', 404)
+      );
+    }
+    // if (pickup.pickup_time) {
+    //   console.log(new Date(pickup.pickup_time));
+    // }
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        pickup,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.inputLoad = async (req, res, next) => {
+  try {
+    const checkPickup = await Pickup.findById(req.params.id);
+    if (checkPickup.status === 'selesai')
+      return next(new AppError('id pickup telah selesai digunakan', 400));
+
+    const updatedPickup = await Pickup.findByIdAndUpdate(
+      req.params.id,
+      {
+        load: req.body.load,
+        status: 'selesai',
+        arrival_time: Date.now(),
+        operator_tpa: req.user._id,
+        tpa: req.user.tpa,
+      },
+      { new: true, runValidators: true }
+    );
+    if (!updatedPickup) {
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
+    }
+    await User.findByIdAndUpdate(updatedPickup.petugas, {
+      allowedPick: true,
+    });
+
+    if (checkPickup.payment_method === 'perangkut') {
+      await Tagihan.create({
+        pickup: checkPickup._id,
+        status: 'belum dibayar',
+        payment_method: 'perangkut',
+        price: updatedPickup.load * process.env.DEFAULT_PRICE_PER_KG,
+        tps: checkPickup.tps,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        pickup: updatedPickup,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
