@@ -30,6 +30,9 @@ const complaintSchema = new mongoose.Schema({
     enum: ['terkirim', 'tidak selesai', 'selesai'],
     required: true,
   },
+  solution: {
+    type: String,
+  },
 });
 
 const Complaint = mongoose.model('Complaint', complaintSchema);

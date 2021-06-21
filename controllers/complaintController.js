@@ -17,5 +17,7 @@ exports.update = base.updateOne(
   'phone',
   'pict',
   'desc',
-  'loc'
+  'loc',
+  'status',
+  'solution'
 );
