@@ -24,6 +24,12 @@ const complaintSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    default: 'terkirim',
+    enum: ['tidak selesai', 'selesai'],
+    required: true,
+  },
 });
 
 const Complaint = mongoose.model('Complaint', complaintSchema);
