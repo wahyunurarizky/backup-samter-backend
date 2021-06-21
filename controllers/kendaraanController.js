@@ -13,7 +13,13 @@ exports.create = base.createOne(
 );
 exports.getAll = base.getAll(Kendaraan, { path: 'jenis_kendaraan_id' });
 exports.get = base.getOne(Kendaraan);
-exports.update = base.updateOne(Kendaraan);
+exports.update = base.updateOne(
+  Kendaraan,
+  'plat',
+  'work_unit',
+  'year',
+  'kendaraan_type'
+);
 exports.delete = base.deleteOne(Kendaraan);
 
 exports.generateQr = async function generate(req, res, next) {
