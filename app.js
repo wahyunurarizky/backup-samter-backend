@@ -17,6 +17,7 @@ const tpaRoutes = require('./routes/tpaRoutes');
 const bakRoutes = require('./routes/bakRoutes');
 const pickupRoutes = require('./routes/pickupRoutes');
 const tagihanRoutes = require('./routes/tagihanRoutes');
+const bankRoutes = require('./routes/bankRoutes');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
@@ -69,6 +70,7 @@ app.use('/api/v1/tpa', tpaRoutes);
 app.use('/api/v1/bak', bakRoutes);
 app.use('/api/v1/pickup', pickupRoutes);
 app.use('/api/v1/tagihan', tagihanRoutes);
+app.use('/api/v1/bank', bankRoutes);
 
 // handling unhandled routes
 app.all('*', (req, res, next) => {
