@@ -97,7 +97,10 @@ exports.signup = async (req, res, next) => {
     ]);
     console.log(filteredBody);
 
-    if (req.file) filteredBody.photo = req.file.filename;
+    if (req.file)
+      filteredBody.photo = `${req.protocol}://${req.get('host')}/img/users/${
+        req.file.filename
+      }`;
 
     const newUser = await User.create(filteredBody);
 
