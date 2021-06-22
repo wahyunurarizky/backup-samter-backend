@@ -165,6 +165,8 @@ exports.restrictTo =
   (...roles) =>
   (req, res, next) => {
     console.log(req.user.role);
+    console.log(roles);
+    console.log(roles.includes(req.user.role));
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError(

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Tagihan = require('./models/tagihanModel');
+const Tps = require('./models/tpsModel');
+const Pickup = require('./models/pickupModel');
 const schedule = require('node-schedule');
 const dotenv = require('dotenv');
 
@@ -33,15 +35,28 @@ mongoose
 
 // create new payment
 
-schedule.scheduleJob('1 1 * * * *', async () => {
-  try {
-    await Tagihan.create({
-      price: 23425324232,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-});
+schedule.scheduleJob('1 1 * * * *', async () => {});
+
+const test = async () => {
+  const tps = await Tps.find();
+
+  tps.forEach(async (e) => {
+    const load = await Pickup.aggregate([
+      {
+        $match: { tps: e._id, payment_method: 'perbulan' },
+      },
+      {
+        $group: {
+          _id: '$tps',
+          totalLoad: { $sum: '$load' },
+        },
+      },
+    ]);
+
+    console.log(load);
+  });
+};
+test();
 
 // Start the server
 const port = process.env.PORT || 3000;

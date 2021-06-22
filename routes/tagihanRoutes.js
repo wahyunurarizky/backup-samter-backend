@@ -10,7 +10,7 @@ router.route('/').get(tagihanController.getAll);
 router
   .route('/getMyTagihan')
   .get(
-    authController.restrictTo('koordinator tps'),
+    authController.restrictTo('koordinator ksm'),
     tagihanController.getMyTagihan
   );
 
@@ -26,7 +26,7 @@ router
 router
   .route('/pay/:id')
   .patch(
-    authController.restrictTo('koordinator tps'),
+    authController.restrictTo('koordinator ksm'),
     tagihanController.uploadPaymentPhoto,
     tagihanController.resizePaymentPhoto,
     tagihanController.pay

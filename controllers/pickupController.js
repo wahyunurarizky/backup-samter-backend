@@ -171,3 +171,29 @@ exports.inputLoad = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.generateQr = async (req, res, next) => {
+  const doc = await Pickup.findOne({
+    petugas: req.user._id,
+    status: 'menuju tpa',
+  });
+
+  console.log(doc.qr_id);
+  const stringdata = JSON.stringify(doc.qr_id);
+
+  QRCode.toDataURL(stringdata, (err, imgUrl) => {
+    const pickup = {
+      pickup_id: doc._id,
+      imgUrl: imgUrl,
+    };
+    if (err) return next(new AppError('Error Occured', 400));
+    res.status(201).json({
+      success: true,
+      code: '201',
+      message: 'OK',
+      data: {
+        pickup,
+      },
+    });
+  });
+};

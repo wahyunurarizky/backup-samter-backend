@@ -20,6 +20,10 @@ router
   );
 
 router
+  .route('/getMyPickupQR')
+  .get(authController.restrictTo('petugas'), pickupController.generateQr);
+
+router
   .route('/:id')
   .get(authController.restrictTo('pegawai'), pickupController.get);
 

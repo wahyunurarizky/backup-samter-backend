@@ -1,0 +1,114 @@
+[
+  {
+    "_id": "60c59fcf33c42456982ded73",
+    "plat": "A qBCDq1 1319",
+    "work_unit": "dinas LK",
+    "year": 2021,
+    "kendaraan_type": "60c59f69d7586c0b08eed7de",
+    "qr_id": "KNDRN2DED73"
+  },
+  {
+    "_id": "60c59fe133c42456982ded74",
+    "plat": "B 2020 AGT",
+    "work_unit": "Ciputat",
+    "year": 2020,
+    "kendaraan_type": "60c59f69d7586c0b08eed7de",
+    "qr_id": "KNDRN2DED74"
+  },
+  {
+    "_id": "60c59fe533c42456982ded75",
+    "plat": "B 2020 CPT",
+    "work_unit": "Ciputat",
+    "year": 2019,
+    "kendaraan_type": "60c59f69d7586c0b08eed7de",
+    "qr_id": "KNDRN2DED75"
+  },
+  {
+    "_id": "60cf59a1b0b4a92b30619ae5",
+    "plat": "B 2021 CPT",
+    "work_unit": "Ciputat",
+    "year": 2021,
+    "kendaraan_type": "60c59f69d7586c0b08eed7de",
+    "qr_id": "KNDRN619AE5"
+  },
+  {
+    "_id": "60cf5a08b0b4a92b30619aeb",
+    "plat": "B 2022 CPT",
+    "work_unit": "Ciputat",
+    "year": 2021,
+    "kendaraan_type": "60c59f79d7586c0b08eed7df",
+    "qr_id": "KNDRN619AEB"
+  },
+  {
+    "_id": "60cf5a2cb0b4a92b30619aed",
+    "plat": "B 2023 CPT",
+    "work_unit": "Ciputat",
+    "year": 2021,
+    "kendaraan_type": "60c59f79d7586c0b08eed7df",
+    "qr_id": "KNDRN619AED"
+  },
+  {
+    "_id": "60cf5a92b0b4a92b30619af0",
+    "plat": "B 2024 CPT",
+    "work_unit": "Ciputat",
+    "year": 2021,
+    "kendaraan_type": "60c59f79d7586c0b08eed7df",
+    "qr_id": "KNDRN619AF0"
+  },
+  {
+    "_id": "60cf5afab0b4a92b30619af3",
+    "plat": "B 2025 CPT",
+    "work_unit": "Dinas LK",
+    "year": 2021,
+    "kendaraan_type": "60c59f79d7586c0b08eed7df",
+    "qr_id": "KNDRN619AF3"
+  },
+  {
+    "plat": "B 3023 CPT",
+    "work_unit": "Ciputat",
+    "year": 2021,
+    "kendaraan_type": "60d0177c0b451876fff9c69e"
+  },
+  {
+    "plat": "B 3024 CPT",
+    "work_unit": "Bekasi",
+    "year": 2023,
+    "kendaraan_type": "60d0177c0b451876fff9c69e"
+  },
+  {
+    "plat": "B 3025 CPT",
+    "work_unit": "Serpong",
+    "year": 2022,
+    "kendaraan_type": "60d0177c0b451876fff9c69e"
+  },
+  {
+    "plat": "B 3026 CPT",
+    "work_unit": "Bekasi",
+    "year": 2021,
+    "kendaraan_type": "60d0177c0b451876fff9c69e"
+  },
+  {
+    "plat": "B 4023 CPT",
+    "work_unit": "Serpong",
+    "year": 2021,
+    "kendaraan_type": "60d018d50b451876fff9c69f"
+  },
+  {
+    "plat": "B 4024 CPT",
+    "work_unit": "Ciputat",
+    "year": 2019,
+    "kendaraan_type": "60d018d50b451876fff9c69f"
+  },
+  {
+    "plat": "B 4025 CPT",
+    "work_unit": "Dinas LK",
+    "year": 2021,
+    "kendaraan_type": "60d018d50b451876fff9c69f"
+  },
+  {
+    "plat": "B 4026 CPT",
+    "work_unit": "Dinas LK",
+    "year": 2023,
+    "kendaraan_type": "60d018d50b451876fff9c69f"
+  }
+]

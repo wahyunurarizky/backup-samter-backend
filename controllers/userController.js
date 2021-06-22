@@ -41,7 +41,10 @@ exports.updateMe = async (req, res, next) => {
 };
 
 exports.getAllUsers = base.getAll(User);
-exports.getUser = base.getOne(User, [{ path: 'tps' }, { path: 'tpa' }]);
+exports.getUser = base.getOne(User, [
+  { path: 'tps', select: '-__v' },
+  { path: 'tpa', select: '-__v' },
+]);
 
 // Don't update password on this
 exports.deleteUser = base.deleteOne(User);

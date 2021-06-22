@@ -1,0 +1,106 @@
+[
+  {
+    "_id": "60c59bee1e65c41efc522421",
+    "name": "jabbar hafizh",
+    "email": "jabbar@pegawai.com",
+    "address": "Jl. tut wuri handayani, Bogor",
+    "password": "$2a$12$clxHn8mBRSxz0X7J7BI0xudDp7x3VUNYIHk8hU3yGTPmmW3DVJUBK",
+    "role": "pegawai",
+    "NIP": "11180910000003",
+    "phone": "085819756133",
+    "golongan": "3A",
+    "jabatan": "petugas dinas",
+    "work_unit": "dinas LK"
+  },
+  {
+    "_id": "60c59c4c1e65c41efc522422",
+    "name": "Wahyu Nur Arizky",
+    "email": "wahyu@pegawai.com",
+    "address": "Jl. Delima Jaya, Tangerang Selatan",
+    "password": "$2a$12$YGLElTj8U9ejOOa4ToCTsOwTgYzKy61BhVaRTILNyhpwOsw9QXNg6",
+    "role": "pegawai",
+    "NIP": "11180910000002",
+    "phone": "085819756134",
+    "passwordChangedAt": "2021-06-13T05:59:20.685Z",
+    "golongan": "3A",
+    "jabatan": "petugas dinas",
+    "work_unit": "dinas LK"
+  },
+  {
+    "_id": "60c59c7e25249653fcacfdd0",
+    "name": "Nunung",
+    "email": "nunung@pegawai.com",
+    "address": "Jl. Pegawai, Bogor",
+    "password": "$2a$12$B8uavsHAfAoTqpKTutEwie05Lk/NbS7755gEDlECOf5h3P3UZ6Dpe",
+    "role": "pegawai",
+    "NIP": "11180910000001",
+    "phone": "085819756135",
+    "golongan": "3A",
+    "jabatan": "petugas dinas",
+    "work_unit": "dinas LK"
+  },
+  {
+    "_id": "60c59cf125249653fcacfdd2",
+    "name": "fajri",
+    "email": "fajri@petugas.com",
+    "address": "Bogor",
+    "password": "$2a$12$.6QC4NVHmARSxAxFHgUrVONxqIdU.XjDQoiAHXOrNQ/djWS/UctPO",
+    "role": "petugas",
+    "NIP": "11180910000013",
+    "phone": "085819756170"
+  },
+  {
+    "_id": "60c59d1a25249653fcacfdd3",
+    "name": "Yuda K",
+    "email": "yuda@petugas.com",
+    "address": "Bogor",
+    "password": "$2a$12$T8xTS1qKSjCld526GPGYa.gy.QtboiXowdoIL/D7zBSvXlxSu25.a",
+    "role": "petugas",
+    "NIP": "11180910000011",
+    "phone": "085819756171"
+  },
+  {
+    "_id": "60c59d2b25249653fcacfdd4",
+    "name": "Yuda K",
+    "email": "yuda@tpa.com",
+    "address": "Bogor",
+    "password": "$2a$12$YaIWHvy2NI2LNRn1qddIeuek8Xj7jcw4F2E9e8BIhl/rCLltHCrT.",
+    "role": "operator tpa",
+    "NIP": "11180910000032",
+    "phone": "085819756152",
+    "tpa": "60c5986190b8dc2cf4031495"
+  },
+
+  {
+    "_id": "60c59d3025249653fcacfdd5",
+    "name": "Misuh Misuh",
+    "email": "misuh@tps.com",
+    "address": "Bogor",
+    "password": "$2a$12$8.L5E.YsO/ZKWxOjOd5IKeywbTQdHnwEOTejEAGJJmUWq6Yq.jz66",
+    "role": "koordinator ksm",
+    "NIP": "11180910000041",
+    "phone": "085819756131",
+    "tps": "60c59ab9c3d7f325f87a2271"
+  },
+  {
+    "_id": "60c59d8025249653fcacfdd8",
+    "name": "Ikhsan Maulana",
+    "email": "ikhsan@pimpinan.com",
+    "address": "Bogor",
+    "password": "$2a$12$QoNSir1l7Vws//CaAv60D.v7QY6KELr6pZrMfUE1wQWUIJa6qBK/2",
+    "role": "pimpinan",
+    "NIP": "11180910000057",
+    "phone": "085819756109"
+  },
+  {
+    "_id": "60c86027e1f1930480e38d3a",
+    "name": "supriyanto",
+    "email": "supri@tpa.com",
+    "address": "Bogor",
+    "password": "$2a$12$rlIRlPSD95GwoGONoYT8ROccye7kFmMXEdswiU.FmnHWP/5j37GJK",
+    "role": "operator tpa",
+    "NIP": "11180910000030",
+    "phone": "085819756199",
+    "tpa": "60c5986190b8dc2cf4031495"
+  }
+]
