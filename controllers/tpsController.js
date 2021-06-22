@@ -12,7 +12,14 @@ exports.create = base.createOne(
 );
 exports.getAll = base.getAll(Tps);
 exports.get = base.getOne(Tps);
-exports.update = base.updateOne(Tps);
+exports.update = base.updateOne(
+  Tps,
+  'name',
+  'location',
+  'capacity',
+  'koordinator',
+  'tps_type'
+);
 exports.delete = base.deleteOne(Tps);
 exports.generateQr = async function generate(req, res, next) {
   try {

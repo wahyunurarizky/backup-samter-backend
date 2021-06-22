@@ -4,6 +4,7 @@ const Tps = require('./models/tpsModel');
 const Pickup = require('./models/pickupModel');
 const schedule = require('node-schedule');
 const dotenv = require('dotenv');
+const Tagihan = require('./models/tagihanModel');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION!!! 💥 shutting down...');
