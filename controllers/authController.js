@@ -98,9 +98,10 @@ exports.signup = async (req, res, next) => {
     console.log(filteredBody);
 
     if (req.file)
-      filteredBody.photo = `${req.protocol}://${req.get('host')}/img/users/${
-        req.file.filename
-      }`;
+      // filteredBody.photo = `${req.protocol}://${req.get('host')}/img/users/${
+      //   req.file.filename
+      // }`;
+      filteredBody.photo = `https://rifil-samater.herokuapp.com/img/users/${req.file.filename}`;
 
     const newUser = await User.create(filteredBody);
 

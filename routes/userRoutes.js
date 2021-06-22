@@ -20,7 +20,7 @@ router.delete('/deleteMe', userController.deleteMe);
 router.patch('/updateMyPassword', authController.updatePassword);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo('pegawai'));
+router.use(authController.restrictTo('pegawai', 'superadmin'));
 
 router.post(
   '/signup',

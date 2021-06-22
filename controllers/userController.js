@@ -68,7 +68,8 @@ exports.updateUser = async (req, res, next) => {
       'phone',
       'role',
     ]);
-    if (req.file) filteredBody.photo = req.file.filename;
+    if (req.file)
+      filteredBody.photo = `https://rifil-samater.herokuapp.com/img/users/${req.file.filename}`;
 
     console.log(filteredBody);
     // 3) Update user document

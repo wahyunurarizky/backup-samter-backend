@@ -52,8 +52,17 @@ const test = async () => {
         },
       },
     ]);
-
-    console.log(load);
+    if (load[0]) {
+      // Tagihan.create({
+      //   status: 'belum dibayar',
+      //   payment_method: 'perbulan',
+      //   payment_month: Date.now(),
+      //   tps: e._id,
+      // });
+      console.log(load[0].totalLoad);
+    } else {
+      console.log('tidak ada tagihan');
+    }
   });
 };
 test();

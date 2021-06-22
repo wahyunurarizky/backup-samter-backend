@@ -17,10 +17,7 @@ router
 router
   .route('/:id')
   .get(tagihanController.get)
-  .patch(
-    authController.restrictTo('operator tpa'),
-    tagihanController.updateStatus
-  )
+  .patch(authController.restrictTo('pegawai'), tagihanController.updateStatus)
   .delete(tagihanController.delete);
 
 router

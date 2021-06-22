@@ -11,4 +11,6 @@ router
   .patch(tpsController.update)
   .delete(tpsController.delete);
 
+// router.route('/getGrafik').get(tpsController.getGrafik);
+
 module.exports = router;
