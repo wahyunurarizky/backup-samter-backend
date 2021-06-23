@@ -6,14 +6,6 @@ const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
 
-const filterObj = (obj, allowedFields) => {
-  const newObj = {};
-  Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) newObj[el] = obj[el];
-  });
-  return newObj;
-};
-
 // mereturn sebuah jwt token
 const createToken = (id) =>
   jwt.sign(
@@ -28,16 +20,16 @@ const createToken = (id) =>
 
 const createSendToken = (user, statusCode, req, res) => {
   const token = createToken(user._id);
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true,
-    // that we cookie cannot modified anyway in browser. to prevent cross ss attack xss
-  };
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-  // i dont know why it should be in production
-  res.cookie('jwt', token, cookieOptions);
+  // const cookieOptions = {
+  //   expires: new Date(
+  //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+  //   ),
+  //   httpOnly: true,
+  //   // that we cookie cannot modified anyway in browser. to prevent cross ss attack xss
+  // };
+  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  // // i dont know why it should be in production
+  // res.cookie('jwt', token, cookieOptions);
 
   // menghilangkan dari output. ini tidak akan merubah database karena kta tidak melakukan save
   user.password = undefined;
@@ -78,38 +70,38 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.signup = async (req, res, next) => {
-  try {
-    const filteredBody = filterObj(req.body, [
-      'name',
-      'email',
-      'password',
-      'passwordConfirm',
-      'passwordChangedAt',
-      'role',
-      'address',
-      'NIP',
-      'phone',
-      'photo',
-      'tpa',
-      'tps',
-      'jumlah_penarikan',
-    ]);
-    console.log(filteredBody);
+// exports.signup = async (req, res, next) => {
+//   try {
+//     const filteredBody = filterObj(req.body, [
+//       'name',
+//       'email',
+//       'password',
+//       'passwordConfirm',
+//       'passwordChangedAt',
+//       'role',
+//       'address',
+//       'NIP',
+//       'phone',
+//       'photo',
+//       'tpa',
+//       'tps',
+//       'jumlah_penarikan',
+//     ]);
+//     console.log(filteredBody);
 
-    if (req.file)
-      // filteredBody.photo = `${req.protocol}://${req.get('host')}/img/users/${
-      //   req.file.filename
-      // }`;
-      filteredBody.photo = `https://rifil-samater.herokuapp.com/img/users/${req.file.filename}`;
+//     if (req.file)
+//       // filteredBody.photo = `${req.protocol}://${req.get('host')}/img/users/${
+//       //   req.file.filename
+//       // }`;
+//       filteredBody.photo = `https://rifil-samater.herokuapp.com/img/users/${req.file.filename}`;
 
-    const newUser = await User.create(filteredBody);
+//     const newUser = await User.create(filteredBody);
 
-    createSendToken(newUser, 201, req, res);
-  } catch (err) {
-    next(err);
-  }
-};
+//     createSendToken(newUser, 201, req, res);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {

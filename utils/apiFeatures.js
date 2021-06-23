@@ -16,7 +16,10 @@ class APIFeatures {
     // advance filtering
     // { difficulty: 'easy', duration: {$gte: 5}}
     let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    queryStr = queryStr.replace(
+      /\b(gte|gt|lte|lt|ne)\b/g,
+      (match) => `$${match}`
+    );
     // \b\b artinya specific untuk misal kata 'gte' tidak akan berubah jika 'agtek'
     // /g artinya global. akan merubah semua kata bukan hanya kata pertama yang ditemukan
     console.log(queryStr);

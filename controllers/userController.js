@@ -6,6 +6,7 @@ const User = require('../models/userModel');
 const base = require('./baseController');
 const AppError = require('../utils/appError');
 
+// function bantuan untuk filter object
 const filterObj = (obj, allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -14,6 +15,7 @@ const filterObj = (obj, allowedFields) => {
   return newObj;
 };
 
+// get me dan delete me
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
   next();
@@ -40,11 +42,56 @@ exports.updateMe = async (req, res, next) => {
   // perlu kah?
 };
 
+// restrict to pegawai dan superadmin
 exports.getAllUsers = base.getAll(User);
 exports.getUser = base.getOne(User, [
   { path: 'tps', select: '-__v' },
   { path: 'tpa', select: '-__v' },
 ]);
+
+exports.createUser = async (req, res, next) => {
+  try {
+    const filteredBody = filterObj(req.body, [
+      'name',
+      'email',
+      'password',
+      'passwordConfirm',
+      'passwordChangedAt',
+      'role',
+      'address',
+      'NIP',
+      'phone',
+      'photo',
+      'tpa',
+      'tps',
+      'jumlah_penarikan',
+      'jabatan',
+      'golongan',
+      'work_unit',
+    ]);
+
+    if (req.file)
+      // filteredBody.photo = `${req.protocol}://${req.get('host')}/img/users/${
+      //   req.file.filename
+      // }`;
+      filteredBody.photo = `https://rifil-samater.herokuapp.com/img/users/${req.file.filename}`;
+
+    const newUser = await User.create(filteredBody);
+
+    newUser.password = undefined;
+
+    res.status(201).json({
+      success: true,
+      code: '201',
+      message: 'OK',
+      data: {
+        user: newUser,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 // Don't update password on this
 exports.deleteUser = base.deleteOne(User);
@@ -69,7 +116,7 @@ exports.updateUser = async (req, res, next) => {
       'role',
     ]);
     if (req.file)
-      filteredBody.photo = `https://rifil-samater.herokuapp.com/img/users/${req.file.filename}`;
+      filteredBody.photo = `https://rifil-samter.herokuapp.com/img/users/${req.file.filename}`;
 
     console.log(filteredBody);
     // 3) Update user document

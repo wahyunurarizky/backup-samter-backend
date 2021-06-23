@@ -11,7 +11,10 @@ router
   .post(authController.restrictTo('petugas'), pickupController.createPickup);
 router
   .route('/getMyPickup')
-  .get(authController.restrictTo('petugas'), pickupController.getMyPickup);
+  .get(
+    authController.restrictTo('petugas', 'koordinator ksm'),
+    pickupController.getMyPickup
+  );
 router
   .route('/qr/:qr_id')
   .get(
@@ -22,6 +25,8 @@ router
 router
   .route('/getMyPickupQR')
   .get(authController.restrictTo('petugas'), pickupController.generateQr);
+
+router.route('/average').get(pickupController.getAverage);
 
 router
   .route('/:id')
