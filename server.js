@@ -35,15 +35,20 @@ mongoose
 
 // create new payment
 
-schedule.scheduleJob('1 1 * * * *', async () => {});
+schedule.scheduleJob('0 0 0 1 * *', async () => {});
 
 const test = async () => {
   const tps = await Tps.find();
 
+  // cara ngitung selisih = 
   tps.forEach(async (e) => {
     const load = await Pickup.aggregate([
       {
-        $match: { tps: e._id, payment_method: 'perbulan' },
+        $match: {
+          tps: e._id,
+          payment_method: 'perbulan',
+          arrival_time: { $gte: new Date(2021, 5, 21) },
+        },
       },
       {
         $group: {

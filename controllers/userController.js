@@ -100,9 +100,7 @@ exports.updateUser = async (req, res, next) => {
   try {
     // 1) Create error if user POSTs password data
     if (req.body.password || req.body.passwordConfirm) {
-      return next(
-        new AppError('Hanya user sendiri yang bisa mengubah passwordnya', 400)
-      );
+      return next(new AppError('Bukan tempat untuk update password', 400));
     }
 
     // 2) Filtered out unwanted fields names that are not allowed to be updated
@@ -135,6 +133,29 @@ exports.updateUser = async (req, res, next) => {
       message: 'OK',
       data: {
         user: updatedUser,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resetUserPassword = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        user,
       },
     });
   } catch (err) {

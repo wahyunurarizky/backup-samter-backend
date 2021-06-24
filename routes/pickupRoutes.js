@@ -12,7 +12,7 @@ router
 router
   .route('/getMyPickup')
   .get(
-    authController.restrictTo('petugas', 'koordinator ksm'),
+    authController.restrictTo('petugas', 'koordinator ksm', 'operator tpa'),
     pickupController.getMyPickup
   );
 router

@@ -100,6 +100,16 @@ exports.getMyPickup = async (req, res, next) => {
         .limit()
         .paginate();
       pickup = await features.query.populate();
+    } else if (req.user.role === 'operator tpa') {
+      const features = new APIFeatures(
+        Pickup.find({ tpa: req.user.tpa }),
+        req.query
+      )
+        .filter()
+        .sort()
+        .limit()
+        .paginate();
+      pickup = await features.query.populate();
     }
 
     if (!pickup)
@@ -220,13 +230,10 @@ exports.generateQr = async (req, res, next) => {
     });
   });
 };
+
 exports.getAverage = async (req, res, next) => {
   try {
-    const x = new Date();
-    x.setDate(1);
-    x.setMonth(1);
-    console.log(x);
-    const average = await Pickup.aggregate([
+    const pickupEachWeek = await Pickup.aggregate([
       {
         $match: {
           tps: req.user.tps,
@@ -235,14 +242,42 @@ exports.getAverage = async (req, res, next) => {
       },
       {
         $group: {
-          _id: '$tps',
-          avg_month: { $avg: '$load' },
+          _id: { $week: '$arrival_time' },
           total: { $sum: '$load' },
-          nTotal: { $sum: 1 },
         },
       },
     ]);
-    console.log(average);
+    let sum = 0;
+    pickupEachWeek.forEach((num) => {
+      sum += num.total;
+    });
+    console.log(pickupEachWeek);
+    const avgLoadWeek = sum / pickupEachWeek.length;
+
+    const m = new Date(Date.now());
+    const pickupThisMonth = await Pickup.aggregate([
+      {
+        $match: {
+          tps: req.user.tps,
+          arrival_time: { $gt: new Date(m.getFullYear(), m.getMonth()) },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$arrival_time' },
+          total: { $sum: '$load' },
+        },
+      },
+    ]);
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        avgLoadWeek,
+        loadThisMonth: pickupThisMonth[0].total,
+      },
+    });
   } catch (err) {
     next(err);
   }
