@@ -41,6 +41,8 @@ router
   )
   .delete(userController.deleteUser);
 
+router.route('/:id/resetPassword').patch(userController.resetUserPassword);
+
 // router.route('/qr/:qrid').get(userController.getPetugasByQrId);
 
 module.exports = router;
