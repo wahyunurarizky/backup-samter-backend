@@ -1,0 +1,13 @@
+NODE_ENV=development 
+PORT=3000
+DATABASE=mongodb+srv://dbJabbar:<PASSWORD>@cluster0.vml51.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+DATABASE_PASSWORD=TLOovYVTUMyNBiKD
+
+JWT_SECRET=rifil-samter-ultra-secure-secret
+JWT_EXPIRES_IN=30d
+JWT_COOKIE_EXPIRES_IN=90
+
+EMAIL_USERNAME=7d37cf6872a744
+EMAIL_PASSWORD=1626b88d16bc69
+EMAIL_HOST=smtp.mailtrap.io
+EMAIL_PORT=2525
