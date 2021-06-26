@@ -90,7 +90,7 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
     if (popOptions) query = query.populate(popOptions);
 
     const doc = await query.select('-__v');
-
+    console.log(doc);
     if (!doc) {
       return next(
         new AppError('tidak ada dokumen yang ditemukan dengan id tersebut', 404)

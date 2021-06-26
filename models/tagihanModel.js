@@ -37,5 +37,32 @@ const tagihanSchema = new mongoose.Schema(
   }
 );
 
+tagihanSchema.pre(/^find/, function (next) {
+  this.populate([
+    {
+      path: 'pickup',
+      select: '-tps -tpa -petugas -bak -kendaraan -operator_tpa',
+    },
+    { path: 'tps', select: 'name' },
+  ]);
+  next();
+});
+tagihanSchema.post(/^find/, (result) => {
+  if (Array.isArray(result)) {
+    result.forEach((e) => {
+      if (!e.payment_month) return;
+      e._doc.payment_month_local = e.payment_month.toLocaleString('id-ID', {
+        month: 'long',
+        year: 'numeric',
+      });
+    });
+  } else if (result) {
+    result._doc.payment_month_local = result.payment_month.toLocaleString(
+      'id-ID',
+      { month: 'long', year: 'numeric' }
+    );
+  }
+});
+
 const Tagihan = mongoose.model('Tagihan', tagihanSchema);
 module.exports = Tagihan;

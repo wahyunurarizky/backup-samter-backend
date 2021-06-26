@@ -35,43 +35,105 @@ mongoose
 
 // create new payment
 
-schedule.scheduleJob('0 0 0 1 * *', async () => {});
-
 const test = async () => {
-  const tps = await Tps.find();
+  const m = new Date(Date.now());
 
-  // cara ngitung selisih = 
-  tps.forEach(async (e) => {
-    const load = await Pickup.aggregate([
-      {
-        $match: {
-          tps: e._id,
-          payment_method: 'perbulan',
-          arrival_time: { $gte: new Date(2021, 5, 21) },
+  const pickup = await Pickup.aggregate([
+    {
+      $match: {
+        payment_method: 'perbulan',
+        arrival_time: {
+          $gte: new Date(m.getFullYear(), m.getMonth()),
+          $lt: new Date(m.getFullYear() + 1, m.getMonth() + 1),
         },
       },
-      {
-        $group: {
-          _id: '$tps',
-          totalLoad: { $sum: '$load' },
+    },
+    {
+      $group: {
+        _id: '$tps',
+        totalLoad: { $sum: '$load' },
+      },
+    },
+    {
+      $addFields: {
+        tps: '$_id',
+        status: 'belum dibayar',
+        payment_method: 'perbulan',
+        payment_month: new Date(m.getFullYear(), m.getMonth()),
+        price: {
+          $multiply: ['$totalLoad', process.env.DEFAULT_PRICE_PER_KG * 1],
         },
       },
-    ]);
-    if (load[0]) {
-      // Tagihan.create({
-      //   status: 'belum dibayar',
-      //   payment_method: 'perbulan',
-      //   payment_month: Date.now(),
-      //   tps: e._id,
-      // });
-      console.log(load[0].totalLoad);
-    } else {
-      console.log('tidak ada tagihan');
-    }
-  });
+    },
+    // menghapus atau tidak menampilkan id
+    {
+      $project: {
+        _id: 0,
+      },
+    },
+  ]);
+
+  await Tagihan.insertMany(pickup);
+
+  console.log(pickup);
+  // const tps = await Tps.find();
+
+  // // cara ngitung selisih =
+  // tps.forEach(async (e) => {
+  //   const m = new Date(Date.now());
+  //   const load = await Pickup.aggregate([
+  //     {
+  //       $match: {
+  //         tps: e._id,
+  //         payment_method: 'perbulan',
+  //         arrival_time: {
+  //           $gte: new Date(m.getFullYear() - 1, m.getMonth() - 1),
+  //         },
+  //       },
+  //     },
+  //     {
+  //       $group: {
+  //         _id: '$tps',
+  //         totalLoad: { $sum: '$load' },
+  //       },
+  //     },
+  //   ]);
+  //   if (load[0]) {
+  //     const exist = await Tagihan.findOne({
+  //       tps: e._id,
+  //       payment_month: new Date(m.getFullYear(), m.getMonth()),
+  //     });
+  //     if (!exist) {
+  //       console.log('wwkwk');
+  //       await Tagihan.create({
+  //         status: 'belum dibayar',
+  //         payment_method: 'perbulan',
+  //         payment_month: new Date(m.getFullYear(), m.getMonth()),
+  //         tps: e._id,
+  //         price: load[0].totalLoad * process.env.DEFAULT_PRICE_PER_KG,
+  //       });
+  //     }
+  //   } else {
+  //     const m = new Date(Date.now());
+  //     const exist = await Tagihan.findOne({
+  //       tps: e._id,
+  //       payment_month: new Date(m.getFullYear(), m.getMonth()),
+  //     });
+  //     if (!exist) {
+  //       console.log('jaja');
+  //       await Tagihan.create({
+  //         status: 'sudah dibayar',
+  //         payment_method: 'perbulan',
+  //         payment_month: new Date(m.getFullYear(), m.getMonth()),
+  //         tps: e._id,
+  //         price: 0,
+  //       });
+  //     }
+  //   }
+  // });
 };
+// schedule.scheduleJob('1 1 1 1 */1 *', test);
 test();
-
 // Start the server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
@@ -80,7 +142,7 @@ app.listen(port, () => {
 
 process.on('unhandledRejection', (err) => {
   console.log('UNHANDLED REJECTION!!!  shutting down ...');
-  console.log(err.name, err.message);
+  console.log(err);
   server.close(() => {
     process.exit(1);
   });
