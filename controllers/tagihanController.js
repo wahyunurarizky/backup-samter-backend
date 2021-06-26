@@ -86,7 +86,7 @@ exports.pay = async (req, res, next) => {
   const payment = await Tagihan.findByIdAndUpdate(
     req.params.id,
     {
-      payment_photo: `https://rifil-samter.herokuapp.com/img/bukti${req.body.payment_photo}`,
+      payment_photo: `${process.env.URL}img/bukti${req.body.payment_photo}`,
       status: 'menunggu konfirmasi',
       description: req.body.description,
     },

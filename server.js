@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
-const Tagihan = require('./models/tagihanModel');
-const Tps = require('./models/tpsModel');
-const Pickup = require('./models/pickupModel');
-const schedule = require('node-schedule');
 const dotenv = require('dotenv');
+// eslint-disable-next-line no-unused-vars
+const schedule = require('node-schedule');
+const Tagihan = require('./models/tagihanModel');
+// const Tps = require('./models/tpsModel');
+const Pickup = require('./models/pickupModel');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION!!! 💥 shutting down...');
@@ -29,7 +30,8 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then((con) => {
+  // .then((con) => {
+  .then(() => {
     console.log('DB connection Successfully!');
   });
 
@@ -136,7 +138,7 @@ const test = async () => {
 test();
 // Start the server
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Application is running on port ${port}`);
 });
 
@@ -145,5 +147,12 @@ process.on('unhandledRejection', (err) => {
   console.log(err);
   server.close(() => {
     process.exit(1);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+  server.close(() => {
+    console.log('💥 Process terminated!');
   });
 });
