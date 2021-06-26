@@ -2,6 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 const kendaraanController = require('../controllers/kendaraanController');
+const authController = require('../controllers/authController');
 
 router.use(authController.protect);
 router
