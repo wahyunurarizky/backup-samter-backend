@@ -94,6 +94,9 @@ const userSchema = new mongoose.Schema({
   golongan: String,
   jabatan: String,
   work_unit: String,
+  device_id: String,
+  device_manufacture: String,
+  device_model: String,
 });
 
 // encrypt the password using 'bcryptjs'

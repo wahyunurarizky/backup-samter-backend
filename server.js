@@ -122,7 +122,6 @@ const test = async () => {
   );
 };
 schedule.scheduleJob('1 1 1 1 */1 *', test);
-test();
 
 // Start the server
 const port = process.env.PORT || 3000;
