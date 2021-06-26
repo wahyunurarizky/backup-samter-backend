@@ -5,7 +5,10 @@ const tagihanSchema = new mongoose.Schema(
     price: Number,
     payment_photo: String,
     payment_time: Date,
-    payment_month: Date,
+    payment_month: {
+      type: Date,
+      default: null,
+    },
     status: {
       type: String,
       enum: [
@@ -51,7 +54,7 @@ tagihanSchema.pre(/^find/, function (next) {
   next();
 });
 tagihanSchema.post(/^find/, (result) => {
-  if (Array.isArray(result)) {
+  if (Array.isArray(result) && result) {
     result.forEach((e) => {
       if (!e.payment_month) return;
       e._doc.payment_month_local = e.payment_month.toLocaleString('id-ID', {
