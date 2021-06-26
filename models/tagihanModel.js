@@ -57,7 +57,10 @@ tagihanSchema.post(/^find/, (result) => {
       });
     });
   } else if (result) {
-    result._doc.payment_month_local = result.payment_month.toLocaleString();
+    result._doc.payment_month_local = result.payment_month.toLocaleString(
+      'id-ID',
+      { hour12: false }
+    );
   }
 });
 
