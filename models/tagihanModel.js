@@ -30,7 +30,10 @@ const tagihanSchema = new mongoose.Schema(
       ref: 'Tps',
     },
     description: String,
-    selisih: Number,
+    selisih: {
+      type: Number,
+      default: process.env.DEFAULT_MONTHLY_PAYMENT,
+    },
   },
   {
     collection: 'tagihan',
@@ -59,7 +62,7 @@ tagihanSchema.post(/^find/, (result) => {
   } else if (result) {
     result._doc.payment_month_local = result.payment_month.toLocaleString(
       'id-ID',
-      { hour12: false }
+      { month: 'long', year: 'numeric' }
     );
   }
 });

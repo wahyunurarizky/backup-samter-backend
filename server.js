@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 // eslint-disable-next-line no-unused-vars
 const schedule = require('node-schedule');
 const Tagihan = require('./models/tagihanModel');
-// const Tps = require('./models/tpsModel');
+const Tps = require('./models/tpsModel');
 const Pickup = require('./models/pickupModel');
 
 process.on('uncaughtException', (err) => {
@@ -45,8 +45,9 @@ const test = async () => {
       $match: {
         payment_method: 'perbulan',
         arrival_time: {
-          $gte: new Date(m.getFullYear(), m.getMonth()),
-          $lt: new Date(m.getFullYear() + 1, m.getMonth() + 1),
+          // PENTING {GANTI}
+          $gte: new Date(m.getFullYear() - 1, m.getMonth() - 1),
+          $lt: new Date(m.getFullYear(), m.getMonth()),
         },
       },
     },
@@ -75,67 +76,54 @@ const test = async () => {
     },
   ]);
 
-  await Tagihan.insertMany(pickup);
+  const neObj = [];
 
-  console.log(pickup);
-  // const tps = await Tps.find();
+  pickup.forEach((e) => {
+    const x = {
+      _id: {
+        $ne: e.tps,
+      },
+    };
+    neObj.push(x);
+  });
 
-  // // cara ngitung selisih =
-  // tps.forEach(async (e) => {
-  //   const m = new Date(Date.now());
-  //   const load = await Pickup.aggregate([
-  //     {
-  //       $match: {
-  //         tps: e._id,
-  //         payment_method: 'perbulan',
-  //         arrival_time: {
-  //           $gte: new Date(m.getFullYear() - 1, m.getMonth() - 1),
-  //         },
-  //       },
-  //     },
-  //     {
-  //       $group: {
-  //         _id: '$tps',
-  //         totalLoad: { $sum: '$load' },
-  //       },
-  //     },
-  //   ]);
-  //   if (load[0]) {
-  //     const exist = await Tagihan.findOne({
-  //       tps: e._id,
-  //       payment_month: new Date(m.getFullYear(), m.getMonth()),
-  //     });
-  //     if (!exist) {
-  //       console.log('wwkwk');
-  //       await Tagihan.create({
-  //         status: 'belum dibayar',
-  //         payment_method: 'perbulan',
-  //         payment_month: new Date(m.getFullYear(), m.getMonth()),
-  //         tps: e._id,
-  //         price: load[0].totalLoad * process.env.DEFAULT_PRICE_PER_KG,
-  //       });
-  //     }
-  //   } else {
-  //     const m = new Date(Date.now());
-  //     const exist = await Tagihan.findOne({
-  //       tps: e._id,
-  //       payment_month: new Date(m.getFullYear(), m.getMonth()),
-  //     });
-  //     if (!exist) {
-  //       console.log('jaja');
-  //       await Tagihan.create({
-  //         status: 'sudah dibayar',
-  //         payment_method: 'perbulan',
-  //         payment_month: new Date(m.getFullYear(), m.getMonth()),
-  //         tps: e._id,
-  //         price: 0,
-  //       });
-  //     }
-  //   }
-  // });
+  let tps;
+  if (!neObj.length) {
+    tps = await Tps.find();
+  } else {
+    tps = await Tps.find({
+      $and: neObj,
+    });
+  }
+
+  tps.forEach((e) => {
+    pickup.push({
+      tps: e._id,
+      totalLoad: 0,
+      price: 0,
+      status: 'sudah dibayar',
+      payment_method: 'perbulan',
+      payment_month: new Date(m.getFullYear(), m.getMonth()),
+    });
+  });
+
+  const tagihan = await Tagihan.find({
+    payment_month: new Date(m.getFullYear(), m.getMonth()),
+  });
+
+  await Tagihan.insertMany(
+    pickup.filter((e) => {
+      // console.log(tagihan);
+      if (tagihan.filter((y) => `${y.tps._id}` === `${e.tps}`).length > 0) {
+        return false;
+      }
+      return true;
+    })
+  );
 };
-// schedule.scheduleJob('1 1 1 1 */1 *', test);
+schedule.scheduleJob('1 1 1 1 */1 *', test);
 test();
+
 // Start the server
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
