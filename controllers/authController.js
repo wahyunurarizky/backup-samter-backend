@@ -63,12 +63,17 @@ exports.login = async (req, res, next) => {
       return next(new AppError('NIP atau password salah', 401)); //401 is unauthorized
     }
 
-    await User.findByIdAndUpdate(user._id, {
-      device_id: req.body.device_id,
-      device_manufacture: req.body.device_manufacture,
-      device_model: req.body.device_model,
-    });
-
+    if (
+      req.body.device_id ||
+      req.body.device_manufacture ||
+      req.body.device_model
+    ) {
+      await User.findByIdAndUpdate(user._id, {
+        device_id: req.body.device_id,
+        device_manufacture: req.body.device_manufacture,
+        device_model: req.body.device_model,
+      });
+    }
     // 3) All correct, send jwt to client
     createSendToken(user, 200, req, res);
   } catch (err) {
