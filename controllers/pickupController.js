@@ -233,34 +233,12 @@ exports.generateQr = async (req, res, next) => {
 
 exports.getAverage = async (req, res, next) => {
   try {
-    let m;
-    if (req.params.month || req.params.year) {
-      m = new Date(req.params.year * 1 - 1, req.params.month * 1 - 1);
-    } else {
-      m = new Date(Date.now());
-    }
-
-    let objMatch = {};
-    if (req.user.role === 'koordinator ksm') {
-      objMatch = {
-        tps: req.user.tps,
-        arrival_time: {
-          $gte: new Date(m.getFullYear(), m.getMonth()),
-          $lt: new Date(m.getFullYear() + 1, m.getMonth() + 1),
-        },
-      };
-    } else {
-      objMatch = {
-        arrival_time: {
-          $gte: new Date(m.getFullYear(), m.getMonth()),
-          $lt: new Date(m.getFullYear() + 1, m.getMonth() + 1),
-        },
-      };
-    }
-
     const pickupEachWeek = await Pickup.aggregate([
       {
-        $match: objMatch,
+        $match: {
+          tps: req.user.tps,
+          arrival_time: { $lt: new Date(Date.now()) },
+        },
       },
       {
         $group: {
@@ -276,9 +254,13 @@ exports.getAverage = async (req, res, next) => {
     console.log(pickupEachWeek);
     const avgLoadWeek = sum / pickupEachWeek.length;
 
+    const m = new Date(Date.now());
     const pickupThisMonth = await Pickup.aggregate([
       {
-        $match: objMatch,
+        $match: {
+          tps: req.user.tps,
+          arrival_time: { $gt: new Date(m.getFullYear(), m.getMonth()) },
+        },
       },
       {
         $group: {
@@ -287,32 +269,13 @@ exports.getAverage = async (req, res, next) => {
         },
       },
     ]);
-    console.log(pickupThisMonth);
     res.status(200).json({
       success: true,
       code: '200',
       message: 'OK',
       data: {
         avgLoadWeek,
-        totalLoad: pickupThisMonth[0] ? pickupThisMonth[0].total : null,
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.getAverageWeekly = async (req, res, next) => {
-  try {
-    res.status(200).json({
-      success: true,
-      code: '200',
-      message: 'ini dummy',
-      data: {
-        week1: 3000,
-        week2: 4000,
-        week3: 6500,
-        week4: 2100,
+        loadThisMonth: pickupThisMonth[0].total,
       },
     });
   } catch (err) {

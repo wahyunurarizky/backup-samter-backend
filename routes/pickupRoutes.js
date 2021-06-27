@@ -26,31 +26,7 @@ router
   .route('/getMyPickupQR')
   .get(authController.restrictTo('petugas'), pickupController.generateQr);
 
-router
-  .route('/monthly-data/:month/:year')
-  .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'koordinator ksm'),
-    pickupController.getAverage
-  );
-router
-  .route('/monthly-data')
-  .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'koordinator ksm'),
-    pickupController.getAverage
-  );
-
-router
-  .route('/weekly-data/:month/:year')
-  .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'koordinator ksm'),
-    pickupController.getAverageWeekly
-  );
-router
-  .route('/weekly-data')
-  .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'koordinator ksm'),
-    pickupController.getAverageWeekly
-  );
+router.route('/average').get(pickupController.getAverage);
 
 router
   .route('/:id')

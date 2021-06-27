@@ -8,7 +8,7 @@ exports.create = async (req, res, next) => {
   try {
     if (req.file) req.body.pict = req.file.filename;
     const complaint = await Complaint.create({
-      pict: `${process.env.URL}img/complaint${req.body.pict}`,
+      pict: `https://rifil-samter.herokuapp.com/img/complaint${req.body.pict}`,
       nik: req.body.nik,
       phone: req.body.phone,
       desc: req.body.desc,

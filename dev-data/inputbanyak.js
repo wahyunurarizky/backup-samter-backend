@@ -57,11 +57,10 @@ const importData = async () => {
 
 const deleteData = async () => {
   try {
-    // await Kendaraan.deleteMany();
-    // await JenisKendaraan.deleteMany();
-    // await Tps.deleteMany();
-    // await User.deleteMany();
-    await Tagihan.deleteMany({ payment_method: 'perbulan' });
+    await Kendaraan.deleteMany();
+    await JenisKendaraan.deleteMany();
+    await Tps.deleteMany();
+    await User.deleteMany();
 
     console.log('data successfully deleted');
   } catch (e) {

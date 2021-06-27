@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-// autoIncrement = require('mongoose-auto-increment');
-
-// const moment = require('moment');
 
 const kendaraanSchema = new mongoose.Schema(
   {
@@ -41,7 +38,15 @@ kendaraanSchema.pre('save', function (next) {
   next();
 });
 
-// kendar
+kendaraanSchema.pre(/^find/, function (next) {
+  this.populate([
+    {
+      path: 'kendaraan_type',
+      select: ['type', 'empty_weight', 'max_load_weight'],
+    },
+  ]);
+  next();
+});
 
 const Kendaraan = mongoose.model('Kendaraan', kendaraanSchema);
 module.exports = Kendaraan;
