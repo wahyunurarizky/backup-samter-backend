@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
-const Tagihan = require('./models/tagihanModel');
-const Tps = require('./models/tpsModel');
-const Pickup = require('./models/pickupModel');
-const schedule = require('node-schedule');
 const dotenv = require('dotenv');
+// eslint-disable-next-line no-unused-vars
+const schedule = require('node-schedule');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION!!! 💥 shutting down...');
@@ -34,43 +32,6 @@ mongoose
   });
 
 // create new payment
-
-schedule.scheduleJob('0 0 0 1 * *', async () => {});
-
-const test = async () => {
-  const tps = await Tps.find();
-
-  // cara ngitung selisih = 
-  tps.forEach(async (e) => {
-    const load = await Pickup.aggregate([
-      {
-        $match: {
-          tps: e._id,
-          payment_method: 'perbulan',
-          arrival_time: { $gte: new Date(2021, 5, 21) },
-        },
-      },
-      {
-        $group: {
-          _id: '$tps',
-          totalLoad: { $sum: '$load' },
-        },
-      },
-    ]);
-    if (load[0]) {
-      // Tagihan.create({
-      //   status: 'belum dibayar',
-      //   payment_method: 'perbulan',
-      //   payment_month: Date.now(),
-      //   tps: e._id,
-      // });
-      console.log(load[0].totalLoad);
-    } else {
-      console.log('tidak ada tagihan');
-    }
-  });
-};
-test();
 
 // Start the server
 const port = process.env.PORT || 3000;

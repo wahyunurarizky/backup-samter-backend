@@ -8,6 +8,7 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const compression = require('compression');
+const schedule = require('node-schedule');
 
 const userRoutes = require('./routes/userRoutes');
 const jenisKendaraanRoutes = require('./routes/jenisKendaraanRoutes');
@@ -19,10 +20,14 @@ const pickupRoutes = require('./routes/pickupRoutes');
 const tagihanRoutes = require('./routes/tagihanRoutes');
 const bankRoutes = require('./routes/bankRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
+
+const tagihanController = require('./controllers/tagihanController');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 
 const app = express();
+
+schedule.scheduleJob('1 1 1 1 * *', tagihanController.createTagihanMonthly);
 
 // Allow Cross-Origin requests
 app.use(cors());

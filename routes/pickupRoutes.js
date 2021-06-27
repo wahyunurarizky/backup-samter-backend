@@ -25,6 +25,9 @@ router
 router
   .route('/getMyPickupQR')
   .get(authController.restrictTo('petugas'), pickupController.generateQr);
+router
+  .route('/lanjut/:id')
+  .get(authController.restrictTo('petugas'), pickupController.isAlreadyDone);
 
 router.route('/average').get(pickupController.getAverage);
 

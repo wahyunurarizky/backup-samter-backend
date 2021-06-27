@@ -58,18 +58,30 @@ pickupSchema.post('save', function (next) {
 
 pickupSchema.post(/^find/, (result) => {
   console.log(!this.pickup_time);
-  if (Array.isArray(result)) {
-    result.forEach((e) => {
-      if (e.pickup_time)
-        e._doc.pickup_time_local = e.pickup_time.toLocaleString();
-      if (e.arrival_time)
-        e._doc.arrival_time_local = e.arrival_time.toLocaleString();
-    });
-  } else {
-    if (result.pickup_time)
-      result._doc.pickup_time_local = result.pickup_time.toLocaleString();
-    if (result.arrival_time)
-      result._doc.arrival_time_local = result.arrival_time.toLocaleString();
+  if (result) {
+    if (Array.isArray(result)) {
+      result.forEach((e) => {
+        if (e.pickup_time)
+          e._doc.pickup_time_local = e.pickup_time.toLocaleString('id-ID', {
+            hour12: false,
+          });
+        if (e.arrival_time)
+          e._doc.arrival_time_local = e.arrival_time.toLocaleString('id-ID', {
+            hour12: false,
+          });
+      });
+    } else {
+      if (result.pickup_time)
+        result._doc.pickup_time_local = result.pickup_time.toLocaleString(
+          'id-ID',
+          { hour12: false }
+        );
+      if (result.arrival_time)
+        result._doc.arrival_time_local = result.arrival_time.toLocaleString(
+          'id-ID',
+          { hour12: false }
+        );
+    }
   }
 });
 

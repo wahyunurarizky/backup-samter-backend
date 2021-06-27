@@ -206,29 +206,62 @@ exports.inputLoad = async (req, res, next) => {
 };
 
 exports.generateQr = async (req, res, next) => {
-  const doc = await Pickup.findOne({
-    petugas: req.user._id,
-    status: 'menuju tpa',
-  });
+  try {
+    const doc = await Pickup.findOne({
+      petugas: req.user._id,
+      status: 'menuju tpa',
+    });
 
-  console.log(doc.qr_id);
-  const stringdata = JSON.stringify(doc.qr_id);
+    if (!doc) {
+      return next(new AppError('tidak ada data', 404));
+    }
 
-  QRCode.toDataURL(stringdata, (err, imgUrl) => {
-    const pickup = {
-      pickup_id: doc._id,
-      imgUrl: imgUrl,
-    };
-    if (err) return next(new AppError('Error Occured', 400));
-    res.status(201).json({
+    console.log(doc.qr_id);
+    const stringdata = JSON.stringify(doc.qr_id);
+
+    QRCode.toDataURL(stringdata, (err, imgUrl) => {
+      const pickup = {
+        pickup_id: doc._id,
+        imgUrl: imgUrl,
+      };
+      if (err) return next(new AppError('Error Occured', 400));
+      res.status(201).json({
+        success: true,
+        code: '201',
+        message: 'OK',
+        data: {
+          pickup,
+        },
+      });
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.isAlreadyDone = async (req, res, next) => {
+  try {
+    if (!req.user.allowedPick)
+      return next(
+        new AppError(
+          'belum selesai, segera timbang dan lapor operator tpa',
+          403
+        )
+      );
+    const pickup = await Pickup.findById(req.params.id);
+    if (!pickup) {
+      return next(new AppError('id salah', 400));
+    }
+    res.status(200).json({
       success: true,
-      code: '201',
+      code: '200',
       message: 'OK',
       data: {
         pickup,
       },
     });
-  });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.getAverage = async (req, res, next) => {
