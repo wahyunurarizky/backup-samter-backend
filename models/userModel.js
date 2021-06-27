@@ -99,6 +99,9 @@ const userSchema = new mongoose.Schema({
   device_model: String,
 });
 
+userSchema.index({ role: 1, pns: 1 });
+userSchema.index({ '$**': 'text' });
+
 // encrypt the password using 'bcryptjs'
 // Mongoose -> Document Middleware
 userSchema.pre('save', async function (next) {

@@ -35,5 +35,7 @@ const complaintSchema = new mongoose.Schema({
   },
 });
 
+complaintSchema.index({ '$**': 'text' });
+
 const Complaint = mongoose.model('Complaint', complaintSchema);
 module.exports = Complaint;

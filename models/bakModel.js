@@ -22,6 +22,7 @@ const bakSchema = new mongoose.Schema(
     collection: 'bak',
   }
 );
+bakSchema.index({ '$**': 'text' });
 
 bakSchema.pre('save', function (next) {
   const date = this._id;

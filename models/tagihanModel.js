@@ -42,6 +42,7 @@ const tagihanSchema = new mongoose.Schema(
     collection: 'tagihan',
   }
 );
+tagihanSchema.index({ '$**': 'text' });
 
 tagihanSchema.pre(/^find/, function (next) {
   this.populate([

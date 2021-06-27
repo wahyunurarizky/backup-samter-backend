@@ -9,7 +9,7 @@ class APIFeatures {
     // console.log(req.query);
     // {a: 5, b: 4}
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search'];
 
     excludedFields.forEach((el) => delete queryObj[el]);
 
@@ -75,6 +75,15 @@ class APIFeatures {
     const skip = (page - 1) * limit;
 
     this.query = this.query.skip(skip).limit(limit);
+    return this;
+  }
+
+  search() {
+    if (this.queryString.search) {
+      this.query = this.query.find({
+        $text: { $search: this.queryString.search },
+      });
+    }
     return this;
   }
 }
