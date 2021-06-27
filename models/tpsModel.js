@@ -20,7 +20,8 @@ const tpsSchema = new mongoose.Schema(
     },
     capacity: Number,
     koordinator: {
-      type: String,
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
     },
     tps_type: {
       type: String,
