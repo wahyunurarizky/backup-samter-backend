@@ -22,9 +22,30 @@ const tpsSchema = new mongoose.Schema(
     koordinator: {
       type: String,
     },
+    tps_type: {
+      type: String,
+      enum: [
+        'DIPO',
+        'Lintas',
+        'Bak Beton',
+        'Pool Gerobak',
+        'Pool Container',
+        'TPS 3R',
+      ],
+    },
+    tps_status_ownership: {
+      type: String,
+      enum: [
+        'Dinas Lingkungan Hidup',
+        'Pemerintah',
+        'Swasta',
+        'Perumahan',
+        'Warga',
+        'Bahu Jalan',
+        'Bebas/Tidak Ada',
+      ],
+    },
     tps_area: Number,
-    tps_status_ownership: String,
-    tps_type: String,
     qr_id: {
       type: String,
       unique: true,

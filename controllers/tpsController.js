@@ -8,7 +8,9 @@ exports.create = base.createOne(
   'location',
   'capacity',
   'koordinator',
-  'tps_type'
+  'tps_type',
+  'tps_area',
+  'tps_status_ownership'
 );
 exports.getAll = base.getAll(Tps);
 exports.get = base.getOne(Tps);
@@ -18,7 +20,9 @@ exports.update = base.updateOne(
   'location',
   'capacity',
   'koordinator',
-  'tps_type'
+  'tps_type',
+  'tps_area',
+  'tps_status_ownership'
 );
 exports.delete = base.deleteOne(Tps);
 exports.generateQr = async function generate(req, res, next) {
