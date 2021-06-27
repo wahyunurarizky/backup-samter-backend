@@ -19,10 +19,7 @@ const tpsSchema = new mongoose.Schema(
       kelurahan: String,
     },
     capacity: Number,
-    koordinator: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-    },
+    koordinator: String,
     tps_type: {
       type: String,
       enum: [
