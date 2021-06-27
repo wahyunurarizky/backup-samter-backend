@@ -6,9 +6,12 @@ const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 
 // exports.create = base.createOne(Tagihan, 'total', 'bukti', 'waktu', 'status');
-exports.getAll = base.getAll(Tagihan);
+exports.getAll = base.getAll(Tagihan, [
+  { path: 'pickup', select: 'load' },
+  { path: 'tps', select: 'name' },
+]);
 exports.get = base.getOne(Tagihan);
-exports.updateStatus = base.updateOne(Tagihan, 'status');
+exports.updateStatus = base.updateOne(Tagihan, 'status', 'description');
 exports.delete = base.deleteOne(Tagihan);
 
 exports.getMyTagihan = async (req, res, next) => {
@@ -74,12 +77,18 @@ exports.resizePaymentPhoto = async (req, res, next) => {
   }
 };
 exports.pay = async (req, res, next) => {
+  const tagihan = await Tagihan.findById(req.params.id);
+  if (tagihan.status === 'sudah dibayar') {
+    return next(new AppError('sudah berhasil dibayar', 401));
+  }
+
   if (req.file) req.body.payment_photo = req.file.filename;
   const payment = await Tagihan.findByIdAndUpdate(
     req.params.id,
     {
-      payment_photo: req.body.payment_photo,
+      payment_photo: `https://rifil-samter.herokuapp.com/img/bukti${req.body.payment_photo}`,
       status: 'menunggu konfirmasi',
+      description: req.body.description,
     },
     {
       new: true,

@@ -5,6 +5,7 @@ const tagihanSchema = new mongoose.Schema(
     price: Number,
     payment_photo: String,
     payment_time: Date,
+    payment_month: Date,
     status: {
       type: String,
       enum: [
@@ -28,6 +29,8 @@ const tagihanSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Tps',
     },
+    description: String,
+    selisih: Number,
   },
   {
     collection: 'tagihan',

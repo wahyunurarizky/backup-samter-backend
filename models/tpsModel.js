@@ -22,6 +22,8 @@ const tpsSchema = new mongoose.Schema(
     koordinator: {
       type: String,
     },
+    tps_area: Number,
+    tps_status_ownership: String,
     tps_type: String,
     qr_id: {
       type: String,

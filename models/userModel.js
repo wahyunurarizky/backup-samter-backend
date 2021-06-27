@@ -38,7 +38,14 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['pegawai', 'koordinator tps', 'operator tpa', 'petugas', 'pimpinan'],
+    enum: [
+      'superadmin',
+      'pegawai',
+      'koordinator ksm',
+      'operator tpa',
+      'petugas',
+      'pimpinan',
+    ],
     required: [true, 'Please fill role user'],
   },
   active: {
@@ -84,6 +91,9 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  golongan: String,
+  jabatan: String,
+  work_unit: String,
 });
 
 // encrypt the password using 'bcryptjs'

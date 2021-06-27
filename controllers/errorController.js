@@ -50,6 +50,7 @@ const sendErrorProd = (err, req, res) => {
         success: false,
         code: `${err.statusCode}`,
         message: err.message,
+        data: null,
       });
     }
     console.error('ERROR', err);
@@ -59,6 +60,7 @@ const sendErrorProd = (err, req, res) => {
       success: false,
       code: `${err.statusCode}`,
       message: 'something went very wrong',
+      data: null,
     });
   }
   if (err.isOperational) {

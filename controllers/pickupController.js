@@ -8,6 +8,7 @@ const AppError = require('../utils/appError');
 const User = require('../models/userModel');
 const base = require('./baseController');
 const Tagihan = require('../models/tagihanModel');
+const APIFeatures = require('../utils/apiFeatures');
 
 exports.createPickup = async (req, res, next) => {
   try {
@@ -78,7 +79,39 @@ exports.createPickup = async (req, res, next) => {
 
 exports.getMyPickup = async (req, res, next) => {
   try {
-    const pickup = await Pickup.find({ petugas: req.user._id }).populate();
+    let pickup;
+    if (req.user.role === 'petugas') {
+      const features = new APIFeatures(
+        Pickup.find({ petugas: req.user._id }),
+        req.query
+      )
+        .filter()
+        .sort()
+        .limit()
+        .paginate();
+      pickup = await features.query.populate();
+    } else if (req.user.role === 'koordinator ksm') {
+      const features = new APIFeatures(
+        Pickup.find({ tps: req.user.tps }),
+        req.query
+      )
+        .filter()
+        .sort()
+        .limit()
+        .paginate();
+      pickup = await features.query.populate();
+    } else if (req.user.role === 'operator tpa') {
+      const features = new APIFeatures(
+        Pickup.find({ tpa: req.user.tpa }),
+        req.query
+      )
+        .filter()
+        .sort()
+        .limit()
+        .paginate();
+      pickup = await features.query.populate();
+    }
+
     if (!pickup)
       return next(new AppError('tidak ada data pickup untukmu', 404));
     res.status(201).json({
@@ -165,6 +198,84 @@ exports.inputLoad = async (req, res, next) => {
       message: 'OK',
       data: {
         pickup: updatedPickup,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.generateQr = async (req, res, next) => {
+  const doc = await Pickup.findOne({
+    petugas: req.user._id,
+    status: 'menuju tpa',
+  });
+
+  console.log(doc.qr_id);
+  const stringdata = JSON.stringify(doc.qr_id);
+
+  QRCode.toDataURL(stringdata, (err, imgUrl) => {
+    const pickup = {
+      pickup_id: doc._id,
+      imgUrl: imgUrl,
+    };
+    if (err) return next(new AppError('Error Occured', 400));
+    res.status(201).json({
+      success: true,
+      code: '201',
+      message: 'OK',
+      data: {
+        pickup,
+      },
+    });
+  });
+};
+
+exports.getAverage = async (req, res, next) => {
+  try {
+    const pickupEachWeek = await Pickup.aggregate([
+      {
+        $match: {
+          tps: req.user.tps,
+          arrival_time: { $lt: new Date(Date.now()) },
+        },
+      },
+      {
+        $group: {
+          _id: { $week: '$arrival_time' },
+          total: { $sum: '$load' },
+        },
+      },
+    ]);
+    let sum = 0;
+    pickupEachWeek.forEach((num) => {
+      sum += num.total;
+    });
+    console.log(pickupEachWeek);
+    const avgLoadWeek = sum / pickupEachWeek.length;
+
+    const m = new Date(Date.now());
+    const pickupThisMonth = await Pickup.aggregate([
+      {
+        $match: {
+          tps: req.user.tps,
+          arrival_time: { $gt: new Date(m.getFullYear(), m.getMonth()) },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$arrival_time' },
+          total: { $sum: '$load' },
+        },
+      },
+    ]);
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        avgLoadWeek,
+        loadThisMonth: pickupThisMonth[0].total,
       },
     });
   } catch (err) {

@@ -9,7 +9,11 @@ router.use(authController.protect);
 router
   .route('/')
   .get(complaintController.getAll)
-  .post(complaintController.create);
+  .post(
+    complaintController.uploadComplaintPhoto,
+    complaintController.resizeComplaintPhoto,
+    complaintController.create
+  );
 router
   .route('/:id')
   .get(complaintController.get)

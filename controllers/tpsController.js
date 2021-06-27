@@ -37,11 +37,29 @@ exports.generateQr = async function generate(req, res, next) {
       };
       if (err) return console.log('error occurred');
       res.status(200).json({
-        status: 'success',
+        success: true,
+        code: '200',
+        message: 'OK',
         data: data,
       });
     });
   } catch (error) {
     next(error);
+  }
+};
+
+exports.getTotalTps = async (req, res, next) => {
+  try {
+    const total = await Tps.find();
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        total: total.length,
+      },
+    });
+  } catch (err) {
+    next(err);
   }
 };

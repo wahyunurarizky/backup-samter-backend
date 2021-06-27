@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "60c59f69d7586c0b08eed7de",
+    "type": "typer",
+    "empty_weight": 150,
+    "max_load_weight": 100
+  },
+  {
+    "_id": "60c59f79d7586c0b08eed7df",
+    "type": "Container",
+    "empty_weight": 1000,
+    "max_load_weight": 5000
+  },
+  {
+    "_id": "60d0177c0b451876fff9c69e",
+    "type": "Arm Roll",
+    "empty_weight": 500,
+    "max_load_weight": 2000
+  },
+  {
+    "_id": "60d018d50b451876fff9c69f",
+    "type": "Bak Standar",
+    "empty_weight": 2000,
+    "max_load_weight": 4000
+  }
+]

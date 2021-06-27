@@ -6,6 +6,7 @@ const User = require('../models/userModel');
 const base = require('./baseController');
 const AppError = require('../utils/appError');
 
+// function bantuan untuk filter object
 const filterObj = (obj, allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -14,6 +15,7 @@ const filterObj = (obj, allowedFields) => {
   return newObj;
 };
 
+// get me dan delete me
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
   next();
@@ -40,8 +42,56 @@ exports.updateMe = async (req, res, next) => {
   // perlu kah?
 };
 
+// restrict to pegawai dan superadmin
 exports.getAllUsers = base.getAll(User);
-exports.getUser = base.getOne(User, [{ path: 'tps' }, { path: 'tpa' }]);
+exports.getUser = base.getOne(User, [
+  { path: 'tps', select: '-__v' },
+  { path: 'tpa', select: '-__v' },
+]);
+
+exports.createUser = async (req, res, next) => {
+  try {
+    const filteredBody = filterObj(req.body, [
+      'name',
+      'email',
+      'password',
+      'passwordConfirm',
+      'passwordChangedAt',
+      'role',
+      'address',
+      'NIP',
+      'phone',
+      'photo',
+      'tpa',
+      'tps',
+      'jumlah_penarikan',
+      'jabatan',
+      'golongan',
+      'work_unit',
+    ]);
+
+    if (req.file)
+      // filteredBody.photo = `${req.protocol}://${req.get('host')}/img/users/${
+      //   req.file.filename
+      // }`;
+      filteredBody.photo = `https://rifil-samater.herokuapp.com/img/users/${req.file.filename}`;
+
+    const newUser = await User.create(filteredBody);
+
+    newUser.password = undefined;
+
+    res.status(201).json({
+      success: true,
+      code: '201',
+      message: 'OK',
+      data: {
+        user: newUser,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 // Don't update password on this
 exports.deleteUser = base.deleteOne(User);
@@ -50,9 +100,7 @@ exports.updateUser = async (req, res, next) => {
   try {
     // 1) Create error if user POSTs password data
     if (req.body.password || req.body.passwordConfirm) {
-      return next(
-        new AppError('Hanya user sendiri yang bisa mengubah passwordnya', 400)
-      );
+      return next(new AppError('Bukan tempat untuk update password', 400));
     }
 
     // 2) Filtered out unwanted fields names that are not allowed to be updated
@@ -65,7 +113,8 @@ exports.updateUser = async (req, res, next) => {
       'phone',
       'role',
     ]);
-    if (req.file) filteredBody.photo = req.file.filename;
+    if (req.file)
+      filteredBody.photo = `https://rifil-samter.herokuapp.com/img/users/${req.file.filename}`;
 
     console.log(filteredBody);
     // 3) Update user document
@@ -84,6 +133,29 @@ exports.updateUser = async (req, res, next) => {
       message: 'OK',
       data: {
         user: updatedUser,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.resetUserPassword = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        user,
       },
     });
   } catch (err) {

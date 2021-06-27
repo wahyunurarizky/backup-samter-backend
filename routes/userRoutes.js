@@ -20,15 +20,16 @@ router.delete('/deleteMe', userController.deleteMe);
 router.patch('/updateMyPassword', authController.updatePassword);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo('pegawai'));
+router.use(authController.restrictTo('pegawai', 'superadmin'));
 
-router.post(
-  '/signup',
-  userController.uploadUserPhoto,
-  userController.resizeUserPhoto,
-  authController.signup
-);
-router.route('/').get(userController.getAllUsers);
+router
+  .route('/')
+  .get(userController.getAllUsers)
+  .post(
+    userController.uploadUserPhoto,
+    userController.resizeUserPhoto,
+    userController.createUser
+  );
 
 router
   .route('/:id')
@@ -39,6 +40,8 @@ router
     userController.updateUser
   )
   .delete(userController.deleteUser);
+
+router.route('/:id/resetPassword').patch(userController.resetUserPassword);
 
 // router.route('/qr/:qrid').get(userController.getPetugasByQrId);
 

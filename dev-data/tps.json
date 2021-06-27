@@ -1,0 +1,54 @@
+[
+  {
+    "_id": "60c59ab9c3d7f325f87a2271",
+    "location": {
+      "type": "Point",
+      "coordinates": [-6.234234, 69.11221231],
+      "address": "Jl. Delima Jaya RT/RW 01/02",
+      "city": "Tangerang Selatan",
+      "kecamatan": "Ciputat Timur",
+      "kelurahan": "Cempaka Putih"
+    },
+    "name": "TPS Ciputat",
+    "tps_type": "tps 3R",
+    "capacity": 2000,
+    "koordinator": "Jabbar Hafizh",
+    "qr_id": "TPS7A2271",
+    "tps_area": 1000,
+    "tps_status_ownership": "pemerintah"
+  },
+  {
+    "_id": "60d025460b451876fff9c6a0",
+    "location": {
+      "type": "Point",
+      "coordinates": [-120.34123, 9.11221231],
+      "address": "Jl. Serpong Jaya RT/RW 01/02",
+      "city": "Tangerang Selatan",
+      "kecamatan": "BSD",
+      "kelurahan": "Serpong damai"
+    },
+    "name": "TPS Serpong",
+    "tps_type": "tps mini",
+    "capacity": 3000,
+    "koordinator": "Wahyu Nur Arizky",
+    "tps_area": 500,
+    "tps_status_ownership": "pemerintah"
+  },
+  {
+    "_id": "60d026b30b451876fff9c6a1",
+    "location": {
+      "type": "Point",
+      "coordinates": [40.34123, 9.11221231],
+      "address": "Jl. Serpong Jaya RT/RW 01/02",
+      "city": "Tangerang Selatan",
+      "kecamatan": "Pamulang",
+      "kelurahan": "Pamulang damai"
+    },
+    "name": "TPS Pamulang",
+    "tps_type": "tps besar",
+    "capacity": 5000,
+    "koordinator": "Fajri Adi Mulya",
+    "tps_area": 700,
+    "tps_status_ownership": "pemerintah"
+  }
+]
