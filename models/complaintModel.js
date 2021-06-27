@@ -55,7 +55,6 @@ complaintSchema.post('save', function (next) {
 });
 
 complaintSchema.post(/^find/, (result) => {
-  console.log(!this.time);
   if (Array.isArray(result)) {
     result.forEach((e) => {
       if (e.time)
