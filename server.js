@@ -27,7 +27,8 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then((con) => {
+  // .then((con) => {
+  .then(() => {
     console.log('DB connection Successfully!');
   });
 
@@ -35,14 +36,21 @@ mongoose
 
 // Start the server
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Application is running on port ${port}`);
 });
 
 process.on('unhandledRejection', (err) => {
   console.log('UNHANDLED REJECTION!!!  shutting down ...');
-  console.log(err.name, err.message);
+  console.log(err);
   server.close(() => {
     process.exit(1);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+  server.close(() => {
+    console.log('💥 Process terminated!');
   });
 });

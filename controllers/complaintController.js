@@ -6,13 +6,25 @@ const base = require('./baseController');
 
 exports.create = async (req, res, next) => {
   try {
+    // ini kalo mau ngakalin timezone jakarta
+    // const wib_time = moment
+    //   .tz('Asia/Calcutta')
+    //   .startOf('hours')
+    //   .tz('UTC')
+    //   .subtract(-420, 'minutes');
+    const time = new Date(Date.now());
+
     if (req.file) req.body.pict = req.file.filename;
     const complaint = await Complaint.create({
-      pict: `https://rifil-samter.herokuapp.com/img/complaint${req.body.pict}`,
+      pict: `${process.env.URL}img/complaint/${req.body.pict}`,
+      time: time,
+      name: req.body.name,
       nik: req.body.nik,
+      address: req.body.address,
+      kelurahan: req.body.kelurahan,
+      kecamatan: req.body.kecamatan,
       phone: req.body.phone,
       desc: req.body.desc,
-      loc: req.body.loc,
     });
     res.status(201).json({
       success: true,
@@ -28,16 +40,7 @@ exports.create = async (req, res, next) => {
 };
 exports.getAll = base.getAll(Complaint);
 exports.get = base.getOne(Complaint);
-exports.update = base.updateOne(
-  Complaint,
-  'nik',
-  'phone',
-  'pict',
-  'desc',
-  'loc',
-  'status',
-  'solution'
-);
+exports.update = base.updateOne(Complaint, 'status', 'solution');
 
 const multerStorage = multer.memoryStorage();
 

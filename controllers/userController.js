@@ -74,7 +74,7 @@ exports.createUser = async (req, res, next) => {
       // filteredBody.photo = `${req.protocol}://${req.get('host')}/img/users/${
       //   req.file.filename
       // }`;
-      filteredBody.photo = `https://rifil-samater.herokuapp.com/img/users/${req.file.filename}`;
+      filteredBody.photo = `${process.env.URL}img/users/${req.file.filename}`;
 
     const newUser = await User.create(filteredBody);
 
@@ -114,7 +114,7 @@ exports.updateUser = async (req, res, next) => {
       'role',
     ]);
     if (req.file)
-      filteredBody.photo = `https://rifil-samter.herokuapp.com/img/users/${req.file.filename}`;
+      filteredBody.photo = `${process.env.URL}img/users/${req.file.filename}`;
 
     console.log(filteredBody);
     // 3) Update user document
@@ -201,7 +201,7 @@ exports.resizeUserPhoto = async (req, res, next) => {
     }
 
     if (!req.file) return next();
-    req.file.filename = `user-${user.role}-${user.NIP}.jpeg`;
+    req.file.filename = `user-${user.role}-${user.NIP}.jpeg`.replace(/\s/g, '');
     // }-${Date.now()}.jpeg`;
 
     await sharp(req.file.buffer)

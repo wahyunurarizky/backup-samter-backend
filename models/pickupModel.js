@@ -53,7 +53,9 @@ pickupSchema.pre('save', function (next) {
 });
 
 pickupSchema.post('save', function (next) {
-  this._doc.pickup_time_local = this.pickup_time.toLocaleString();
+  this._doc.pickup_time_local = this.pickup_time.toLocaleString('id-ID', {
+    hour12: false,
+  });
 });
 
 pickupSchema.post(/^find/, (result) => {

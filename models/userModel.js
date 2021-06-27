@@ -66,7 +66,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: 'default-user-image.png',
+    default: `${process.env.URL}img/users/default-user-image.png`,
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
@@ -94,6 +94,9 @@ const userSchema = new mongoose.Schema({
   golongan: String,
   jabatan: String,
   work_unit: String,
+  device_id: String,
+  device_manufacture: String,
+  device_model: String,
 });
 
 // encrypt the password using 'bcryptjs'
