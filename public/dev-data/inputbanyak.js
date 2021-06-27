@@ -1,8 +1,17 @@
+const fs = require('fs');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const Kendaraan = require('../../models/kendaraanModel');
+// const Tour = require('../../models/tourModel');
+// const User = require('../../models/userModel');
+const Tagihan = require('../models/tagihanModel');
+const Bak = require('../models/bakModel');
+const User = require('../models/userModel');
+const Pickup = require('../models/pickupModel');
+const Kendaraan = require('../models/kendaraanModel');
+const JenisKendaraan = require('../models/jenisKendaraanModel');
+const Tps = require('../models/tpsModel');
 
-dotenv.config({ path: '../../config.env' });
+dotenv.config({ path: 'config.env' });
 
 const database = process.env.DATABASE.replace(
   '<PASSWORD>',
@@ -21,132 +30,24 @@ mongoose
     console.log('DB connection Successfully!');
   });
 
-const kendaraan = [
-  {
-    plat_nomor: 'A BCD 19',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDQ 1234229',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDW 12342349',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDE 19234',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCD 19234',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDQ 19345',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDW 1900',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDE 196',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCD 197',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDQ 198',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDW 159',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDE 149',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCD 139',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDQ 12',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDW 149',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDE 195',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCD 194',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDQ 191',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDW 192',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-  {
-    plat_nomor: 'A BCDE 193',
-    unit_kerja: 'Ciputat',
-    tahun: 2021,
-    jenis_kendaraan_id: '60be480c92f5e22d68cf3ff6',
-  },
-];
+// READ JSON FILE
+const jenis = JSON.parse(
+  fs.readFileSync(`${__dirname}/jenis_kendaraan.json`, 'utf-8')
+);
+console.log(jenis);
+const kendaraan = JSON.parse(
+  fs.readFileSync(`${__dirname}/kendaraan.json`, 'utf-8')
+);
+console.log(kendaraan);
+const tps = JSON.parse(fs.readFileSync(`${__dirname}/tps.json`, 'utf-8'));
+const user = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
 
 const importData = async () => {
   try {
+    await JenisKendaraan.create(jenis, { validateBeforeSave: false });
     await Kendaraan.create(kendaraan, { validateBeforeSave: false });
+    await Tps.create(tps, { validateBeforeSave: false });
+    await User.create(user, { validateBeforeSave: false });
     console.log('data successfully loaded');
   } catch (e) {
     console.log(e);
@@ -156,7 +57,12 @@ const importData = async () => {
 
 const deleteData = async () => {
   try {
-    await Kendaraan.deleteMany();
+    // await Kendaraan.deleteMany();
+    // await JenisKendaraan.deleteMany();
+    // await Tps.deleteMany();
+    // await User.deleteMany();
+    await Tagihan.deleteMany({ payment_method: 'perbulan' });
+
     console.log('data successfully deleted');
   } catch (e) {
     console.log(e);
