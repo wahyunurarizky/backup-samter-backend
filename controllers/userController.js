@@ -43,7 +43,10 @@ exports.updateMe = async (req, res, next) => {
 };
 
 // restrict to pegawai dan superadmin
-exports.getAllUsers = base.getAll(User);
+exports.getAllUsers = base.getAll(User, [
+  { path: 'tps', select: 'name' },
+  { path: 'tpa', select: 'name' },
+]);
 exports.getUser = base.getOne(User, [
   { path: 'tps', select: '-__v' },
   { path: 'tpa', select: '-__v' },
@@ -186,9 +189,12 @@ exports.uploadUserPhoto = upload.single('photo');
 exports.resizeUserPhoto = async (req, res, next) => {
   try {
     let user;
+    // ini untuk create
     if (!req.params.id) {
       user = req.body;
-    } else {
+    }
+    // ini untuk update
+    else {
       user = await User.findById(req.params.id);
       if (user.photo !== 'default-user-image.png') {
         fs.unlink(`public/img/users/${user.photo}`, (err) => {

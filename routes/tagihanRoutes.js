@@ -6,7 +6,9 @@ const authController = require('../controllers/authController');
 
 router.use(authController.protect);
 
-router.route('/').get(tagihanController.getAll);
+router
+  .route('/')
+  .get(authController.restrictTo('pegawai'), tagihanController.getAll);
 router
   .route('/getMyTagihan')
   .get(

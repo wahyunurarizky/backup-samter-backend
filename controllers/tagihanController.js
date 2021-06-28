@@ -66,7 +66,7 @@ exports.resizePaymentPhoto = async (req, res, next) => {
   try {
     if (!req.file) return next();
 
-    req.file.filename = `bukti-${req.user.id}-${Date.now()}.jpeg`;
+    req.file.filename = `bukti-${req.params.id}.jpeg`;
 
     await sharp(req.file.buffer)
       .toFormat('jpeg')
@@ -80,6 +80,14 @@ exports.resizePaymentPhoto = async (req, res, next) => {
 };
 exports.pay = async (req, res, next) => {
   const tagihan = await Tagihan.findById(req.params.id);
+  console.log(tagihan.tps._id);
+  console.log(req.user.tps);
+  if (tagihan.tps._id.toString() !== req.user.tps.toString()) {
+    return next(
+      new AppError('kamu tidak bisa membayar tagihan orang lain', 403)
+    );
+  }
+
   if (tagihan.status === 'sudah dibayar') {
     return next(new AppError('sudah berhasil dibayar', 401));
   }

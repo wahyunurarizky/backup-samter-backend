@@ -120,6 +120,8 @@ exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
       .limit()
       .paginate()
       .search();
+
+    console.log(popOptions);
     const docs = await features.query.populate(popOptions);
     // const docs = await features.query.explain();
 
