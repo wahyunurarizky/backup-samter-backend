@@ -21,6 +21,7 @@ exports.createPickup = async (req, res, next) => {
       );
 
     const kendaraan = await Kendaraan.findOne({ qr_id: req.body.kendaraan });
+    console.log(kendaraan);
     if (!kendaraan)
       return next(
         new AppError(
@@ -130,6 +131,42 @@ exports.getMyPickup = async (req, res, next) => {
 
 exports.getAll = base.getAll(Pickup);
 exports.get = base.getOne(Pickup);
+exports.updateStatus = async (req, res, next) => {
+  try {
+    if (req.body.status === 'selesai' || req.user.role === 'pegawai') {
+      return next(
+        new AppError('pegawai tidak bisa merubah menjadi selesai', 403)
+      );
+    }
+
+    // const filteredBody = filterObj(req.body, fields);
+    const updatedDoc = await Tagihan.findByIdAndUpdate(
+      req.params.id,
+      { status: req.body.status },
+      {
+        // jangan lupa run validators pada update
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!updatedDoc) {
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
+    }
+    await User.findByIdAndUpdate(updatedDoc.petugas._id, { allowedPick: true });
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        doc: updatedDoc,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.getByQr = async (req, res, next) => {
   try {

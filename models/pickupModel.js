@@ -25,7 +25,7 @@ const pickupSchema = new mongoose.Schema({
   arrival_time: Date,
   status: {
     type: String,
-    enum: ['menuju tpa', 'selesai', 'terlambat'],
+    enum: ['menuju tpa', 'selesai', 'tidak selesai'],
     default: 'menuju tpa',
   },
   load: Number,
@@ -110,11 +110,11 @@ pickupSchema.pre(/^find/, function (next) {
     },
     {
       path: 'operator_tpa',
-      select: ['name'],
+      select: ['name', 'NIP'],
     },
     {
       path: 'tpa',
-      select: ['name'],
+      select: ['name', 'qr_id'],
     },
   ]);
   next();
