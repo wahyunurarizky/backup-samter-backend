@@ -51,7 +51,8 @@ const complaintSchema = new mongoose.Schema({
 complaintSchema.index({ '$**': 'text' });
 
 complaintSchema.post('save', function (next) {
-  this._doc.time = this.time.toLocaleString('id-ID', {
+  this._doc.time = this.time.toLocaleString('en-GB', {
+    timeZone: 'Asia/jakarta',
     hour12: false,
   });
 });
@@ -60,21 +61,25 @@ complaintSchema.post(/^find/, (result) => {
   if (Array.isArray(result)) {
     result.forEach((e) => {
       if (e.time)
-        e._doc.time = e.time.toLocaleString('id-ID', {
+        e._doc.time = e.time.toLocaleString('en-GB', {
+          timeZone: 'Asia/jakarta',
           hour12: false,
         });
       if (e.arrival_time)
-        e._doc.arrival_time_local = e.arrival_time.toLocaleString('id-ID', {
+        e._doc.arrival_time_local = e.arrival_time.toLocaleString('en-GB', {
           hour12: false,
         });
     });
   } else {
     if (result.time)
-      result._doc.time = result.time.toLocaleString('id-ID', { hour12: false });
+      result._doc.time = result.time.toLocaleString('en-GB', {
+        timeZone: 'Asia/jakarta',
+        hour12: false,
+      });
     if (result.arrival_time)
       result._doc.arrival_time_local = result.arrival_time.toLocaleString(
-        'id-ID',
-        { hour12: false }
+        'en-GB',
+        { timeZone: 'Asia/jakarta', hour12: false }
       );
   }
 });

@@ -59,6 +59,7 @@ tagihanSchema.post(/^find/, (result) => {
     result.forEach((e) => {
       if (!e.payment_month) return;
       e._doc.payment_month_local = e.payment_month.toLocaleString('en-GB', {
+        timeZone: 'Asia/jakarta',
         month: 'long',
         year: 'numeric',
       });
@@ -67,7 +68,7 @@ tagihanSchema.post(/^find/, (result) => {
     if (!result.payment_month) return;
     result._doc.payment_month_local = result.payment_month.toLocaleString(
       'en-GB',
-      { month: 'long', year: 'numeric' }
+      { timeZone: 'Asia/jakarta', month: 'long', year: 'numeric' }
     );
   }
 });

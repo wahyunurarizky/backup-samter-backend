@@ -48,7 +48,7 @@ exports.createPickup = async (req, res, next) => {
       bak: bak._id,
       kendaraan: kendaraan._id,
       tps: tps._id,
-      pickup_time: new Date(Date.now()),
+      pickup_time: Date.now(),
       arrival_time: null,
       payment_method: req.body.payment_method,
     });
