@@ -28,7 +28,10 @@ const pickupSchema = new mongoose.Schema({
     enum: ['menuju tpa', 'selesai', 'tidak selesai'],
     default: 'menuju tpa',
   },
-  load: Number,
+  load: {
+    type: Number,
+    default: null,
+  },
   payment_method: {
     type: String,
     enum: ['perbulan', 'perangkut'],
@@ -106,7 +109,7 @@ pickupSchema.pre(/^find/, function (next) {
     },
     {
       path: 'tps',
-      select: ['qr_id', 'name'],
+      select: ['qr_id', 'name', 'location'],
     },
     {
       path: 'operator_tpa',
@@ -114,7 +117,7 @@ pickupSchema.pre(/^find/, function (next) {
     },
     {
       path: 'tpa',
-      select: ['name', 'qr_id'],
+      select: ['name', 'qr_id', 'location'],
     },
   ]);
   next();
