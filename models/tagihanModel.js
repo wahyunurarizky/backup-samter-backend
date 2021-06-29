@@ -58,7 +58,7 @@ tagihanSchema.post(/^find/, (result) => {
   if (Array.isArray(result)) {
     result.forEach((e) => {
       if (!e.payment_month) return;
-      e._doc.payment_month_local = e.payment_month.toLocaleString('id-ID', {
+      e._doc.payment_month_local = e.payment_month.toLocaleString('en-GB', {
         month: 'long',
         year: 'numeric',
       });
@@ -66,7 +66,7 @@ tagihanSchema.post(/^find/, (result) => {
   } else if (result) {
     if (!result.payment_month) return;
     result._doc.payment_month_local = result.payment_month.toLocaleString(
-      'id-ID',
+      'en-GB',
       { month: 'long', year: 'numeric' }
     );
   }
