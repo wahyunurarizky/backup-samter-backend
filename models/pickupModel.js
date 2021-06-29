@@ -44,6 +44,7 @@ const pickupSchema = new mongoose.Schema({
   tpa: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tpa',
+    default: null,
   },
 });
 
@@ -84,11 +85,14 @@ pickupSchema.post(/^find/, (result) => {
           'en-GB',
           { hour12: false }
         );
-      if (result.arrival_time)
+      if (result.arrival_time) {
         result._doc.arrival_time_local = result.arrival_time.toLocaleString(
           'en-GB',
           { hour12: false }
         );
+      } else {
+        result._doc.arrival_time_local = null;
+      }
     }
   }
 });
