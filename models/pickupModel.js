@@ -62,6 +62,7 @@ pickupSchema.pre('save', function (next) {
 
 pickupSchema.post('save', function (next) {
   this._doc.pickup_time_local = this.pickup_time.toLocaleString('en-GB', {
+    timeZone: 'Asia/jakarta',
     hour12: false,
   });
 });
@@ -73,10 +74,12 @@ pickupSchema.post(/^find/, (result) => {
       result.forEach((e) => {
         if (e.pickup_time)
           e._doc.pickup_time_local = e.pickup_time.toLocaleString('en-GB', {
+            timeZone: 'Asia/jakarta',
             hour12: false,
           });
         if (e.arrival_time)
           e._doc.arrival_time_local = e.arrival_time.toLocaleString('en-GB', {
+            timeZone: 'Asia/jakarta',
             hour12: false,
           });
       });
@@ -84,12 +87,12 @@ pickupSchema.post(/^find/, (result) => {
       if (result.pickup_time)
         result._doc.pickup_time_local = result.pickup_time.toLocaleString(
           'en-GB',
-          { hour12: false }
+          { timeZone: 'Asia/jakarta', hour12: false }
         );
       if (result.arrival_time) {
         result._doc.arrival_time_local = result.arrival_time.toLocaleString(
           'en-GB',
-          { hour12: false }
+          { timeZone: 'Asia/jakarta', hour12: false }
         );
       } else {
         result._doc.arrival_time_local = null;
