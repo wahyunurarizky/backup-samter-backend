@@ -40,6 +40,7 @@ const pickupSchema = new mongoose.Schema({
   operator_tpa: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
+    default: null,
   },
   tpa: {
     type: mongoose.Schema.ObjectId,
