@@ -78,10 +78,12 @@ const userSchema = new mongoose.Schema({
   tpa: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tpa',
+    default: null,
   },
   tps: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tps',
+    default: null,
   },
   pns: {
     type: Boolean,
