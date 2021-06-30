@@ -47,6 +47,10 @@ const pickupSchema = new mongoose.Schema({
     ref: 'Tpa',
     default: null,
   },
+  desc: {
+    type: String,
+    default: null,
+  },
 });
 
 pickupSchema.index({ pickup_time: 1, arrival_time: 1 });
