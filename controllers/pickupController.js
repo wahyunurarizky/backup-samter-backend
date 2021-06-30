@@ -134,13 +134,15 @@ exports.get = base.getOne(Pickup);
 exports.updateStatus = async (req, res, next) => {
   try {
     if (req.body.status === 'selesai' && req.user.role !== 'operator tpa') {
-      return next(
-        new AppError('pegawai tidak bisa merubah menjadi selesai', 403)
-      );
+      return next(new AppError('tidak diizinkan merubah menjadi selesai', 403));
+    }
+    const pickup = await Pickup.findById(req.params.id);
+    if (pickup.status === 'berhasil') {
+      return next(new AppError('status tidak bisa diubah', 403));
     }
 
     // const filteredBody = filterObj(req.body, fields);
-    const updatedDoc = await Tagihan.findByIdAndUpdate(
+    const updatedDoc = await Pickup.findByIdAndUpdate(
       req.params.id,
       { status: req.body.status },
       {
@@ -154,7 +156,15 @@ exports.updateStatus = async (req, res, next) => {
         new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
       );
     }
-    await User.findByIdAndUpdate(updatedDoc.petugas._id, { allowedPick: true });
+    if (updatedDoc.status === 'tidak selesai') {
+      await User.findByIdAndUpdate(updatedDoc.petugas._id, {
+        allowedPick: true,
+      });
+    } else {
+      await User.findByIdAndUpdate(updatedDoc.petugas._id, {
+        allowedPick: false,
+      });
+    }
     res.status(200).json({
       success: true,
       code: '200',
