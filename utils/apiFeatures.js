@@ -45,6 +45,14 @@ class APIFeatures {
         pars.pickup_time = {
           $gte: new Date(now.getFullYear(), now.getMonth()),
         };
+      } else if (pars.pickup_time === 'today') {
+        pars.pickup_time = {
+          $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        };
+      }
+      if (pars.pickup_time.$lte) {
+        const x = new Date(pars.pickup_time.$lte);
+        pars.pickup_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
       }
     }
 
