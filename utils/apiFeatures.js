@@ -1,3 +1,5 @@
+const { populate } = require('../models/pickupModel');
+
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
@@ -25,15 +27,29 @@ class APIFeatures {
     console.log(queryStr);
     const pars = JSON.parse(queryStr);
 
+    const now = new Date(Date.now());
     if (pars.pickup_time) {
-      // eslint-disable-next-line no-restricted-syntax
-      Object.keys(pars.pickup_time).forEach((key) => {
-        pars.pickup_time[key] = new Date(pars.pickup_time[key]);
-      });
+      if (pars.pickup_time === 'last7') {
+        pars.pickup_time = {
+          $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.pickup_time === 'last14') {
+        pars.pickup_time = {
+          $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.pickup_time === 'last30') {
+        pars.pickup_time = {
+          $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.pickup_time === 'this-month') {
+        pars.pickup_time = {
+          $gte: new Date(now.getFullYear(), now.getMonth()),
+        };
+      }
     }
 
     console.log(pars);
-    this.query = this.query.find(JSON.parse(queryStr));
+    this.query = this.query.find(pars);
     return this;
   }
 

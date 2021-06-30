@@ -144,7 +144,7 @@ exports.updateStatus = async (req, res, next) => {
     // const filteredBody = filterObj(req.body, fields);
     const updatedDoc = await Pickup.findByIdAndUpdate(
       req.params.id,
-      { status: req.body.status },
+      { status: req.body.status, desc: req.body.desc },
       {
         // jangan lupa run validators pada update
         new: true,
@@ -399,3 +399,5 @@ exports.getAverageWeekly = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getLastDays = base.getAll(Pickup);
