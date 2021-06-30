@@ -7,6 +7,7 @@ JWT_SECRET=rifil-samter-ultra-secure-secret
 JWT_EXPIRES_IN=30d
 JWT_COOKIE_EXPIRES_IN=90
 
+EMAIL_FROM=Rifil-Samter@gmail.com
 EMAIL_USERNAME=7d37cf6872a744
 EMAIL_PASSWORD=1626b88d16bc69
 EMAIL_HOST=smtp.mailtrap.io

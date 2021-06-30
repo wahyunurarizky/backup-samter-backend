@@ -133,7 +133,7 @@ exports.getAll = base.getAll(Pickup);
 exports.get = base.getOne(Pickup);
 exports.updateStatus = async (req, res, next) => {
   try {
-    if (req.body.status === 'selesai' || req.user.role === 'pegawai') {
+    if (req.body.status === 'selesai' && req.user.role !== 'operator tpa') {
       return next(
         new AppError('pegawai tidak bisa merubah menjadi selesai', 403)
       );
