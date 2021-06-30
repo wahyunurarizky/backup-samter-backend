@@ -25,10 +25,13 @@ const pickupSchema = new mongoose.Schema({
   arrival_time: Date,
   status: {
     type: String,
-    enum: ['menuju tpa', 'selesai', 'terlambat'],
+    enum: ['menuju tpa', 'selesai', 'tidak selesai'],
     default: 'menuju tpa',
   },
-  load: Number,
+  load: {
+    type: Number,
+    default: null,
+  },
   payment_method: {
     type: String,
     enum: ['perbulan', 'perangkut'],
@@ -37,12 +40,21 @@ const pickupSchema = new mongoose.Schema({
   operator_tpa: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
+    default: null,
   },
   tpa: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tpa',
+    default: null,
+  },
+  desc: {
+    type: String,
+    default: null,
   },
 });
+
+pickupSchema.index({ pickup_time: 1, arrival_time: 1 });
+pickupSchema.index({ '$**': 'text' });
 
 pickupSchema.pre('save', function (next) {
   const date = this._id;
@@ -53,7 +65,8 @@ pickupSchema.pre('save', function (next) {
 });
 
 pickupSchema.post('save', function (next) {
-  this._doc.pickup_time_local = this.pickup_time.toLocaleString('id-ID', {
+  this._doc.pickup_time_local = this.pickup_time.toLocaleString('en-GB', {
+    timeZone: 'Asia/jakarta',
     hour12: false,
   });
 });
@@ -64,25 +77,30 @@ pickupSchema.post(/^find/, (result) => {
     if (Array.isArray(result)) {
       result.forEach((e) => {
         if (e.pickup_time)
-          e._doc.pickup_time_local = e.pickup_time.toLocaleString('id-ID', {
+          e._doc.pickup_time_local = e.pickup_time.toLocaleString('en-GB', {
+            timeZone: 'Asia/jakarta',
             hour12: false,
           });
         if (e.arrival_time)
-          e._doc.arrival_time_local = e.arrival_time.toLocaleString('id-ID', {
+          e._doc.arrival_time_local = e.arrival_time.toLocaleString('en-GB', {
+            timeZone: 'Asia/jakarta',
             hour12: false,
           });
       });
     } else {
       if (result.pickup_time)
         result._doc.pickup_time_local = result.pickup_time.toLocaleString(
-          'id-ID',
-          { hour12: false }
+          'en-GB',
+          { timeZone: 'Asia/jakarta', hour12: false }
         );
-      if (result.arrival_time)
+      if (result.arrival_time) {
         result._doc.arrival_time_local = result.arrival_time.toLocaleString(
-          'id-ID',
-          { hour12: false }
+          'en-GB',
+          { timeZone: 'Asia/jakarta', hour12: false }
         );
+      } else {
+        result._doc.arrival_time_local = null;
+      }
     }
   }
 });
@@ -103,15 +121,15 @@ pickupSchema.pre(/^find/, function (next) {
     },
     {
       path: 'tps',
-      select: ['qr_id', 'name'],
+      select: ['qr_id', 'name', 'location'],
     },
     {
       path: 'operator_tpa',
-      select: ['name'],
+      select: ['name', 'NIP'],
     },
     {
       path: 'tpa',
-      select: ['name'],
+      select: ['name', 'qr_id', 'location'],
     },
   ]);
   next();

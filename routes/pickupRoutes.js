@@ -8,7 +8,8 @@ router.use(authController.protect);
 
 router
   .route('/')
-  .post(authController.restrictTo('petugas'), pickupController.createPickup);
+  .post(authController.restrictTo('petugas'), pickupController.createPickup)
+  .get(authController.restrictTo('pegawai'), pickupController.getAll);
 router
   .route('/getMyPickup')
   .get(
@@ -57,11 +58,8 @@ router
 
 router
   .route('/:id')
-  .get(authController.restrictTo('pegawai'), pickupController.get);
-
-router
-  .route('/')
-  .get(authController.restrictTo('pegawai'), pickupController.getAll);
+  .get(authController.restrictTo('pegawai'), pickupController.get)
+  .patch(authController.restrictTo('pegawai'), pickupController.updateStatus);
 
 router
   .route('/inputLoad/:id')

@@ -78,10 +78,12 @@ const userSchema = new mongoose.Schema({
   tpa: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tpa',
+    default: null,
   },
   tps: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tps',
+    default: null,
   },
   pns: {
     type: Boolean,
@@ -98,6 +100,9 @@ const userSchema = new mongoose.Schema({
   device_manufacture: String,
   device_model: String,
 });
+
+userSchema.index({ role: 1, pns: 1 });
+userSchema.index({ '$**': 'text' });
 
 // encrypt the password using 'bcryptjs'
 // Mongoose -> Document Middleware

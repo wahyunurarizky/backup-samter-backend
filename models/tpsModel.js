@@ -54,6 +54,8 @@ const tpsSchema = new mongoose.Schema(
   }
 );
 
+tpsSchema.index({ '$**': 'text' });
+
 tpsSchema.pre('save', function (next) {
   const id = this._id;
   const str = id.toString().toUpperCase();

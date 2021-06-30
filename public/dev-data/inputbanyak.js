@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 // const Tour = require('../../models/tourModel');
 // const User = require('../../models/userModel');
-const Tagihan = require('../models/tagihanModel');
-const Bak = require('../models/bakModel');
-const User = require('../models/userModel');
-const Pickup = require('../models/pickupModel');
-const Kendaraan = require('../models/kendaraanModel');
-const JenisKendaraan = require('../models/jenisKendaraanModel');
-const Tps = require('../models/tpsModel');
+const Tagihan = require('../../models/tagihanModel');
+const Bak = require('../../models/bakModel');
+const User = require('../../models/userModel');
+const Pickup = require('../../models/pickupModel');
+const Kendaraan = require('../../models/kendaraanModel');
+const JenisKendaraan = require('../../models/jenisKendaraanModel');
+const Tps = require('../../models/tpsModel');
 
 dotenv.config({ path: 'config.env' });
 

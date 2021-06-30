@@ -21,6 +21,7 @@ exports.createPickup = async (req, res, next) => {
       );
 
     const kendaraan = await Kendaraan.findOne({ qr_id: req.body.kendaraan });
+    console.log(kendaraan);
     if (!kendaraan)
       return next(
         new AppError(
@@ -47,7 +48,7 @@ exports.createPickup = async (req, res, next) => {
       bak: bak._id,
       kendaraan: kendaraan._id,
       tps: tps._id,
-      pickup_time: new Date(Date.now()),
+      pickup_time: Date.now(),
       arrival_time: null,
       payment_method: req.body.payment_method,
     });
@@ -130,6 +131,52 @@ exports.getMyPickup = async (req, res, next) => {
 
 exports.getAll = base.getAll(Pickup);
 exports.get = base.getOne(Pickup);
+exports.updateStatus = async (req, res, next) => {
+  try {
+    if (req.body.status === 'selesai' && req.user.role !== 'operator tpa') {
+      return next(new AppError('tidak diizinkan merubah menjadi selesai', 403));
+    }
+    const pickup = await Pickup.findById(req.params.id);
+    if (pickup.status === 'berhasil') {
+      return next(new AppError('status tidak bisa diubah', 403));
+    }
+
+    // const filteredBody = filterObj(req.body, fields);
+    const updatedDoc = await Pickup.findByIdAndUpdate(
+      req.params.id,
+      { status: req.body.status },
+      {
+        // jangan lupa run validators pada update
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!updatedDoc) {
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
+    }
+    if (updatedDoc.status === 'tidak selesai') {
+      await User.findByIdAndUpdate(updatedDoc.petugas._id, {
+        allowedPick: true,
+      });
+    } else {
+      await User.findByIdAndUpdate(updatedDoc.petugas._id, {
+        allowedPick: false,
+      });
+    }
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        doc: updatedDoc,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.getByQr = async (req, res, next) => {
   try {

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
-const sendEmail = require('../utils/email');
+const Email = require('../utils/email');
 
 // mereturn sebuah jwt token
 const createToken = (id) =>
@@ -206,11 +206,10 @@ exports.forgotPassword = async (req, res, next) => {
     const message = `Forgot your password ? submit a patch request with yout new password and passwordConfirm to : ${resetURL}.\nif you didn't forget your password please ignore this email`;
 
     try {
-      await sendEmail({
-        email: user.email,
-        subject: 'your password reset token (valid for 10 minutes)',
-        message,
-      });
+      const resetURL = `${req.protocol}://${req.get(
+        'host'
+      )}/api/v1/users/resetPassword/${resetToken}`;
+      await new Email(user, resetURL).sendPasswordReset();
 
       res.status(200).json({
         success: true,

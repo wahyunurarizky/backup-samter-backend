@@ -42,6 +42,7 @@ const tagihanSchema = new mongoose.Schema(
     collection: 'tagihan',
   }
 );
+tagihanSchema.index({ '$**': 'text' });
 
 tagihanSchema.pre(/^find/, function (next) {
   this.populate([
@@ -57,7 +58,8 @@ tagihanSchema.post(/^find/, (result) => {
   if (Array.isArray(result)) {
     result.forEach((e) => {
       if (!e.payment_month) return;
-      e._doc.payment_month_local = e.payment_month.toLocaleString('id-ID', {
+      e._doc.payment_month_local = e.payment_month.toLocaleString('en-GB', {
+        timeZone: 'Asia/jakarta',
         month: 'long',
         year: 'numeric',
       });
@@ -65,8 +67,8 @@ tagihanSchema.post(/^find/, (result) => {
   } else if (result) {
     if (!result.payment_month) return;
     result._doc.payment_month_local = result.payment_month.toLocaleString(
-      'id-ID',
-      { month: 'long', year: 'numeric' }
+      'en-GB',
+      { timeZone: 'Asia/jakarta', month: 'long', year: 'numeric' }
     );
   }
 });

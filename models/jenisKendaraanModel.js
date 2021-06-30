@@ -20,6 +20,7 @@ const jenisKendaraanSchema = new mongoose.Schema(
     collection: 'jenisKendaraan',
   }
 );
+jenisKendaraanSchema.index({ '$**': 'text' });
 
 const JenisKendaraan = mongoose.model('JenisKendaraan', jenisKendaraanSchema);
 module.exports = JenisKendaraan;
