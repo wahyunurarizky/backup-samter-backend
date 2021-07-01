@@ -58,11 +58,11 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({
       NIP: username,
     })
-      .select('+password')
-      .populate(
+      .populate([
+        { path: 'tpa', select: 'name' },
         { path: 'tps', select: 'name' },
-        { path: 'tpa', select: 'name' }
-      );
+      ])
+      .select('+password');
 
     if (!user || !(await user.correctPassword(password, user.password))) {
       return next(new AppError('NIP atau password salah', 401)); //401 is unauthorized
