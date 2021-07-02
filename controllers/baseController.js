@@ -123,6 +123,8 @@ exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
 
     console.log(popOptions);
     const docs = await features.query.populate(popOptions);
+    // const docs = await Model.fuzzySearch('cipu');
+
     // const docs = await features.query.explain();
 
     // docs.forEach((e) => {

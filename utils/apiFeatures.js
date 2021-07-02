@@ -1,4 +1,5 @@
 const { populate } = require('../models/pickupModel');
+const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 class APIFeatures {
   constructor(query, queryString) {
@@ -107,9 +108,16 @@ class APIFeatures {
       this.query = this.query.find({
         $text: { $search: this.queryString.search },
       });
+      // const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
+      // this.query = this.query.find({ name: this.queryString.search });
+      // this.fuzzySearch('ciput').then(console.log).catch(console.error);
     }
     return this;
   }
+
+  // escapeRegex(text) {
+  //   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  // }
 }
 
 module.exports = APIFeatures;

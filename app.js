@@ -27,7 +27,7 @@ const AppError = require('./utils/appError');
 
 const app = express();
 
-schedule.scheduleJob('1 1 1 1 * *', tagihanController.createTagihanMonthly);
+schedule.scheduleJob('1 1 1 3 * *', tagihanController.createTagihanMonthly);
 
 // Allow Cross-Origin requests
 app.use(cors());
