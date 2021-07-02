@@ -1,6 +1,3 @@
-const { populate } = require('../models/pickupModel');
-const mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
-
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;

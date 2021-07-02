@@ -5,7 +5,6 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const compression = require('compression');
 const schedule = require('node-schedule');
@@ -53,8 +52,6 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-// cookie parser
-app.use(cookieParser());
 
 // Data sanitization against Nosql query injection
 app.use(mongoSanitize());
