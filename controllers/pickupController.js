@@ -303,7 +303,7 @@ exports.isAlreadyDone = async (req, res, next) => {
       code: '200',
       message: 'OK',
       data: {
-        pickup,
+        selesai: pickup.status === 'selesai',
       },
     });
   } catch (err) {
