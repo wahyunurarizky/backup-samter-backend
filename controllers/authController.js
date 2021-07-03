@@ -229,8 +229,7 @@ exports.forgotPassword = async (req, res, next) => {
 
       return next(
         new AppError(
-          'terjadi kesalahan saat mengirim email, coba lagi beberapa saat' +
-            err,
+          'terjadi kesalahan saat mengirim email, coba lagi beberapa saat',
           500
         )
       );
