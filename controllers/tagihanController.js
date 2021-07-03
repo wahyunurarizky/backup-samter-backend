@@ -190,7 +190,7 @@ exports.createTagihanMonthly = async () => {
       payment_month: new Date(m.getFullYear(), m.getMonth()),
     });
 
-    await Tagihan.insertMany(
+    const x = await Tagihan.insertMany(
       pickup.filter((e) => {
         // console.log(tagihan);
         if (tagihan.filter((y) => `${y.tps._id}` === `${e.tps}`).length > 0) {
@@ -199,6 +199,7 @@ exports.createTagihanMonthly = async () => {
         return true;
       })
     );
+    console.log(x);
   } catch (err) {
     console.log(err);
   }

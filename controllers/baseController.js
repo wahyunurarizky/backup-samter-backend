@@ -121,7 +121,7 @@ exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
       .paginate()
       .search();
 
-    console.log(popOptions);
+    // console.log(popOptions);
     const docs = await features.query.populate(popOptions);
     // const docs = await Model.fuzzySearch('cipu');
 
