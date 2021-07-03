@@ -306,6 +306,7 @@ exports.isAlreadyDone = async (req, res, next) => {
         selesai: pickup.status === 'selesai',
       },
     });
+    console.log('itu diatas');
   } catch (err) {
     next(err);
   }
