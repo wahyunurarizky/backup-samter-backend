@@ -88,7 +88,7 @@ exports.pay = async (req, res, next) => {
     );
   }
 
-  if (tagihan.status === 'sudah dibayar') {
+  if (tagihan.status === 'sudah terbayar') {
     return next(new AppError('sudah berhasil dibayar', 401));
   }
 
@@ -180,7 +180,7 @@ exports.createTagihanMonthly = async () => {
         tps: e._id,
         totalLoad: 0,
         price: 0,
-        status: 'sudah dibayar',
+        status: 'sudah terbayar',
         payment_method: 'perbulan',
         payment_month: new Date(m.getFullYear(), m.getMonth()),
       });

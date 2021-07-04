@@ -293,7 +293,7 @@ exports.isAlreadyDone = async (req, res, next) => {
           403
         )
       );
-    const pickup = await Pickup.findById(req.params.id);
+    const pickup = await Pickup.findOne({ qr_id: req.params.id });
     if (!pickup) {
       return next(new AppError('id salah', 400));
     }
@@ -302,7 +302,7 @@ exports.isAlreadyDone = async (req, res, next) => {
       code: '200',
       message: 'OK',
       data: {
-        selesai: pickup.status === 'selesai',
+        pickup,
       },
     });
     console.log('itu diatas');

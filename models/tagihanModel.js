@@ -37,12 +37,24 @@ const tagihanSchema = new mongoose.Schema(
       type: Number,
       default: process.env.DEFAULT_MONTHLY_PAYMENT,
     },
+    qr_id: {
+      type: String,
+      unique: true,
+    },
   },
   {
     collection: 'tagihan',
   }
 );
 tagihanSchema.index({ '$**': 'text' });
+
+tagihanSchema.pre('save', function (next) {
+  const date = this._id;
+  const str = date.toString().toUpperCase();
+
+  this.qr_id = `TGN${str.substr(str.length - 6)}`;
+  next();
+});
 
 tagihanSchema.pre(/^find/, function (next) {
   this.populate([
