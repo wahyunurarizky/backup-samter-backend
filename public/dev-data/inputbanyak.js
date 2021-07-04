@@ -72,7 +72,7 @@ const importData = async () => {
       {
         $addFields: {
           tps: '$_id',
-          status: 'belum dibayar',
+          status: 'belum terbayar',
           payment_method: 'perbulan',
           payment_month: new Date(m.getFullYear(), m.getMonth()),
           price: {

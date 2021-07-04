@@ -97,7 +97,7 @@ exports.pay = async (req, res, next) => {
     req.params.id,
     {
       payment_photo: `${process.env.URL}img/bukti/${req.body.payment_photo}`,
-      status: 'menunggu konfirmasi',
+      status: 'belum terverifikasi',
       description: req.body.description,
     },
     {
@@ -139,7 +139,7 @@ exports.createTagihanMonthly = async () => {
       {
         $addFields: {
           tps: '$_id',
-          status: 'belum dibayar',
+          status: 'belum terbayar',
           payment_method: 'perbulan',
           payment_month: new Date(m.getFullYear(), m.getMonth()),
           price: {

@@ -21,7 +21,6 @@ exports.createPickup = async (req, res, next) => {
       );
 
     const kendaraan = await Kendaraan.findOne({ qr_id: req.body.kendaraan });
-    console.log(kendaraan);
     if (!kendaraan)
       return next(
         new AppError(
@@ -50,7 +49,7 @@ exports.createPickup = async (req, res, next) => {
       tps: tps._id,
       pickup_time: Date.now(),
       arrival_time: null,
-      payment_method: req.body.payment_method,
+      payment_method: tps.payment_method,
     });
 
     await User.findByIdAndUpdate(req.user._id, { allowedPick: false });
@@ -232,7 +231,7 @@ exports.inputLoad = async (req, res, next) => {
     if (checkPickup.payment_method === 'perangkut') {
       await Tagihan.create({
         pickup: checkPickup._id,
-        status: 'belum dibayar',
+        status: 'belum terbayar',
         payment_method: 'perangkut',
         price: updatedPickup.load * process.env.DEFAULT_PRICE_PER_KG,
         tps: checkPickup.tps,

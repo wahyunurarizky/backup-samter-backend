@@ -48,6 +48,11 @@ const tpsSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    payment_method: {
+      type: String,
+      enum: ['perangkut', 'perbulan'],
+      default: 'perbulan',
+    },
   },
   {
     collection: 'tps',

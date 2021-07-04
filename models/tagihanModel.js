@@ -12,12 +12,12 @@ const tagihanSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: [
-        'belum dibayar',
-        'menunggu konfirmasi',
-        'sudah dibayar',
+        'belum terbayar',
+        'belum terverifikasi',
+        'terverifikasi',
         'tidak terverifikasi',
       ],
-      default: 'belum dibayar',
+      default: 'belum terbayar',
     },
     payment_method: {
       type: String,
