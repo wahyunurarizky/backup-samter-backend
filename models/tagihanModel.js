@@ -75,12 +75,21 @@ tagihanSchema.post(/^find/, (result) => {
         month: 'long',
         year: 'numeric',
       });
+      e._doc.payment_time_local = e.payment_month.toLocaleString('en-GB', {
+        timeZone: 'Asia/jakarta',
+      });
     });
   } else if (result) {
     if (!result.payment_month) return;
     result._doc.payment_month_local = result.payment_month.toLocaleString(
       'en-GB',
       { timeZone: 'Asia/jakarta', month: 'long', year: 'numeric' }
+    );
+    result._doc.payment_time_local = result.payment_month.toLocaleString(
+      'en-GB',
+      {
+        timeZone: 'Asia/jakarta',
+      }
     );
   }
 });

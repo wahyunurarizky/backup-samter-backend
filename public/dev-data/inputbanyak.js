@@ -154,9 +154,21 @@ const deleteData = async () => {
   process.exit();
 };
 
+const trigersave = async () => {
+  const tag = await Tagihan.find();
+
+  tag.forEach(async (e) => {
+    const b = await Tagihan.findById(e._id);
+    b.save({ validateBeforeSave: false });
+  });
+};
+
 if (process.argv[2] === '--import') {
   importData();
 }
 if (process.argv[2] === '--delete') {
   deleteData();
+}
+if (process.argv[2] === '--trigersave') {
+  trigersave();
 }
