@@ -5,6 +5,7 @@ const tpsController = require('../controllers/tpsController');
 const authController = require('../controllers/authController');
 
 router.use(authController.protect);
+router.use(authController.restrictTo('pegawai', 'pimpinan', 'superadmin'));
 
 router.route('/').get(tpsController.getAll).post(tpsController.create);
 router.route('/get-tps-total').get(tpsController.getTotalTps);

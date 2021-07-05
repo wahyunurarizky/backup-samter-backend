@@ -12,12 +12,12 @@ const tagihanSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: [
-        'belum dibayar',
-        'menunggu konfirmasi',
-        'sudah dibayar',
+        'belum terbayar',
+        'belum terverifikasi',
+        'terverifikasi',
         'tidak terverifikasi',
       ],
-      default: 'belum dibayar',
+      default: 'belum terbayar',
     },
     payment_method: {
       type: String,
@@ -37,12 +37,24 @@ const tagihanSchema = new mongoose.Schema(
       type: Number,
       default: process.env.DEFAULT_MONTHLY_PAYMENT,
     },
+    qr_id: {
+      type: String,
+      unique: true,
+    },
   },
   {
     collection: 'tagihan',
   }
 );
 tagihanSchema.index({ '$**': 'text' });
+
+tagihanSchema.pre('save', function (next) {
+  const date = this._id;
+  const str = date.toString().toUpperCase();
+
+  this.qr_id = `TGN${str.substr(str.length - 6)}`;
+  next();
+});
 
 tagihanSchema.pre(/^find/, function (next) {
   this.populate([
@@ -63,12 +75,21 @@ tagihanSchema.post(/^find/, (result) => {
         month: 'long',
         year: 'numeric',
       });
+      e._doc.payment_time_local = e.payment_month.toLocaleString('en-GB', {
+        timeZone: 'Asia/jakarta',
+      });
     });
   } else if (result) {
     if (!result.payment_month) return;
     result._doc.payment_month_local = result.payment_month.toLocaleString(
       'en-GB',
       { timeZone: 'Asia/jakarta', month: 'long', year: 'numeric' }
+    );
+    result._doc.payment_time_local = result.payment_month.toLocaleString(
+      'en-GB',
+      {
+        timeZone: 'Asia/jakarta',
+      }
     );
   }
 });

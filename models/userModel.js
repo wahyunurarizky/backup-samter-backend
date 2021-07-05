@@ -93,10 +93,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  allowedPick: {
-    type: Boolean,
-    default: true,
-  },
   golongan: String,
   jabatan: String,
   work_unit: String,

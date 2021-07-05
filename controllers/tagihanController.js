@@ -88,7 +88,7 @@ exports.pay = async (req, res, next) => {
     );
   }
 
-  if (tagihan.status === 'sudah dibayar') {
+  if (tagihan.status === 'sudah terbayar') {
     return next(new AppError('sudah berhasil dibayar', 401));
   }
 
@@ -97,7 +97,7 @@ exports.pay = async (req, res, next) => {
     req.params.id,
     {
       payment_photo: `${process.env.URL}img/bukti/${req.body.payment_photo}`,
-      status: 'menunggu konfirmasi',
+      status: 'belum terverifikasi',
       description: req.body.description,
     },
     {
@@ -139,7 +139,7 @@ exports.createTagihanMonthly = async () => {
       {
         $addFields: {
           tps: '$_id',
-          status: 'belum dibayar',
+          status: 'belum terbayar',
           payment_method: 'perbulan',
           payment_month: new Date(m.getFullYear(), m.getMonth()),
           price: {
@@ -180,7 +180,7 @@ exports.createTagihanMonthly = async () => {
         tps: e._id,
         totalLoad: 0,
         price: 0,
-        status: 'sudah dibayar',
+        status: 'sudah terbayar',
         payment_method: 'perbulan',
         payment_month: new Date(m.getFullYear(), m.getMonth()),
       });
@@ -190,7 +190,7 @@ exports.createTagihanMonthly = async () => {
       payment_month: new Date(m.getFullYear(), m.getMonth()),
     });
 
-    await Tagihan.insertMany(
+    const x = await Tagihan.insertMany(
       pickup.filter((e) => {
         // console.log(tagihan);
         if (tagihan.filter((y) => `${y.tps._id}` === `${e.tps}`).length > 0) {
@@ -199,6 +199,7 @@ exports.createTagihanMonthly = async () => {
         return true;
       })
     );
+    console.log(x);
   } catch (err) {
     console.log(err);
   }

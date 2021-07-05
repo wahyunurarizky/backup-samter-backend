@@ -21,7 +21,6 @@ exports.createPickup = async (req, res, next) => {
       );
 
     const kendaraan = await Kendaraan.findOne({ qr_id: req.body.kendaraan });
-    console.log(kendaraan);
     if (!kendaraan)
       return next(
         new AppError(
@@ -50,7 +49,7 @@ exports.createPickup = async (req, res, next) => {
       tps: tps._id,
       pickup_time: Date.now(),
       arrival_time: null,
-      payment_method: req.body.payment_method,
+      payment_method: tps.payment_method,
     });
 
     await User.findByIdAndUpdate(req.user._id, { allowedPick: false });
@@ -144,7 +143,7 @@ exports.updateStatus = async (req, res, next) => {
     // const filteredBody = filterObj(req.body, fields);
     const updatedDoc = await Pickup.findByIdAndUpdate(
       req.params.id,
-      { status: req.body.status },
+      { status: req.body.status, desc: req.body.desc },
       {
         // jangan lupa run validators pada update
         new: true,
@@ -232,7 +231,7 @@ exports.inputLoad = async (req, res, next) => {
     if (checkPickup.payment_method === 'perangkut') {
       await Tagihan.create({
         pickup: checkPickup._id,
-        status: 'belum dibayar',
+        status: 'belum terbayar',
         payment_method: 'perangkut',
         price: updatedPickup.load * process.env.DEFAULT_PRICE_PER_KG,
         tps: checkPickup.tps,
@@ -294,7 +293,7 @@ exports.isAlreadyDone = async (req, res, next) => {
           403
         )
       );
-    const pickup = await Pickup.findById(req.params.id);
+    const pickup = await Pickup.findOne({ qr_id: req.params.id });
     if (!pickup) {
       return next(new AppError('id salah', 400));
     }
@@ -306,6 +305,7 @@ exports.isAlreadyDone = async (req, res, next) => {
         pickup,
       },
     });
+    console.log('itu diatas');
   } catch (err) {
     next(err);
   }
@@ -399,3 +399,5 @@ exports.getAverageWeekly = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getLastDays = base.getAll(Pickup);

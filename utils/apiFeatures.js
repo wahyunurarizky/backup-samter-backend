@@ -25,15 +25,37 @@ class APIFeatures {
     console.log(queryStr);
     const pars = JSON.parse(queryStr);
 
+    const now = new Date(Date.now());
     if (pars.pickup_time) {
-      // eslint-disable-next-line no-restricted-syntax
-      Object.keys(pars.pickup_time).forEach((key) => {
-        pars.pickup_time[key] = new Date(pars.pickup_time[key]);
-      });
+      if (pars.pickup_time === 'last7') {
+        pars.pickup_time = {
+          $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.pickup_time === 'last14') {
+        pars.pickup_time = {
+          $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.pickup_time === 'last30') {
+        pars.pickup_time = {
+          $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.pickup_time === 'this-month') {
+        pars.pickup_time = {
+          $gte: new Date(now.getFullYear(), now.getMonth()),
+        };
+      } else if (pars.pickup_time === 'today') {
+        pars.pickup_time = {
+          $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        };
+      }
+      if (pars.pickup_time.$lte) {
+        const x = new Date(pars.pickup_time.$lte);
+        pars.pickup_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
+      }
     }
 
     console.log(pars);
-    this.query = this.query.find(JSON.parse(queryStr));
+    this.query = this.query.find(pars);
     return this;
   }
 
@@ -83,9 +105,16 @@ class APIFeatures {
       this.query = this.query.find({
         $text: { $search: this.queryString.search },
       });
+      // const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
+      // this.query = this.query.find({ name: this.queryString.search });
+      // this.fuzzySearch('ciput').then(console.log).catch(console.error);
     }
     return this;
   }
+
+  // escapeRegex(text) {
+  //   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  // }
 }
 
 module.exports = APIFeatures;
