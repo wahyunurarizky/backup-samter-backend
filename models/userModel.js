@@ -48,10 +48,10 @@ const userSchema = new mongoose.Schema({
     ],
     required: [true, 'Please fill role user'],
   },
-  active: {
+  isDeleted: {
     type: Boolean,
-    default: true,
-    select: false,
+    default: false,
+    select: true,
   },
   NIP: {
     type: String,
@@ -86,6 +86,10 @@ const userSchema = new mongoose.Schema({
     default: null,
   },
   pns: {
+    type: Boolean,
+    default: true,
+  },
+  allowedPick: {
     type: Boolean,
     default: true,
   },
@@ -131,7 +135,7 @@ userSchema.pre('save', function (next) {
 
 userSchema.pre(/^find/, function (next) {
   // this points to the current query
-  this.find({ active: { $ne: false } });
+  this.find({ isDeleted: { $ne: true } });
   next();
 });
 

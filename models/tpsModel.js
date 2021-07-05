@@ -48,6 +48,10 @@ const tpsSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     collection: 'tps',
