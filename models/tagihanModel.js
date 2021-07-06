@@ -6,7 +6,7 @@ const tagihanSchema = new mongoose.Schema(
     payment_photo: String,
     payment_time: {
       type: Date,
-      default: null,
+      default: Date.now,
     },
     payment_payed_time: {
       type: Date,
