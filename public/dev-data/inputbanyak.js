@@ -113,7 +113,7 @@ const importData = async () => {
         tps: e._id,
         totalLoad: 0,
         price: 0,
-        status: 'sudah terbayar',
+        status: 'terverifikasi',
         payment_method: 'perbulan',
         payment_month: new Date(m.getFullYear(), m.getMonth()),
       });

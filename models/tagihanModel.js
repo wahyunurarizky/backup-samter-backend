@@ -4,7 +4,14 @@ const tagihanSchema = new mongoose.Schema(
   {
     price: Number,
     payment_photo: String,
-    payment_time: Date,
+    payment_time: {
+      type: Date,
+      default: null,
+    },
+    payment_payed_time: {
+      type: Date,
+      default: null,
+    },
     payment_month: {
       type: Date,
       default: null,
@@ -59,6 +66,15 @@ tagihanSchema.pre('save', function (next) {
   this.qr_id = `TGN${str.substr(str.length - 6)}`;
   next();
 });
+tagihanSchema.pre('insertMany', function (next) {
+  console.log(this);
+
+  // const date = this._id;
+  // const str = date.toString().toUpperCase();
+
+  // this.qr_id = `TGN${str.substr(str.length - 6)}`;
+  next();
+});
 
 tagihanSchema.pre(/^find/, function (next) {
   this.populate([
@@ -73,28 +89,46 @@ tagihanSchema.pre(/^find/, function (next) {
 tagihanSchema.post(/^find/, (result) => {
   if (Array.isArray(result)) {
     result.forEach((e) => {
-      if (!e.payment_month) return;
-      e._doc.payment_month_local = e.payment_month.toLocaleString('id-ID', {
-        timeZone: 'Asia/jakarta',
-        month: 'long',
-        year: 'numeric',
-      });
-      e._doc.payment_time_local = e.payment_month.toLocaleString('en-GB', {
-        timeZone: 'Asia/jakarta',
-      });
+      if (e.payment_month) {
+        e._doc.payment_month_local = e.payment_month.toLocaleString('id-ID', {
+          timeZone: 'Asia/jakarta',
+          month: 'long',
+          year: 'numeric',
+        });
+      }
+      if (e.payment_time) {
+        e._doc.payment_time_local = e.payment_time.toLocaleString('en-GB', {
+          timeZone: 'Asia/jakarta',
+        });
+      }
+      if (e.payment_payed_time) {
+        e._doc.payment_payed_time_local = e.payment_payed_time.toLocaleString(
+          'en-GB',
+          {
+            timeZone: 'Asia/jakarta',
+          }
+        );
+      }
     });
   } else if (result) {
-    if (!result.payment_month) return;
-    result._doc.payment_month_local = result.payment_month.toLocaleString(
-      'id-ID',
-      { timeZone: 'Asia/jakarta', month: 'long', year: 'numeric' }
-    );
-    result._doc.payment_time_local = result.payment_month.toLocaleString(
-      'en-GB',
-      {
-        timeZone: 'Asia/jakarta',
-      }
-    );
+    if (result.payment_month)
+      result._doc.payment_month_local = result.payment_month.toLocaleString(
+        'id-ID',
+        { timeZone: 'Asia/jakarta', month: 'long', year: 'numeric' }
+      );
+
+    if (result.payment_time)
+      result._doc.payment_time_local = result.payment_time.toLocaleString(
+        'en-GB',
+        {
+          timeZone: 'Asia/jakarta',
+        }
+      );
+    if (result.payment_payed_time)
+      result._doc.payment_payed_time_local =
+        result.payment_payed_time.toLocaleString('en-GB', {
+          timeZone: 'Asia/jakarta',
+        });
   }
 });
 
