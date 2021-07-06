@@ -26,6 +26,9 @@ class APIFeatures {
     const pars = JSON.parse(queryStr);
 
     const now = new Date(Date.now());
+
+    // const timeType = ['pickup_time', 'payment_time']
+
     if (pars.pickup_time) {
       if (pars.pickup_time === 'last7') {
         pars.pickup_time = {
@@ -53,6 +56,35 @@ class APIFeatures {
         pars.pickup_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
       }
     }
+    if (pars.payment_time) {
+      if (pars.payment_time === 'last7') {
+        pars.payment_time = {
+          $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.payment_time === 'last14') {
+        pars.payment_time = {
+          $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.payment_time === 'last30') {
+        pars.payment_time = {
+          $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.payment_time === 'this-month') {
+        pars.payment_time = {
+          $gte: new Date(now.getFullYear(), now.getMonth()),
+        };
+      } else if (pars.payment_time === 'today') {
+        pars.payment_time = {
+          $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        };
+      }
+      if (pars.payment_time.$lte) {
+        const x = new Date(pars.payment_time.$lte);
+        pars.payment_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
+      }
+    }
+
+    // if(pars.payment_time)
 
     console.log(pars);
     this.query = this.query.find(pars);
