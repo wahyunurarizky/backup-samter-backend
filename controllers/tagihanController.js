@@ -98,7 +98,7 @@ exports.pay = async (req, res, next) => {
     {
       payment_photo: `${process.env.URL}img/bukti/${req.body.payment_photo}`,
       status: 'belum terverifikasi',
-      description: req.body.description,
+      pembayar: req.user.name,
     },
     {
       new: true,
