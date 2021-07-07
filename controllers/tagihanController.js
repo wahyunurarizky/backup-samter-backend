@@ -88,7 +88,7 @@ exports.pay = async (req, res, next) => {
     );
   }
 
-  if (tagihan.status === 'sudah terbayar') {
+  if (tagihan.status === 'terverifikasi') {
     return next(new AppError('sudah berhasil dibayar', 401));
   }
 
@@ -98,7 +98,8 @@ exports.pay = async (req, res, next) => {
     {
       payment_photo: `${process.env.URL}img/bukti/${req.body.payment_photo}`,
       status: 'belum terverifikasi',
-      description: req.body.description,
+      pembayar: req.user.name,
+      payment_payed_time: Date.now(),
     },
     {
       new: true,
@@ -119,7 +120,7 @@ exports.createTagihanMonthly = async () => {
   try {
     const m = new Date(Date.now());
 
-    const pickup = await Pickup.aggregate([
+    let pickup = await Pickup.aggregate([
       {
         $match: {
           payment_method: 'perbulan',
@@ -142,6 +143,7 @@ exports.createTagihanMonthly = async () => {
           status: 'belum terbayar',
           payment_method: 'perbulan',
           payment_month: new Date(m.getFullYear(), m.getMonth()),
+          payment_time: new Date(m.getFullYear(), m.getMonth()),
           price: {
             $multiply: ['$totalLoad', process.env.DEFAULT_PRICE_PER_KG * 1],
           },
@@ -180,9 +182,10 @@ exports.createTagihanMonthly = async () => {
         tps: e._id,
         totalLoad: 0,
         price: 0,
-        status: 'sudah terbayar',
+        status: 'terverifikasi',
         payment_method: 'perbulan',
         payment_month: new Date(m.getFullYear(), m.getMonth()),
+        payment_time: new Date(m.getFullYear(), m.getMonth()),
       });
     });
 
@@ -190,16 +193,18 @@ exports.createTagihanMonthly = async () => {
       payment_month: new Date(m.getFullYear(), m.getMonth()),
     });
 
-    const x = await Tagihan.insertMany(
-      pickup.filter((e) => {
-        // console.log(tagihan);
-        if (tagihan.filter((y) => `${y.tps._id}` === `${e.tps}`).length > 0) {
-          return false;
-        }
-        return true;
-      })
-    );
-    console.log(x);
+    pickup = pickup.filter((e) => {
+      // console.log(tagihan);
+      if (tagihan.filter((y) => `${y.tps._id}` === `${e.tps}`).length > 0) {
+        return false;
+      }
+      return true;
+    });
+    console.log(pickup);
+
+    pickup.forEach(async (e) => {
+      await Tagihan.create(e);
+    });
   } catch (err) {
     console.log(err);
   }

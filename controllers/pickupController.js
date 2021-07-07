@@ -233,6 +233,7 @@ exports.inputLoad = async (req, res, next) => {
         pickup: checkPickup._id,
         status: 'belum terbayar',
         payment_method: 'perangkut',
+        payment_time: updatedPickup.arrival_time,
         price: updatedPickup.load * process.env.DEFAULT_PRICE_PER_KG,
         tps: checkPickup.tps,
       });
@@ -253,6 +254,9 @@ exports.inputLoad = async (req, res, next) => {
 
 exports.generateQr = async (req, res, next) => {
   try {
+    if (req.user.allowedPick) {
+      return next(new AppError('tidak ada data', 404));
+    }
     const doc = await Pickup.findOne({
       petugas: req.user._id,
       status: 'menuju tpa',
@@ -262,12 +266,14 @@ exports.generateQr = async (req, res, next) => {
       return next(new AppError('tidak ada data', 404));
     }
 
-    console.log(doc.qr_id);
     const stringdata = JSON.stringify(doc.qr_id);
 
     QRCode.toDataURL(stringdata, (err, imgUrl) => {
       const pickup = {
         pickup_id: doc._id,
+        qr_id_bak: doc.bak.qr_id,
+        qr_id_kendaraan: doc.kendaraan.qr_id,
+        qr_id_tps: doc.tps.qr_id,
         imgUrl: imgUrl,
       };
       if (err) return next(new AppError('Error Occured', 400));
