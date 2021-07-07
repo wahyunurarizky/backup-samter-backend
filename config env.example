@@ -1,6 +1,6 @@
 NODE_ENV=development 
 PORT=3000
-DATABASE=mongodb+srv://dbJabbar:<PASSWORD>@cluster0.vml51.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+DATABASE=mongodb+srv://dbJabbar:<PASSWORD>@cluster0.vml51.mongodb.net/samterDevDb?retryWrites=true&w=majority
 DATABASE_PASSWORD=TLOovYVTUMyNBiKD
 
 JWT_SECRET=rifil-samter-ultra-secure-secret
