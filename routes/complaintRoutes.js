@@ -12,6 +12,7 @@ router
     complaintController.resizeComplaintPhoto,
     complaintController.create
   );
+router.route('/export').get(complaintController.exportPdf);
 router
   .route('/:id')
   .get(complaintController.get)

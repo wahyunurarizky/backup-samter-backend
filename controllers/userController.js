@@ -18,13 +18,14 @@ const filterObj = (obj, allowedFields) => {
 // get me dan delete me
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
+  req.now = new Date(Date.now());
   next();
 };
 
 exports.deleteMe = async (req, res, next) => {
   try {
     await User.findByIdAndUpdate(req.user.id, {
-      active: false,
+      isDeleted: false,
     });
 
     res.status(204).json({

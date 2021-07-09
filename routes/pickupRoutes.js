@@ -17,6 +17,13 @@ router
     pickupController.getMyPickup
   );
 router
+  .route('/createPickupManual')
+  .post(
+    authController.restrictTo('operator tpa'),
+    pickupController.createPickup,
+    pickupController.inputLoad
+  );
+router
   .route('/qr/:qr_id')
   .get(
     authController.restrictTo('petugas', 'operator tpa'),

@@ -5,7 +5,6 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const compression = require('compression');
 const schedule = require('node-schedule');
@@ -27,7 +26,7 @@ const AppError = require('./utils/appError');
 
 const app = express();
 
-schedule.scheduleJob('1 1 1 1 * *', tagihanController.createTagihanMonthly);
+schedule.scheduleJob('1 42 17 6 * *', tagihanController.createTagihanMonthly);
 
 // Allow Cross-Origin requests
 app.use(cors());
@@ -53,8 +52,6 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-// cookie parser
-app.use(cookieParser());
 
 // Data sanitization against Nosql query injection
 app.use(mongoSanitize());
@@ -63,7 +60,7 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // Prevent parameter pollution
-app.use(hpp({ whitelist: ['pickup_time, arrival_time', 'status'] }));
+app.use(hpp({ whitelist: ['pickup_time, arrival_time', 'status', 'time'] }));
 
 app.use(compression());
 

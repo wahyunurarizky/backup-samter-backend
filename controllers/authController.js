@@ -57,7 +57,12 @@ exports.login = async (req, res, next) => {
     // 2) check if user exist and password is correct
     const user = await User.findOne({
       NIP: username,
-    }).select('+password');
+    })
+      .populate([
+        { path: 'tpa', select: 'name' },
+        { path: 'tps', select: 'name' },
+      ])
+      .select('+password');
 
     if (!user || !(await user.correctPassword(password, user.password))) {
       return next(new AppError('NIP atau password salah', 401)); //401 is unauthorized
@@ -114,18 +119,18 @@ exports.login = async (req, res, next) => {
 //   }
 // };
 
-exports.logout = (req, res) => {
-  res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-  res.status(200).json({
-    success: true,
-    code: '200',
-    message: 'OK',
-    data: null,
-  });
-};
+// exports.logout = (req, res) => {
+//   res.cookie('jwt', 'loggedout', {
+//     expires: new Date(Date.now() + 10 * 1000),
+//     httpOnly: true,
+//   });
+//   res.status(200).json({
+//     success: true,
+//     code: '200',
+//     message: 'OK',
+//     data: null,
+//   });
+// };
 
 exports.protect = async (req, res, next) => {
   try {
@@ -135,9 +140,10 @@ exports.protect = async (req, res, next) => {
       req.headers.authorization.startsWith('Bearer')
     ) {
       token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies.jwt) {
-      token = req.cookies.jwt;
     }
+    // else if (req.cookies.jwt) {
+    //   token = req.cookies.jwt;
+    // }
 
     if (!token) {
       return next(new AppError('silahkan login untuk mendapatkan akses', 401));
@@ -159,7 +165,7 @@ exports.protect = async (req, res, next) => {
     // }
 
     req.user = user;
-    res.locals.user = user;
+    // res.locals.user = user;
 
     next();
   } catch (err) {
@@ -198,12 +204,12 @@ exports.forgotPassword = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     // 3) send it to users email
-    const resetURL = `${req.protocol}://${req.get(
-      'host'
-    )}/api/v1/users/resetPassword/${resetToken}`;
-    console.log(resetURL);
+    // const resetURL = `${req.protocol}://${req.get(
+    //   'host'
+    // )}/api/v1/users/resetPassword/${resetToken}`;
+    // console.log(resetURL);
 
-    const message = `Forgot your password ? submit a patch request with yout new password and passwordConfirm to : ${resetURL}.\nif you didn't forget your password please ignore this email`;
+    // const message = `Forgot your password ? submit a patch request with yout new password and passwordConfirm to : ${resetURL}.\nif you didn't forget your password please ignore this email`;
 
     try {
       const resetURL = `${req.protocol}://${req.get(

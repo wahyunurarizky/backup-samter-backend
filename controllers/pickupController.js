@@ -20,8 +20,9 @@ exports.createPickup = async (req, res, next) => {
         )
       );
 
+    console.log(req.body.kendaraan);
     const kendaraan = await Kendaraan.findOne({ qr_id: req.body.kendaraan });
-    console.log(kendaraan);
+
     if (!kendaraan)
       return next(
         new AppError(
@@ -42,16 +43,34 @@ exports.createPickup = async (req, res, next) => {
         new AppError('BAK Tidak Ditemukan, harap masukan ID yg benar', 404)
       );
 
+    let petugas = req.user._id;
+    if (req.user.role === 'operator tpa') {
+      const petugas_temp = await User.findOne({ NIP: req.body.NIP_petugas });
+      if (!petugas_temp)
+        return next(
+          new AppError(
+            'petugas Tidak Ditemukan, harap masukan NIP yg benar',
+            404
+          )
+        );
+      petugas = petugas_temp._id;
+    }
+
     const pickup = await Pickup.create({
       // qr_id,
-      petugas: req.user._id,
+      petugas,
       bak: bak._id,
       kendaraan: kendaraan._id,
       tps: tps._id,
       pickup_time: Date.now(),
       arrival_time: null,
-      payment_method: req.body.payment_method,
+      payment_method: tps.payment_method,
     });
+
+    if (req.user.role === 'operator tpa') {
+      req.pickup = pickup;
+      return next();
+    }
 
     await User.findByIdAndUpdate(req.user._id, { allowedPick: false });
     // await Tagihan.create({});
@@ -68,7 +87,10 @@ exports.createPickup = async (req, res, next) => {
         code: '201',
         message: 'OK',
         data: {
-          pickup,
+          pickup: {
+            _id: pickup._id,
+            qr_id: pickup.qr_id,
+          },
           qrdata,
         },
       });
@@ -144,7 +166,7 @@ exports.updateStatus = async (req, res, next) => {
     // const filteredBody = filterObj(req.body, fields);
     const updatedDoc = await Pickup.findByIdAndUpdate(
       req.params.id,
-      { status: req.body.status },
+      { status: req.body.status, desc: req.body.desc },
       {
         // jangan lupa run validators pada update
         new: true,
@@ -205,7 +227,14 @@ exports.getByQr = async (req, res, next) => {
 
 exports.inputLoad = async (req, res, next) => {
   try {
-    const checkPickup = await Pickup.findById(req.params.id);
+    let checkPickup;
+    if (!req.params.id) {
+      checkPickup = req.pickup;
+      req.params.id = checkPickup._id;
+    } else {
+      checkPickup = await Pickup.findById(req.params.id);
+    }
+
     if (checkPickup.status === 'selesai')
       return next(new AppError('id pickup telah selesai digunakan', 400));
 
@@ -232,8 +261,9 @@ exports.inputLoad = async (req, res, next) => {
     if (checkPickup.payment_method === 'perangkut') {
       await Tagihan.create({
         pickup: checkPickup._id,
-        status: 'belum dibayar',
+        status: 'belum terbayar',
         payment_method: 'perangkut',
+        payment_time: updatedPickup.arrival_time,
         price: updatedPickup.load * process.env.DEFAULT_PRICE_PER_KG,
         tps: checkPickup.tps,
       });
@@ -254,6 +284,9 @@ exports.inputLoad = async (req, res, next) => {
 
 exports.generateQr = async (req, res, next) => {
   try {
+    if (req.user.allowedPick) {
+      return next(new AppError('tidak ada data', 404));
+    }
     const doc = await Pickup.findOne({
       petugas: req.user._id,
       status: 'menuju tpa',
@@ -263,12 +296,15 @@ exports.generateQr = async (req, res, next) => {
       return next(new AppError('tidak ada data', 404));
     }
 
-    console.log(doc.qr_id);
     const stringdata = JSON.stringify(doc.qr_id);
 
     QRCode.toDataURL(stringdata, (err, imgUrl) => {
       const pickup = {
         pickup_id: doc._id,
+        qr_id_bak: doc.bak.qr_id,
+        qr_id_kendaraan: doc.kendaraan.qr_id,
+        qr_id_tps: doc.tps.qr_id,
+        qr_id_pickup: doc.qr_id,
         imgUrl: imgUrl,
       };
       if (err) return next(new AppError('Error Occured', 400));
@@ -306,6 +342,7 @@ exports.isAlreadyDone = async (req, res, next) => {
         pickup,
       },
     });
+    console.log('itu diatas');
   } catch (err) {
     next(err);
   }
@@ -395,6 +432,58 @@ exports.getAverageWeekly = async (req, res, next) => {
         week4: 2100,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getLastDays = base.getAll(Pickup);
+
+exports.createPickupByTPA = async (req, res, next) => {
+  try {
+    const kendaraan = await Kendaraan.findOne({ qr_id: req.body.kendaraan });
+    if (!kendaraan)
+      return next(
+        new AppError(
+          'Kendaraan Tidak Ditemukan, harap masukan ID yg benar',
+          404
+        )
+      );
+
+    const tps = await Tps.findOne({ qr_id: req.body.tps });
+    if (!tps)
+      return next(
+        new AppError('TPS Tidak Ditemukan, harap masukan ID yg benar', 404)
+      );
+
+    const bak = await Bak.findOne({ qr_id: req.body.bak });
+    if (!bak)
+      return next(
+        new AppError('BAK Tidak Ditemukan, harap masukan ID yg benar', 404)
+      );
+
+    const petugas = await User.findOne({ NIP: req.body.NIP_petugas });
+    if (!petugas)
+      return next(
+        new AppError('petugas Tidak Ditemukan, harap masukan NIP yg benar', 404)
+      );
+
+    const pickup = await Pickup.create({
+      // qr_id,
+      petugas: petugas._id,
+      bak: bak._id,
+      kendaraan: kendaraan._id,
+      tps: tps._id,
+      pickup_time: Date.now(),
+      arrival_time: Date.now(),
+      payment_method: tps.payment_method,
+    });
+
+    req.pickup = pickup;
+    next();
+
+    // await User.findByIdAndUpdate(req.user._id, { allowedPick: false });
+    // await Tagihan.create({});
   } catch (err) {
     next(err);
   }
