@@ -105,6 +105,13 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
       message: 'OK',
       data: {
         doc,
+        time_now_local: req.now.toLocaleString('id-ID', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          timeZone: 'Asia/Jakarta',
+        }),
       },
     });
   } catch (error) {
