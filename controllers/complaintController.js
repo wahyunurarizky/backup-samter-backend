@@ -48,7 +48,7 @@ exports.create = async (req, res, next) => {
 };
 exports.getAll = base.getAll(Complaint);
 exports.get = base.getOne(Complaint);
-exports.update = base.updateOne(Complaint, 'status', 'solution');
+exports.update = base.updateOne(Complaint, 'status', 'solution', 'endTime');
 
 const multerStorage = multer.memoryStorage();
 
@@ -89,6 +89,11 @@ exports.resizeComplaintPhoto = async (req, res, next) => {
 
 exports.exportPdf = async (req, res, next) => {
   try {
+    const date = new Date(Date.now());
+    // date.setDate(date.getDate() + 1);
+    // req.query.time[lte] = date.toLocaleString();
+    // console.log(date, req.query.time);
+
     const features = new APIFeatures(Complaint.find(), req.query)
       .filter()
       .sort()
@@ -97,10 +102,7 @@ exports.exportPdf = async (req, res, next) => {
       .search();
 
     const datas = await features.query;
-    // const datas = await Complaint.find();
-    console.log(datas);
 
-    const date = new Date(Date.now());
     const mil = date.getMilliseconds();
     const sec = date.getSeconds();
     const min = date.getMinutes();
@@ -112,7 +114,7 @@ exports.exportPdf = async (req, res, next) => {
     const tanggal = date.toLocaleString('id-ID', {
       year: 'numeric',
       month: '2-digit',
-      day: 'numeric',
+      day: '2-digit',
     });
     const waktu = `${hou}:${min}:${sec}`;
 
@@ -203,7 +205,7 @@ exports.exportPdf = async (req, res, next) => {
               </tr>
               <tr>
                 <td style="width: 30%; border: 3px solid black">Waktu Pengerjaan</td>
-                <td style="width: 40%; border: 3px solid black"><%= datas[i].time %></td>
+                <td style="width: 40%; border: 3px solid black"><%= datas[i].endTime %></td>
               </tr>
               <tr>
                 <td style="width: 30%; border: 3px solid black">Keterangan Status</td>
@@ -242,6 +244,7 @@ exports.exportPdf = async (req, res, next) => {
     pdf.create(html, options).toStream(async (err, stream) => {
       if (err) {
         //error handling
+        console.log(err);
       }
       res.writeHead(200, {
         'Content-Type': 'application/force-download',
