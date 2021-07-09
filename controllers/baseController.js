@@ -110,6 +110,7 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
+          timeZone: 'Asia/Jakarta',
         }),
       },
     });
