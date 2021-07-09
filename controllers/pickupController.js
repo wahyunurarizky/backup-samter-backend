@@ -304,6 +304,7 @@ exports.generateQr = async (req, res, next) => {
         qr_id_bak: doc.bak.qr_id,
         qr_id_kendaraan: doc.kendaraan.qr_id,
         qr_id_tps: doc.tps.qr_id,
+        qr_id_pickup: doc.qr_id,
         imgUrl: imgUrl,
       };
       if (err) return next(new AppError('Error Occured', 400));
