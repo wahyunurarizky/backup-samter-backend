@@ -6,6 +6,7 @@ const pdf = require('html-pdf');
 const ejs = require('ejs');
 
 const AppError = require('../utils/appError');
+const APIFeatures = require('../utils/apiFeatures');
 const Complaint = require('../models/complaintModel');
 const base = require('./baseController');
 
@@ -87,27 +88,41 @@ exports.resizeComplaintPhoto = async (req, res, next) => {
 };
 
 exports.exportPdf = async (req, res, next) => {
-  const datas = await Complaint.find();
+  try {
+    const features = new APIFeatures(Complaint.find(), req.query)
+      .filter()
+      .sort()
+      .limit()
+      .paginate()
+      .search();
 
-  const date = new Date();
-  const mil = date.getMilliseconds();
-  const sec = date.getSeconds();
-  const min = date.getMinutes();
-  const hou = date.getHours();
-  const day = date.getDay();
-  const mon = date.getMonth();
-  const yea = date.getFullYear();
-  const fileName = `cmplnt-${yea}${mon}${day}${hou}${min}${sec}${mil}.pdf`;
-  const tanggal = `${day}/${mon}/${yea}`;
-  const waktu = `${hou}:${min}:${sec}`;
+    const datas = await features.query;
+    // const datas = await Complaint.find();
+    console.log(datas);
 
-  let dirLogo = '\\public\\img\\logo\\Logo.png';
-  dirLogo = process.cwd() + dirLogo;
+    const date = new Date(Date.now());
+    const mil = date.getMilliseconds();
+    const sec = date.getSeconds();
+    const min = date.getMinutes();
+    const hou = date.getHours();
+    const day = date.getDay();
+    const mon = date.getMonth();
+    const yea = date.getFullYear();
+    const fileName = `cmplnt-${yea}${mon}${day}${hou}${min}${sec}${mil}.pdf`;
+    const tanggal = date.toLocaleString('id-ID', {
+      year: 'numeric',
+      month: '2-digit',
+      day: 'numeric',
+    });
+    const waktu = `${hou}:${min}:${sec}`;
 
-  // const logoSrc = 'file:///projects/sampah-project/public/img/logo/Logo.png';
+    let dirLogo = '\\public\\img\\logo\\Logo.png';
+    dirLogo = process.cwd() + dirLogo;
 
-  const html = ejs.render(
-    `<!DOCTYPE html>
+    // const logoSrc = 'file:///projects/sampah-project/public/img/logo/Logo.png';
+
+    const html = ejs.render(
+      `<!DOCTYPE html>
     <html>
       <head>
         <mate charest="utf-8" />
@@ -200,38 +215,41 @@ exports.exportPdf = async (req, res, next) => {
       </body>
     </html>
     `,
-    {
-      datas: datas,
-    }
-  );
+      {
+        datas: datas,
+      }
+    );
 
-  const options = {
-    format: 'A4',
-    orientation: 'landscape',
-    border: '10mm',
-    footer: {
-      height: '10mm',
-      contents: {
-        default:
-          '<span style="color: #444; text-align: right">Page {{page}}</span> of <span>{{pages}}</span>',
-        last: `<table>
+    const options = {
+      format: 'A4',
+      orientation: 'landscape',
+      border: '10mm',
+      footer: {
+        height: '10mm',
+        contents: {
+          default:
+            '<span style="color: #444; text-align: right">Page {{page}}</span> of <span>{{pages}}</span>',
+          last: `<table>
           <tr>
             <td><img src=${dirLogo} alt="Logo-Samter"></td>
             <td><strong>SAMTER SALATIGA</strong> <br> Versi 1.0</td>
           </tr>
         </table>`,
+        },
       },
-    },
-  };
+    };
 
-  pdf.create(html, options).toStream(async (err, stream) => {
-    if (err) {
-      //error handling
-    }
-    res.writeHead(200, {
-      'Content-Type': 'application/force-download',
-      'Content-disposition': `attachment; filename=${fileName}`,
+    pdf.create(html, options).toStream(async (err, stream) => {
+      if (err) {
+        //error handling
+      }
+      res.writeHead(200, {
+        'Content-Type': 'application/force-download',
+        'Content-disposition': `attachment; filename=${fileName}`,
+      });
+      stream.pipe(res);
     });
-    stream.pipe(res);
-  });
+  } catch (err) {
+    return next(err);
+  }
 };

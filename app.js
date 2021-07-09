@@ -60,7 +60,7 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // Prevent parameter pollution
-app.use(hpp({ whitelist: ['pickup_time, arrival_time', 'status'] }));
+app.use(hpp({ whitelist: ['pickup_time, arrival_time', 'status', 'time'] }));
 
 app.use(compression());
 
