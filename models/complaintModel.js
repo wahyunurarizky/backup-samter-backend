@@ -39,22 +39,30 @@ const complaintSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'terkirim',
-    enum: ['terkirim', 'tidak selesai', 'selesai'],
+    default: 'Terkirim',
     required: true,
   },
   solution: {
     type: String,
   },
+  endTime: Date,
 });
 
 complaintSchema.index({ '$**': 'text' });
 
 complaintSchema.post('save', function (next) {
-  this._doc.time = this.time.toLocaleString('en-GB', {
-    timeZone: 'Asia/jakarta',
-    hour12: false,
-  });
+  if (this.time) {
+    this._doc.time = this.time.toLocaleString('en-GB', {
+      timeZone: 'Asia/jakarta',
+      hour12: false,
+    });
+  }
+  if (this.endTime) {
+    this._doc.endTime = this.endTime.toLocaleString('en-GB', {
+      timeZone: 'Asia/jakarta',
+      hour12: false,
+    });
+  }
 });
 
 complaintSchema.post(/^find/, (result) => {
@@ -62,6 +70,11 @@ complaintSchema.post(/^find/, (result) => {
     result.forEach((e) => {
       if (e.time)
         e._doc.time = e.time.toLocaleString('en-GB', {
+          timeZone: 'Asia/jakarta',
+          hour12: false,
+        });
+      if (e.endTime)
+        e._doc.endTime = e.endTime.toLocaleString('en-GB', {
           timeZone: 'Asia/jakarta',
           hour12: false,
         });
@@ -76,10 +89,18 @@ complaintSchema.post(/^find/, (result) => {
         timeZone: 'Asia/jakarta',
         hour12: false,
       });
+    if (result.endTime)
+      result._doc.endTime = result.endTime.toLocaleString('en-GB', {
+        timeZone: 'Asia/jakarta',
+        hour12: false,
+      });
     if (result.arrival_time)
       result._doc.arrival_time_local = result.arrival_time.toLocaleString(
         'en-GB',
-        { timeZone: 'Asia/jakarta', hour12: false }
+        {
+          timeZone: 'Asia/jakarta',
+          hour12: false,
+        }
       );
   }
 });
