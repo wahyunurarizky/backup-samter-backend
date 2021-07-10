@@ -11,7 +11,9 @@ const filterObj = (obj, allowedFields) => {
 
 exports.deleteOne = (Model) => async (req, res, next) => {
   try {
-    const doc = await Model.findByIdAndDelete(req.params.id);
+    const doc = await Model.findByIdAndUpdate(req.params.id, {
+      isDeleted: true,
+    });
     if (!doc) {
       return next(
         new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)

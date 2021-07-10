@@ -24,6 +24,11 @@ const kendaraanSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      select: true,
+    },
   },
   {
     collection: 'kendaraan',
