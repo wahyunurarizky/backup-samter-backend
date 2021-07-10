@@ -165,7 +165,7 @@ exports.exportPdf = async (req, res, next) => {
               <tr>
                 <td style="border: 3px solid black" rowspan=12><img style="max-width: 300px;" src='<%= datas[i].pict %>' alt="Foto Pengaduan"></td>
                 <td style="width: 30%; border: 3px solid black">ID Lapor</td>
-                <td style="width: 40%; border: 3px solid black"><%= datas[i]._id %></td>
+                <td style="width: 40%; border: 3px solid black"><%= datas[i].qr_id %></td>
               </tr>
               <tr>
                 <td style="width: 30%; border: 3px solid black">Waktu Lapor</td>

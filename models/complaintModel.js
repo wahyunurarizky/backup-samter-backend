@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
+  qr_id: {
+    type: String,
+    unique: true,
+  },
   time: Date,
   name: {
     type: String,
@@ -49,6 +53,19 @@ const complaintSchema = new mongoose.Schema({
 });
 
 complaintSchema.index({ '$**': 'text' });
+
+complaintSchema.pre('save', function (next) {
+  const date = new Date(Date.now());
+  const mil = date.getMilliseconds();
+  const sec = date.getSeconds();
+  const min = date.getMinutes();
+  const hou = date.getHours();
+  const day = date.getDay();
+  const mon = date.getMonth();
+  const yea = date.getFullYear();
+  this.qr_id = `CMPLNT-${yea}${mon}${day}${hou}${min}${sec}${mil}`;
+  next();
+});
 
 complaintSchema.post('save', function (next) {
   if (this.time) {
