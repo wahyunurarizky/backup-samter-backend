@@ -99,20 +99,23 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
     // if (doc.pickup_time) {
     //   console.log(new Date(doc.pickup_time));
     // }
+    const data = {
+      doc,
+    };
+    if (req.now) {
+      data.time_now_local = req.now.toLocaleString('id-ID', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        timeZone: 'Asia/Jakarta',
+      });
+    }
     res.status(200).json({
       success: true,
       code: '200',
       message: 'OK',
-      data: {
-        doc,
-        time_now_local: req.now.toLocaleString('id-ID', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          timeZone: 'Asia/Jakarta',
-        }),
-      },
+      data,
     });
   } catch (error) {
     next(error);
