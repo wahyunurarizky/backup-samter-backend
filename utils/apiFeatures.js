@@ -83,6 +83,33 @@ class APIFeatures {
         pars.payment_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
       }
     }
+    if (pars.time) {
+      if (pars.time === 'last7') {
+        pars.time = {
+          $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.time === 'last14') {
+        pars.time = {
+          $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.time === 'last30') {
+        pars.time = {
+          $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        };
+      } else if (pars.time === 'this-month') {
+        pars.time = {
+          $gte: new Date(now.getFullYear(), now.getMonth()),
+        };
+      } else if (pars.time === 'today') {
+        pars.time = {
+          $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        };
+      }
+      if (pars.time.$lte) {
+        const x = new Date(pars.time.$lte);
+        pars.time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
+      }
+    }
 
     // if(pars.payment_time)
 

@@ -1,8 +1,8 @@
 const QRCode = require('qrcode');
 const Tpa = require('../models/tpaModel');
-// const AppError = require('../utils/appError');
-// const APIFeatures = require('../utils/apiFeatures');
+const User = require('../models/userModel');
 const base = require('./baseController');
+const AppError = require('../utils/appError');
 
 exports.create = base.createOne(
   Tpa,
@@ -18,7 +18,34 @@ exports.create = base.createOne(
 exports.getAll = base.getAll(Tpa);
 exports.get = base.getOne(Tpa);
 exports.update = base.updateOne(Tpa);
-exports.delete = base.deleteOne(Tpa);
+// exports.delete = base.deleteOne(Tpa);
+exports.delete = async (req, res, next) => {
+  try {
+    const doc = await Tpa.findByIdAndUpdate(req.params.id, {
+      isDeleted: true,
+    });
+    const deletedUsers = await User.updateMany(
+      { tps: doc._id },
+      {
+        isDeleted: true,
+      }
+    );
+    console.log(deletedUsers);
+    if (!doc) {
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
+    }
+    res.status(204).json({
+      success: true,
+      code: '204',
+      message: 'OK',
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.generateQr = async function generate(req, res, next) {
   try {

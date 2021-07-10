@@ -51,6 +51,7 @@ const tpsSchema = new mongoose.Schema(
     isDeleted: {
       type: Boolean,
       default: false,
+      select: true,
     },
     payment_method: {
       type: String,
