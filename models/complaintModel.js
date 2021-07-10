@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
+  qr_id: {
+    type: String,
+    unique: true,
+  },
   time: Date,
   name: {
     type: String,
@@ -50,6 +54,19 @@ const complaintSchema = new mongoose.Schema({
 
 complaintSchema.index({ '$**': 'text' });
 
+complaintSchema.pre('save', function (next) {
+  const date = new Date(Date.now());
+  const mil = date.getMilliseconds();
+  const sec = date.getSeconds();
+  const min = date.getMinutes();
+  const hou = date.getHours();
+  const day = date.getDay();
+  const mon = date.getMonth();
+  const yea = date.getFullYear();
+  this.qr_id = `CMPLNT-${yea}${mon}${day}${hou}${min}${sec}${mil}`;
+  next();
+});
+
 complaintSchema.post('save', function (next) {
   if (this.time) {
     this._doc.time = this.time.toLocaleString('en-GB', {
@@ -78,10 +95,6 @@ complaintSchema.post(/^find/, (result) => {
           timeZone: 'Asia/jakarta',
           hour12: false,
         });
-      if (e.arrival_time)
-        e._doc.arrival_time_local = e.arrival_time.toLocaleString('en-GB', {
-          hour12: false,
-        });
     });
   } else {
     if (result.time)
@@ -94,50 +107,6 @@ complaintSchema.post(/^find/, (result) => {
         timeZone: 'Asia/jakarta',
         hour12: false,
       });
-    if (result.arrival_time)
-      result._doc.arrival_time_local = result.arrival_time.toLocaleString(
-        'en-GB',
-        {
-          timeZone: 'Asia/jakarta',
-          hour12: false,
-        }
-      );
-  }
-});
-
-complaintSchema.index({ '$**': 'text' });
-
-complaintSchema.post('save', function (next) {
-  this._doc.time = this.time.toLocaleString('en-GB', {
-    timeZone: 'Asia/jakarta',
-    hour12: false,
-  });
-});
-
-complaintSchema.post(/^find/, (result) => {
-  if (Array.isArray(result)) {
-    result.forEach((e) => {
-      if (e.time)
-        e._doc.time = e.time.toLocaleString('en-GB', {
-          timeZone: 'Asia/jakarta',
-          hour12: false,
-        });
-      if (e.arrival_time)
-        e._doc.arrival_time_local = e.arrival_time.toLocaleString('en-GB', {
-          hour12: false,
-        });
-    });
-  } else {
-    if (result.time)
-      result._doc.time = result.time.toLocaleString('en-GB', {
-        timeZone: 'Asia/jakarta',
-        hour12: false,
-      });
-    if (result.arrival_time)
-      result._doc.arrival_time_local = result.arrival_time.toLocaleString(
-        'en-GB',
-        { timeZone: 'Asia/jakarta', hour12: false }
-      );
   }
 });
 
