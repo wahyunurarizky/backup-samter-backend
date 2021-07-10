@@ -17,6 +17,11 @@ const bakSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      select: true,
+    },
   },
   {
     collection: 'bak',
@@ -31,8 +36,6 @@ bakSchema.pre('save', function (next) {
   this.qr_id = `BAK${str.substr(str.length - 6)}`;
   next();
 });
-
-// kendar
 
 const Bak = mongoose.model('Bak', bakSchema);
 module.exports = Bak;
