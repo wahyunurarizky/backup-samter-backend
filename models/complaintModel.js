@@ -78,10 +78,6 @@ complaintSchema.post(/^find/, (result) => {
           timeZone: 'Asia/jakarta',
           hour12: false,
         });
-      if (e.arrival_time)
-        e._doc.arrival_time_local = e.arrival_time.toLocaleString('en-GB', {
-          hour12: false,
-        });
     });
   } else {
     if (result.time)
@@ -94,14 +90,6 @@ complaintSchema.post(/^find/, (result) => {
         timeZone: 'Asia/jakarta',
         hour12: false,
       });
-    if (result.arrival_time)
-      result._doc.arrival_time_local = result.arrival_time.toLocaleString(
-        'en-GB',
-        {
-          timeZone: 'Asia/jakarta',
-          hour12: false,
-        }
-      );
   }
 });
 
