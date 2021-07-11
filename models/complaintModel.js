@@ -43,7 +43,8 @@ const complaintSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'Terkirim',
+    enum: ['terkirim', 'selesai', 'tidak selesai'],
+    default: 'terkirim',
     required: true,
   },
   solution: {

@@ -48,7 +48,42 @@ exports.create = async (req, res, next) => {
 };
 exports.getAll = base.getAll(Complaint);
 exports.get = base.getOne(Complaint);
-exports.update = base.updateOne(Complaint, 'status', 'solution', 'endTime');
+// exports.update = base.updateOne(Complaint, 'status', 'solution', 'endTime');
+
+exports.update = async (req, res, next) => {
+  try {
+    // const filteredBody = filterObj(req.body, fields);
+    const updatedDoc = await Complaint.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: req.body.status,
+        solution: req.body.solution,
+        endTime: Date.now(),
+      },
+      {
+        // jangan lupa run validators pada update
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!updatedDoc) {
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        doc: updatedDoc,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const multerStorage = multer.memoryStorage();
 

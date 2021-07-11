@@ -54,5 +54,11 @@ kendaraanSchema.pre(/^find/, function (next) {
   next();
 });
 
+kendaraanSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
 const Kendaraan = mongoose.model('Kendaraan', kendaraanSchema);
 module.exports = Kendaraan;
