@@ -116,14 +116,21 @@ class APIFeatures {
         $text: { $search: this.queryString.search },
       });
       // const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
-      // this.query = this.query.find({ name: this.queryString.search });
+      // this.query = this.query.find({
+      //   $or: [
+      //     { status: regex },
+      //     { nik: regex },
+      //     { name: regex },
+      //     { tpa: regex },
+      //   ],
+      // });
       // this.fuzzySearch('ciput').then(console.log).catch(console.error);
     }
     return this;
   }
 
   timeFilter(params, now) {
-    let result = {};
+    let result = params;
     if (params === 'last7') {
       result = {
         $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
@@ -151,9 +158,10 @@ class APIFeatures {
     }
     return result;
   }
-  // escapeRegex(text) {
-  //   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  // }
+
+  escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  }
 }
 
 module.exports = APIFeatures;
