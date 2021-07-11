@@ -68,17 +68,6 @@ complaintSchema.pre('save', function (next) {
   next();
 });
 
-// complaintSchema.pre(/^find/, function (next) {
-//   console.log(this.status);
-//   if (this.status) {
-//     if (this.status === 'Selesai' || this.status === 'selesai') {
-//       this.endTime = new Date(Date.now());
-//       next();
-//     }
-//   }
-//   next();
-// });
-
 complaintSchema.post('save', function (next) {
   if (this.time) {
     this._doc.time = this.time.toLocaleString('en-GB', {
