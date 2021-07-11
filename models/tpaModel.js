@@ -28,6 +28,11 @@ const tpaSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      select: true,
+    },
   },
   {
     collection: 'tpa',
@@ -41,6 +46,12 @@ tpaSchema.pre('save', function (next) {
   const str = id.toString().toUpperCase();
 
   this.qr_id = `TPA${str.substr(str.length - 6)}`;
+  next();
+});
+
+tpaSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ isDeleted: { $ne: true } });
   next();
 });
 

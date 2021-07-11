@@ -37,5 +37,11 @@ bakSchema.pre('save', function (next) {
   next();
 });
 
+bakSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
 const Bak = mongoose.model('Bak', bakSchema);
 module.exports = Bak;
