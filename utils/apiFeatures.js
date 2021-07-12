@@ -115,16 +115,43 @@ class APIFeatures {
       this.query = this.query.find({
         $text: { $search: this.queryString.search },
       });
-      // const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
-      // this.query = this.query.find({
-      //   $or: [
-      //     { status: regex },
-      //     { nik: regex },
-      //     { name: regex },
-      //     { tpa: regex },
-      //   ],
-      // });
+      const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
+      this.query = this.query.find({
+        $or: [
+          { status: regex },
+          { nik: regex },
+          { name: regex },
+          { qr_id: regex },
+          { golongan: regex },
+          { jabatan: regex },
+          { email: regex },
+          { phone: regex },
+          { NIP: regex },
+        ],
+      });
       // this.fuzzySearch('ciput').then(console.log).catch(console.error);
+      // Item.aggregate(
+      //   [
+      //     { "$lookup": {
+      //       "from": ItemTags.collection.name,
+      //       "localField": "tags",
+      //       "foreignField": "_id",
+      //       "as": "tags"
+      //     }},
+      //     { "$unwind": "$tags" },
+      //     { "$match": { "tags.tagName": { "$in": [ "funny", "politics" ] } } },
+      //     { "$group": {
+      //       "_id": "$_id",
+      //       "dateCreated": { "$first": "$dateCreated" },
+      //       "title": { "$first": "$title" },
+      //       "description": { "$first": "$description" },
+      //       "tags": { "$push": "$tags" }
+      //     }}
+      //   ],
+      //   function(err, result) {
+      //     // "tags" is now filtered by condition and "joined"
+      //   }
+      // )
     }
     return this;
   }
