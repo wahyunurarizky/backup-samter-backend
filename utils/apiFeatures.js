@@ -115,15 +115,49 @@ class APIFeatures {
       this.query = this.query.find({
         $text: { $search: this.queryString.search },
       });
-      // const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
-      // this.query = this.query.find({ name: this.queryString.search });
+      const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
+      this.query = this.query.find({
+        $or: [
+          { status: regex },
+          { nik: regex },
+          { name: regex },
+          { qr_id: regex },
+          { golongan: regex },
+          { jabatan: regex },
+          { email: regex },
+          { phone: regex },
+          { NIP: regex },
+        ],
+      });
       // this.fuzzySearch('ciput').then(console.log).catch(console.error);
+      // Item.aggregate(
+      //   [
+      //     { "$lookup": {
+      //       "from": ItemTags.collection.name,
+      //       "localField": "tags",
+      //       "foreignField": "_id",
+      //       "as": "tags"
+      //     }},
+      //     { "$unwind": "$tags" },
+      //     { "$match": { "tags.tagName": { "$in": [ "funny", "politics" ] } } },
+      //     { "$group": {
+      //       "_id": "$_id",
+      //       "dateCreated": { "$first": "$dateCreated" },
+      //       "title": { "$first": "$title" },
+      //       "description": { "$first": "$description" },
+      //       "tags": { "$push": "$tags" }
+      //     }}
+      //   ],
+      //   function(err, result) {
+      //     // "tags" is now filtered by condition and "joined"
+      //   }
+      // )
     }
     return this;
   }
 
   timeFilter(params, now) {
-    let result = {};
+    let result = params;
     if (params === 'last7') {
       result = {
         $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
@@ -151,9 +185,10 @@ class APIFeatures {
     }
     return result;
   }
-  // escapeRegex(text) {
-  //   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  // }
+
+  escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  }
 }
 
 module.exports = APIFeatures;
