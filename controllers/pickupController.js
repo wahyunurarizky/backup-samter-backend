@@ -562,7 +562,7 @@ exports.exportPdf = async (req, res, next) => {
             <h1 style="text-align: center">Laporan Pengangkutan Sampah</h1>
             <% if ('${req.query.pickup_time}' === 'this-month') { %>
               <% if (${req.query.tps}) { %>
-              <h3 style="text-align: center"><%= datas[0].pickup_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,month: 'long'}) %> - <%= datas[0].tps.name %></h3>
+              <h3 style="text-align: center"><%= datas[0].pickup_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,month: 'long',year: 'numeric'}) %> - <%= datas[0].tps.name %></h3>
             <% } %>
             <% } %>
             <br>
