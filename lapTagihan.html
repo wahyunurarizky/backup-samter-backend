@@ -2,7 +2,7 @@
 <html>
   <head>
     <mate charest="utf-8" />
-    <title>Laporan Pengangkutan Sampah</title>
+    <title>Laporan Retribusi</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -18,7 +18,7 @@
 
   <body>
     <div class="container">
-      <h1 style="text-align: center">Laporan Pengangkutan Sampah</h1>
+      <h1 style="text-align: center">Laporan Retribusi Sampah (Bulanan)</h1>
       <% if ('${req.query.pickup_time}' === 'this-month') { %>
         <% if (${req.query.tps}) { %>
           <h3 style="text-align: center"><%= datas[0].pickup_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,month: 'long',year: 'numeric'}) %> - <%= datas[0].tps.name %></h3>

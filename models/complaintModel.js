@@ -49,8 +49,12 @@ const complaintSchema = new mongoose.Schema({
   },
   solution: {
     type: String,
+    default: null,
   },
-  endTime: Date,
+  endTime: {
+    type: Date,
+    default: null,
+  },
 });
 
 complaintSchema.index({ '$**': 'text' });
