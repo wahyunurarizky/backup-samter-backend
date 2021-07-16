@@ -74,5 +74,11 @@ tpsSchema.pre('save', function (next) {
   next();
 });
 
+tpsSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
 const Tps = mongoose.model('Tps', tpsSchema);
 module.exports = Tps;

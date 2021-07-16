@@ -27,5 +27,11 @@ const jenisKendaraanSchema = new mongoose.Schema(
 );
 jenisKendaraanSchema.index({ '$**': 'text' });
 
+jenisKendaraanSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
 const JenisKendaraan = mongoose.model('JenisKendaraan', jenisKendaraanSchema);
 module.exports = JenisKendaraan;

@@ -43,13 +43,18 @@ const complaintSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'Terkirim',
+    enum: ['terkirim', 'selesai', 'tidak selesai'],
+    default: 'terkirim',
     required: true,
   },
   solution: {
     type: String,
+    default: null,
   },
-  endTime: Date,
+  endTime: {
+    type: Date,
+    default: null,
+  },
 });
 
 complaintSchema.index({ '$**': 'text' });
@@ -66,17 +71,6 @@ complaintSchema.pre('save', function (next) {
   this.qr_id = `CMPLNT-${yea}${mon}${day}${hou}${min}${sec}${mil}`;
   next();
 });
-
-// complaintSchema.pre(/^find/, function (next) {
-//   console.log(this.status);
-//   if (this.status) {
-//     if (this.status === 'Selesai' || this.status === 'selesai') {
-//       this.endTime = new Date(Date.now());
-//       next();
-//     }
-//   }
-//   next();
-// });
 
 complaintSchema.post('save', function (next) {
   if (this.time) {

@@ -4,6 +4,8 @@ const router = express.Router();
 const pickupController = require('../controllers/pickupController');
 const authController = require('../controllers/authController');
 
+router.route('/export').get(pickupController.exportPdf);
+
 router.use(authController.protect);
 
 router
@@ -68,6 +70,9 @@ router
   .get(authController.restrictTo('pegawai'), pickupController.get)
   .patch(authController.restrictTo('pegawai'), pickupController.updateStatus);
 
+router
+  .route('/download/:id')
+  .get(authController.restrictTo('petugas'), pickupController.download);
 router
   .route('/inputLoad/:id')
   .patch(authController.restrictTo('operator tpa'), pickupController.inputLoad);

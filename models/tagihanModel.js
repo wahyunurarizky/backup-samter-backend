@@ -66,15 +66,6 @@ tagihanSchema.pre('save', function (next) {
   this.qr_id = `TGN${str.substr(str.length - 6)}`;
   next();
 });
-tagihanSchema.pre('insertMany', function (next) {
-  console.log(this);
-
-  // const date = this._id;
-  // const str = date.toString().toUpperCase();
-
-  // this.qr_id = `TGN${str.substr(str.length - 6)}`;
-  next();
-});
 
 tagihanSchema.pre(/^find/, function (next) {
   this.populate([

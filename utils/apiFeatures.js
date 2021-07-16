@@ -29,87 +29,38 @@ class APIFeatures {
 
     // const timeType = ['pickup_time', 'payment_time']
 
-    if (pars.pickup_time) {
-      if (pars.pickup_time === 'last7') {
-        pars.pickup_time = {
-          $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.pickup_time === 'last14') {
-        pars.pickup_time = {
-          $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.pickup_time === 'last30') {
-        pars.pickup_time = {
-          $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.pickup_time === 'this-month') {
-        pars.pickup_time = {
-          $gte: new Date(now.getFullYear(), now.getMonth()),
-        };
-      } else if (pars.pickup_time === 'today') {
-        pars.pickup_time = {
-          $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-        };
-      }
-      if (pars.pickup_time.$lte) {
-        const x = new Date(pars.pickup_time.$lte);
-        pars.pickup_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
-      }
-    }
-    if (pars.payment_time) {
-      if (pars.payment_time === 'last7') {
-        pars.payment_time = {
-          $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.payment_time === 'last14') {
-        pars.payment_time = {
-          $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.payment_time === 'last30') {
-        pars.payment_time = {
-          $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.payment_time === 'this-month') {
-        pars.payment_time = {
-          $gte: new Date(now.getFullYear(), now.getMonth()),
-        };
-      } else if (pars.payment_time === 'today') {
-        pars.payment_time = {
-          $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-        };
-      }
-      if (pars.payment_time.$lte) {
-        const x = new Date(pars.payment_time.$lte);
-        pars.payment_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
-      }
-    }
-    if (pars.time) {
-      if (pars.time === 'last7') {
-        pars.time = {
-          $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.time === 'last14') {
-        pars.time = {
-          $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.time === 'last30') {
-        pars.time = {
-          $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        };
-      } else if (pars.time === 'this-month') {
-        pars.time = {
-          $gte: new Date(now.getFullYear(), now.getMonth()),
-        };
-      } else if (pars.time === 'today') {
-        pars.time = {
-          $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-        };
-      }
-      if (pars.time.$lte) {
-        const x = new Date(pars.time.$lte);
-        pars.time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
-      }
-    }
+    // if (pars.pickup_time) {
+    //   if (pars.pickup_time === 'last7') {
+    //     pars.pickup_time = {
+    //       $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    //     };
+    //   } else if (pars.pickup_time === 'last14') {
+    //     pars.pickup_time = {
+    //       $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+    //     };
+    //   } else if (pars.pickup_time === 'last30') {
+    //     pars.pickup_time = {
+    //       $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    //     };
+    //   } else if (pars.pickup_time === 'this-month') {
+    //     pars.pickup_time = {
+    //       $gte: new Date(now.getFullYear(), now.getMonth()),
+    //     };
+    //   } else if (pars.pickup_time === 'today') {
+    //     pars.pickup_time = {
+    //       $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    //     };
+    //   }
+    //   if (pars.pickup_time.$lte) {
+    //     const x = new Date(pars.pickup_time.$lte);
+    //     pars.pickup_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
+    //   }
+    // }
+    if (pars.pickup_time)
+      pars.pickup_time = this.timeFilter(pars.pickup_time, now);
+    if (pars.payment_time)
+      pars.payment_time = this.timeFilter(pars.payment_time, now);
+    if (pars.time) pars.time = this.timeFilter(pars.time, now);
 
     // if(pars.payment_time)
 
@@ -164,16 +115,80 @@ class APIFeatures {
       this.query = this.query.find({
         $text: { $search: this.queryString.search },
       });
-      // const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
-      // this.query = this.query.find({ name: this.queryString.search });
+      const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
+      this.query = this.query.find({
+        $or: [
+          { status: regex },
+          { nik: regex },
+          { name: regex },
+          { qr_id: regex },
+          { golongan: regex },
+          { jabatan: regex },
+          { email: regex },
+          { phone: regex },
+          { NIP: regex },
+        ],
+      });
       // this.fuzzySearch('ciput').then(console.log).catch(console.error);
+      // Item.aggregate(
+      //   [
+      //     { "$lookup": {
+      //       "from": ItemTags.collection.name,
+      //       "localField": "tags",
+      //       "foreignField": "_id",
+      //       "as": "tags"
+      //     }},
+      //     { "$unwind": "$tags" },
+      //     { "$match": { "tags.tagName": { "$in": [ "funny", "politics" ] } } },
+      //     { "$group": {
+      //       "_id": "$_id",
+      //       "dateCreated": { "$first": "$dateCreated" },
+      //       "title": { "$first": "$title" },
+      //       "description": { "$first": "$description" },
+      //       "tags": { "$push": "$tags" }
+      //     }}
+      //   ],
+      //   function(err, result) {
+      //     // "tags" is now filtered by condition and "joined"
+      //   }
+      // )
     }
     return this;
   }
 
-  // escapeRegex(text) {
-  //   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  // }
+  timeFilter(params, now) {
+    let result = params;
+    if (params === 'last7') {
+      result = {
+        $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      };
+    } else if (params === 'last14') {
+      result = {
+        $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+      };
+    } else if (params === 'last30') {
+      result = {
+        $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      };
+    } else if (params === 'this-month') {
+      result = {
+        $gte: new Date(now.getFullYear(), now.getMonth()),
+      };
+    } else if (params === 'today') {
+      result = {
+        $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      };
+    }
+    if (params.$lte) {
+      const x = new Date(params.$lte);
+      result.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
+    }
+    return result;
+  }
+
+  escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  }
 }
 
 module.exports = APIFeatures;
