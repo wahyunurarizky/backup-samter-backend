@@ -14,6 +14,7 @@ const base = require('./baseController');
 
 exports.create = async (req, res, next) => {
   try {
+    console.log('wkwk');
     // ini kalo mau ngakalin timezone jakarta
     // const wib_time = moment
     //   .tz('Asia/Calcutta')
@@ -109,6 +110,8 @@ exports.resizeComplaintPhoto = async (req, res, next) => {
   try {
     if (!req.file) return next();
 
+    console.log(req.file);
+
     req.file.filename = `complaint-${Date.now()}.jpeg`;
 
     await sharp(req.file.buffer)
@@ -116,6 +119,7 @@ exports.resizeComplaintPhoto = async (req, res, next) => {
       .jpeg({ quality: 90 })
       .toFile(`public/img/complaint/${req.file.filename}`);
 
+    console.log('wkwk');
     next();
   } catch (err) {
     next(err);
