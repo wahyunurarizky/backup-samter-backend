@@ -103,7 +103,7 @@ class APIFeatures {
     // page=2&limit=10
     // query = query.skip(10).limit(10)
     const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 100;
+    const limit = this.queryString.limit * 1 || 20;
     const skip = (page - 1) * limit;
 
     this.query = this.query.skip(skip).limit(limit);
@@ -115,20 +115,20 @@ class APIFeatures {
       this.query = this.query.find({
         $text: { $search: this.queryString.search },
       });
-      const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
-      this.query = this.query.find({
-        $or: [
-          { status: regex },
-          { nik: regex },
-          { name: regex },
-          { qr_id: regex },
-          { golongan: regex },
-          { jabatan: regex },
-          { email: regex },
-          { phone: regex },
-          { NIP: regex },
-        ],
-      });
+      // const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
+      // this.query = this.query.find({
+      //   $or: [
+      //     { status: regex },
+      //     { nik: regex },
+      //     { name: regex },
+      //     { qr_id: regex },
+      //     { golongan: regex },
+      //     { jabatan: regex },
+      //     { email: regex },
+      //     { phone: regex },
+      //     { NIP: regex },
+      //   ],
+      // });
       // this.fuzzySearch('ciput').then(console.log).catch(console.error);
       // Item.aggregate(
       //   [
