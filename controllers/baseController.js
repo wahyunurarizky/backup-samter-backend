@@ -154,33 +154,33 @@ exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
     if (!req.query.limit) {
       req.query.limit = 20;
     }
-    let strq = '';
-    Object.keys(req.query).forEach((el) => {
-      if (el !== 'page' && el !== 'limit')
-        strq += `${el}=${req.query['pickup_time[gte]']}`;
-    });
-    console.log(strq);
+    // let strq = '';
+    // Object.keys(req.query).forEach((el) => {
+    //   if (el !== 'page' && el !== 'limit')
+    //     strq += `${el}=${req.query['pickup_time[gte]']}`;
+    // });
+    // console.log(strq);
     const self = req.originalUrl;
     const first = `${req.originalUrl.split('?')[0]}?page=1&limit=${
       req.query.limit
-    }&${qstr}`;
+    }${qstr ? '&' + qstr : ''}`;
     const previous =
       req.query.page == 1
         ? null
         : `${req.originalUrl.split('?')[0]}?page=${
             req.query.page * 1 - 1
-          }&limit=${req.query.limit}&${qstr}`;
+          }&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
 
     const nextt =
       req.query.page == Math.ceil(total_count / req.query.limit)
         ? null
         : `${req.originalUrl.split('?')[0]}?page=${
             req.query.page * 1 + 1
-          }&limit=${req.query.limit}&${qstr}`;
+          }&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
 
     const last = `${req.originalUrl.split('?')[0]}?page=${Math.ceil(
       total_count / req.query.limit
-    )}&limit=${req.query.limit}&${qstr}`;
+    )}&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
 
     res.status(200).json({
       success: true,
