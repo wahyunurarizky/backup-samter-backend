@@ -80,8 +80,10 @@ exports.resizePaymentPhoto = async (req, res, next) => {
 };
 exports.pay = async (req, res, next) => {
   const tagihan = await Tagihan.findById(req.params.id);
-  console.log(tagihan.tps._id);
-  console.log(req.user.tps);
+  if (!tagihan) {
+    return new AppError('id tagihan tidak ada', 400);
+  }
+
   if (tagihan.tps._id.toString() !== req.user.tps.toString()) {
     return next(
       new AppError('kamu tidak bisa membayar tagihan orang lain', 403)
