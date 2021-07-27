@@ -163,6 +163,7 @@ exports.exportPdf = async (req, res, next) => {
     // const logoSrc = 'file:///projects/sampah-project/public/img/logo/Logo.png';
 
     const timeTemp = {};
+
     if (req.query.time.gte) {
       timeTemp.gte = req.query.time.gte;
       timeTemp.gte = new Date(timeTemp.gte).toLocaleString('id-ID', {
@@ -183,6 +184,15 @@ exports.exportPdf = async (req, res, next) => {
         year: 'numeric',
       });
       req.query.time.lte = true;
+    }
+
+    if (req.query.time === 'this-month') {
+      timeTemp.thisMonth = date.toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      req.query.time = true;
     }
 
     const dateTemp = date.toLocaleString('id-ID', {
@@ -217,6 +227,8 @@ exports.exportPdf = async (req, res, next) => {
           <h3 style="text-align: center">${timeTemp.gte} - ${timeTemp.lte}</h3>
         <% } else if (${req.query.time.gte}) { %>
           <h3 style="text-align: center">${timeTemp.gte} -  ${dateTemp}</h3>
+        <% } else if (${req.query.time}) { %>
+            <h3 style="text-align: center">${timeTemp.thisMonth}</h3>
         <% } %>
         <br>
         <div class="container">
