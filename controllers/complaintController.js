@@ -162,6 +162,36 @@ exports.exportPdf = async (req, res, next) => {
 
     // const logoSrc = 'file:///projects/sampah-project/public/img/logo/Logo.png';
 
+    const timeTemp = {};
+    if (req.query.time.gte) {
+      timeTemp.gte = req.query.time.gte;
+      timeTemp.gte = new Date(timeTemp.gte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
+      req.query.time.gte = true;
+    }
+
+    if (req.query.time.lte) {
+      timeTemp.lte = req.query.time.lte;
+      timeTemp.lte = new Date(timeTemp.lte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
+      req.query.time.lte = true;
+    }
+
+    const dateTemp = date.toLocaleString('id-ID', {
+      timeZone: 'Asia/jakarta',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+
     const html = ejs.render(
       `<!DOCTYPE html>
     <html>
@@ -183,6 +213,12 @@ exports.exportPdf = async (req, res, next) => {
     
       <body>
         <h1 style="text-align: center">Laporan Pengaduan Sampah</h1>
+        <% if (${req.query.time.gte} && ${req.query.time.lte}) { %>
+          <h3 style="text-align: center">${timeTemp.gte} - ${timeTemp.lte}</h3>
+        <% } else if (${req.query.time.gte}) { %>
+          <h3 style="text-align: center">${timeTemp.gte} -  ${dateTemp}</h3>
+        <% } %>
+        <br>
         <div class="container">
           <table>
             <tr>
