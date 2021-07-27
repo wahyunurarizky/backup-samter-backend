@@ -608,7 +608,7 @@ exports.exportPdf = async (req, res, next) => {
             <h1 style="text-align: center">Laporan Pengangkutan Sampah</h1>
 
             <% if (${req.query.tps}) { %>
-              <% if (datas[0].tps.name != null) { %>
+              <% if (datas[0].tps != null) { %>
                 <h3 style="text-align: center"><%= datas[0].tps.name %></h3>
               <% } %>
             <% } %>
