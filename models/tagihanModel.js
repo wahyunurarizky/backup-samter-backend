@@ -52,11 +52,13 @@ const tagihanSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    total_load: Number,
   },
   {
     collection: 'tagihan',
   }
 );
+tagihanSchema.index({ payment_time: 1, status: 1 });
 tagihanSchema.index({ '$**': 'text' });
 
 tagihanSchema.pre('save', function (next) {

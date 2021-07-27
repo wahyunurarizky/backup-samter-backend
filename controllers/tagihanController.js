@@ -6,6 +6,7 @@ const Tps = require('../models/tpsModel');
 const base = require('./baseController');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
+// const bus = require('../utils/eventBus');
 
 // exports.create = base.createOne(Tagihan, 'total', 'bukti', 'waktu', 'status');
 exports.getAll = base.getAll(Tagihan, [
@@ -121,22 +122,20 @@ exports.pay = async (req, res, next) => {
 exports.createTagihanMonthly = async () => {
   try {
     const m = new Date(Date.now());
-
-    let pickup = await Pickup.aggregate([
+    const pickup = await Pickup.aggregate([
       {
         $match: {
           payment_method: 'perbulan',
           arrival_time: {
-            // PENTING {GANTI}
-            $gte: new Date(m.getFullYear() - 1, m.getMonth() - 1),
-            $lt: new Date(m.getFullYear(), m.getMonth()),
+            $gte: new Date(m.getFullYear(), m.getMonth()),
+            $lt: new Date(m.getFullYear(), m.getMonth() + 1),
           },
         },
       },
       {
         $group: {
           _id: '$tps',
-          totalLoad: { $sum: '$load' },
+          total_load: { $sum: '$load' },
         },
       },
       {
@@ -144,10 +143,11 @@ exports.createTagihanMonthly = async () => {
           tps: '$_id',
           status: 'belum terbayar',
           payment_method: 'perbulan',
-          payment_month: new Date(m.getFullYear(), m.getMonth()),
-          payment_time: new Date(m.getFullYear(), m.getMonth()),
+          payment_month: new Date(m.getFullYear(), m.getMonth(), 2),
+          payment_time: new Date(m.getFullYear(), m.getMonth(), 2),
           price: {
-            $multiply: ['$totalLoad', process.env.DEFAULT_PRICE_PER_KG * 1],
+            // penting perlu dihiung berat truknya juga
+            $multiply: ['$total_load', process.env.DEFAULT_PRICE_PER_KG * 1],
           },
         },
       },
@@ -158,55 +158,23 @@ exports.createTagihanMonthly = async () => {
         },
       },
     ]);
-
-    const neObj = [];
-
-    pickup.forEach((e) => {
-      const x = {
-        _id: {
-          $ne: e.tps,
-        },
-      };
-      neObj.push(x);
-    });
-
-    let tps;
-    if (!neObj.length) {
-      tps = await Tps.find();
-    } else {
-      tps = await Tps.find({
-        $and: neObj,
-      });
-    }
-
-    tps.forEach((e) => {
-      pickup.push({
-        tps: e._id,
-        totalLoad: 0,
-        price: 0,
-        status: 'terverifikasi',
-        payment_method: 'perbulan',
-        payment_month: new Date(m.getFullYear(), m.getMonth()),
-        payment_time: new Date(m.getFullYear(), m.getMonth()),
-      });
-    });
-
-    const tagihan = await Tagihan.find({
-      payment_month: new Date(m.getFullYear(), m.getMonth()),
-    });
-
-    pickup = pickup.filter((e) => {
-      // console.log(tagihan);
-      if (tagihan.filter((y) => `${y.tps._id}` === `${e.tps}`).length > 0) {
-        return false;
-      }
-      return true;
-    });
     console.log(pickup);
 
-    pickup.forEach(async (e) => {
-      await Tagihan.create(e);
-    });
+    const pckp = [];
+
+    for (let p of pickup) {
+      const tagihan = await Tagihan.findOne({
+        tps: p.tps,
+        payment_month: p.payment_month,
+      });
+      if (!tagihan) {
+        pckp.push(p);
+      }
+    }
+
+    console.log(pckp);
+
+    await Tagihan.create(pckp);
   } catch (err) {
     console.log(err);
   }

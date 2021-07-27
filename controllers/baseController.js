@@ -152,7 +152,7 @@ exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
       req.query.page = 1;
     }
     if (!req.query.limit) {
-      req.query.limit = 20;
+      req.query.limit = 100;
     }
     // let strq = '';
     // Object.keys(req.query).forEach((el) => {
@@ -190,7 +190,7 @@ exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
         results: docs.length,
         metadata: {
           page: req.query.page * 1 || 1,
-          per_page: req.query.limit * 1 || 20,
+          per_page: req.query.limit * 1,
           page_count: Math.ceil(total_count / req.query.limit),
           total_count,
           links: {
