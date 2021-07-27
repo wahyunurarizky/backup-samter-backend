@@ -539,6 +539,51 @@ exports.exportPdf = async (req, res, next) => {
     if (req.query.tps) {
       req.query.tps = true;
     }
+
+    const timeTemp = {};
+
+    if (req.query.pickup_time.gte) {
+      timeTemp.gte = req.query.pickup_time.gte;
+      timeTemp.gte = new Date(timeTemp.gte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.gteReq = true;
+    }
+    console.log(timeTemp.gte);
+
+    if (req.query.pickup_time.lte) {
+      timeTemp.lte = req.query.pickup_time.lte;
+      timeTemp.lte = new Date(timeTemp.lte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.lteReq = true;
+    }
+    console.log(timeTemp.lte);
+
+    if (req.query.pickup_time) {
+      timeTemp.thisMonth = date.toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.thisMonthReq = true;
+    }
+    console.log(timeTemp.thisMonth);
+
+    const dateTemp = date.toLocaleString('id-ID', {
+      timeZone: 'Asia/jakarta',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    console.log(dateTemp);
+
     const html = ejs.render(
       `<!DOCTYPE html>
       <html>
@@ -561,10 +606,19 @@ exports.exportPdf = async (req, res, next) => {
         <body>
           <div class="container">
             <h1 style="text-align: center">Laporan Pengangkutan Sampah</h1>
-            <% if ('${req.query.pickup_time}' === 'this-month') { %>
-              <% if (${req.query.tps}) { %>
-              <h3 style="text-align: center"><%= datas[0].pickup_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,month: 'long',year: 'numeric'}) %> - <%= datas[0].tps.name %></h3>
+
+            <% if (${req.query.tps}) { %>
+              <% if (datas[0].tps.name != null) { %>
+                <h3 style="text-align: center"><%= datas[0].tps.name %></h3>
+              <% } %>
             <% } %>
+
+            <% if (${timeTemp.gteReq} && ${timeTemp.lteReq}) { %>
+              <h3 style="text-align: center">${timeTemp.gte} - ${timeTemp.lte}</h3>
+            <% } else if (${timeTemp.gteReq}) { %>
+              <h3 style="text-align: center">${timeTemp.gte} -  ${dateTemp}</h3>
+            <% } else if (${timeTemp.thisMonthReq}) { %>
+              <h3 style="text-align: center">${timeTemp.thisMonth}</h3>
             <% } %>
             <br>
             <table>
@@ -611,11 +665,11 @@ exports.exportPdf = async (req, res, next) => {
                   </td>
                   <td style="border: 3px solid black">
                     <% if (datas[i].pickup_time) %>
-                      <%= datas[i].pickup_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,}) %>
+                      <%= datas[i].pickup_time.toLocaleString('id-ID', {timeZone: 'Asia/jakarta',hour12: false,}) %>
                   </td>
                   <td style="border: 3px solid black">
                     <% if (datas[i].arrival_time != null) { %>
-                      <%= datas[i].arrival_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,}) %>
+                      <%= datas[i].arrival_time.toLocaleString('id-ID', {timeZone: 'Asia/jakarta',hour12: false,}) %>
                     <% } %>
                   </td>
                   <td style="border: 3px solid black">

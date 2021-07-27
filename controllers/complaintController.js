@@ -172,8 +172,9 @@ exports.exportPdf = async (req, res, next) => {
         month: 'long',
         year: 'numeric',
       });
-      req.query.time.gte = true;
+      timeTemp.gteReq = true;
     }
+    console.log(timeTemp.gte);
 
     if (req.query.time.lte) {
       timeTemp.lte = req.query.time.lte;
@@ -183,17 +184,19 @@ exports.exportPdf = async (req, res, next) => {
         month: 'long',
         year: 'numeric',
       });
-      req.query.time.lte = true;
+      timeTemp.lteReq = true;
     }
+    console.log(timeTemp.lte);
 
-    if (req.query.time === 'this-month') {
+    if (req.query.time) {
       timeTemp.thisMonth = date.toLocaleString('id-ID', {
         timeZone: 'Asia/jakarta',
         month: 'long',
         year: 'numeric',
       });
-      req.query.time = true;
+      timeTemp.thisMonthReq = true;
     }
+    console.log(timeTemp.thisMonth);
 
     const dateTemp = date.toLocaleString('id-ID', {
       timeZone: 'Asia/jakarta',
@@ -201,6 +204,7 @@ exports.exportPdf = async (req, res, next) => {
       month: 'long',
       year: 'numeric',
     });
+    console.log(dateTemp);
 
     const html = ejs.render(
       `<!DOCTYPE html>
@@ -223,12 +227,12 @@ exports.exportPdf = async (req, res, next) => {
     
       <body>
         <h1 style="text-align: center">Laporan Pengaduan Sampah</h1>
-        <% if (${req.query.time.gte} && ${req.query.time.lte}) { %>
+        <% if (${timeTemp.gteReq} && ${timeTemp.lteReq}) { %>
           <h3 style="text-align: center">${timeTemp.gte} - ${timeTemp.lte}</h3>
-        <% } else if (${req.query.time.gte}) { %>
+        <% } else if (${timeTemp.gteReq}) { %>
           <h3 style="text-align: center">${timeTemp.gte} -  ${dateTemp}</h3>
-        <% } else if (${req.query.time}) { %>
-            <h3 style="text-align: center">${timeTemp.thisMonth}</h3>
+        <% } else if (${timeTemp.thisMonthReq}) { %>
+          <h3 style="text-align: center">${timeTemp.thisMonth}</h3>
         <% } %>
         <br>
         <div class="container">
