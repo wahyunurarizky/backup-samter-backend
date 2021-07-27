@@ -19,9 +19,9 @@
   <body>
     <div class="container">
       <h1 style="text-align: center">Laporan Retribusi Sampah (Bulanan)</h1>
-      <% if ('${req.query.pickup_time}' === 'this-month') { %>
+      <% if ('${req.query.payment_time}' === 'this-month') { %>
         <% if (${req.query.tps}) { %>
-          <h3 style="text-align: center"><%= datas[0].pickup_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,month: 'long',year: 'numeric'}) %> - <%= datas[0].tps.name %></h3>
+          <h3 style="text-align: center"><%= datas[0].payment_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,month: 'long',year: 'numeric'}) %> - <%= datas[0].tps.name %></h3>
         <% } %>
       <% } %>
       <br>
@@ -38,14 +38,11 @@
       <table class="table table-bordered" style="border: 3px solid black; text-align: center;">
         <tr>
           <th style="border: 3px solid black">No</th>
-          <th style="border: 3px solid black">Nama Petugas</th>
+          <th style="border: 3px solid black">Nama Pembayar</th>
           <th style="border: 3px solid black">TPS</th>
-          <th style="border: 3px solid black">No Polisi</th>
-          <th style="border: 3px solid black">ID Bak Sampah</th>
-          <th style="border: 3px solid black">Waktu Muat</th>
-          <th style="border: 3px solid black">Waktu Bongkar</th>
-          <th style="border: 3px solid black">Nama Operator</th>
-          <th style="border: 3px solid black">Muatan (Kg)</th>
+          <th style="border: 3px solid black">Keterangan Waktu</th>
+          <th style="border: 3px solid black">Jumlah (Rp)</th>
+          <th style="border: 3px solid black">Berat Akumulasi (Kg)</th>
         </tr>
         <% for(let i=0; i<datas.length; i++) {%>
           <tr>
@@ -53,37 +50,24 @@
               <%= i+1 %>
             </td>
             <td style="border: 3px solid black">
-              <%= datas[i].petugas.name %> <br>
-              <%= datas[i].petugas.NIP %>
-            </td>
-            <td style="border: 3px solid black">
-              <%= datas[i].tps.name %> <br>
-              <%= datas[i].tps.qr_id %>
-            </td>
-            <td style="border: 3px solid black">
-              <%= datas[i].kendaraan.plat %> <br>
-              <%= datas[i].kendaraan.kendaraan_type.type %>
-            </td>
-            <td style="border: 3px solid black">
-              <%= datas[i].bak.qr_id %>
-            </td>
-            <td style="border: 3px solid black">
-              <% if (datas[i].pickup_time) %>
-                <%= datas[i].pickup_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,}) %>
-            </td>
-            <td style="border: 3px solid black">
-              <% if (datas[i].arrival_time != null) { %>
-                <%= datas[i].arrival_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,}) %>
+              <% if (datas[i].pembayar != null) { %>
+                <%= datas[i].pembayar %>
               <% } %>
             </td>
             <td style="border: 3px solid black">
-              <% if (datas[i].operator_tpa != null) { %>
-                <%= datas[i].operator_tpa.name %> <br>
-                <%= datas[i].operator_tpa.NIP %>
+              <% if (datas[i].tps != null) { %>
+                <%= datas[i].tps.name %>
               <% } %>
             </td>
             <td style="border: 3px solid black">
-              <%= datas[i].load %>
+              <% if (datas[i].payment_time) %>
+                <%= datas[i].payment_time.toLocaleString('en-GB', {timeZone: 'Asia/jakarta',hour12: false,}) %>
+            </td>
+            <td style="border: 3px solid black">
+              <%= datas[i].price %>
+            </td>
+            <td style="border: 3px solid black">
+              nyusul
             </td>
           </tr>
         <% } %>

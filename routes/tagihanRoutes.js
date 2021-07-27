@@ -4,6 +4,8 @@ const router = express.Router();
 const tagihanController = require('../controllers/tagihanController');
 const authController = require('../controllers/authController');
 
+router.route('/export').get(tagihanController.exportPdf);
+
 router.use(authController.protect);
 
 router

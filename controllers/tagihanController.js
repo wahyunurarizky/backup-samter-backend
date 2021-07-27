@@ -1,5 +1,8 @@
 const multer = require('multer');
 const sharp = require('sharp');
+const pdf = require('html-pdf');
+const ejs = require('ejs');
+
 const Tagihan = require('../models/tagihanModel');
 const Pickup = require('../models/pickupModel');
 const Tps = require('../models/tpsModel');
@@ -177,5 +180,223 @@ exports.createTagihanMonthly = async () => {
     await Tagihan.create(pckp);
   } catch (err) {
     console.log(err);
+  }
+};
+
+exports.exportPdf = async (req, res, next) => {
+  try {
+    const date = new Date(Date.now());
+    const features = new APIFeatures(Tagihan.find(), req.query)
+      .filter()
+      .sort()
+      .limit()
+      .paginate()
+      .search();
+
+    const datas = await features.query.populate();
+
+    const mil = date.getMilliseconds();
+    const sec = date.getSeconds();
+    const min = date.getMinutes();
+    const hou = date.getHours();
+    const day = date.getDay();
+    const mon = date.getMonth();
+    const yea = date.getFullYear();
+    const fileName = `tagihan-${yea}${mon}${day}${hou}${min}${sec}${mil}.pdf`;
+    const tanggal = date.toLocaleString('id-ID', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    const waktu = `${hou}:${min}:${sec}`;
+
+    let dirLogo = '\\public\\img\\logo\\Logo.png';
+    dirLogo = process.cwd() + dirLogo;
+
+    // const logoSrc = 'file:///projects/sampah-project/public/img/logo/Logo.png';
+    if (req.query.tps) {
+      req.query.tps = true;
+    }
+
+    const timeTemp = {};
+
+    if (req.query.payment_time.gte) {
+      timeTemp.gte = req.query.payment_time.gte;
+      timeTemp.gte = new Date(timeTemp.gte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.gteReq = true;
+    }
+    console.log(timeTemp.gte);
+
+    if (req.query.payment_time.lte) {
+      timeTemp.lte = req.query.payment_time.lte;
+      timeTemp.lte = new Date(timeTemp.lte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.lteReq = true;
+    }
+    console.log(timeTemp.lte);
+
+    if (req.query.payment_time) {
+      timeTemp.thisMonth = date.toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.thisMonthReq = true;
+    }
+    console.log(timeTemp.thisMonth);
+
+    const dateTemp = date.toLocaleString('id-ID', {
+      timeZone: 'Asia/jakarta',
+      month: 'long',
+      year: 'numeric',
+    });
+    console.log(dateTemp);
+
+    if (req.query.payment_method) {
+      if (req.query.payment_method === 'perbulan') {
+        timeTemp.paymentMethod = 'Bulanan';
+        timeTemp.paymentMethodReq = true;
+      } else if (req.query.payment_method === 'perangkut') {
+        timeTemp.paymentMethod = 'Angkutan';
+        timeTemp.paymentMethodReq = true;
+      }
+    }
+
+    const html = ejs.render(
+      `<!DOCTYPE html>
+      <html>
+        <head>
+          <mate charest="utf-8" />
+          <title>Laporan Pengaduan</title>
+          <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+          />
+          <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"
+          ></script>
+        </head>
+      
+        <body>
+          <div class="container">
+            <% if (${timeTemp.paymentMethodReq}) { %>
+              <h1 style="text-align: center">Laporan Retribusi Sampah (${timeTemp.paymentMethod})</h1>
+            <% } else { %>
+              <h1 style="text-align: center">Laporan Retribusi Sampah</h1>
+            <% } %>
+
+            <% if (${req.query.tps}) { %>
+              <% if (datas[0].tps != null) { %>
+                <h3 style="text-align: center"><%= datas[0].tps.name %></h3>
+              <% } %>
+            <% } %>
+
+            <% if (${timeTemp.gteReq} && ${timeTemp.lteReq}) { %>
+              <h3 style="text-align: center">${timeTemp.gte} - ${timeTemp.lte}</h3>
+            <% } else if (${timeTemp.gteReq}) { %>
+              <h3 style="text-align: center">${timeTemp.gte} -  ${dateTemp}</h3>
+            <% } else if (${timeTemp.thisMonthReq}) { %>
+              <h3 style="text-align: center">${timeTemp.thisMonth}</h3>
+            <% } %>
+            <br>
+            <table>
+              <tr>
+                <td>Tanggal</td>
+                <td>: ${tanggal}</td>
+              </tr>
+              <tr>
+                <td>Waktu</td>
+                <td>: ${waktu}</td>
+              </tr>
+            </table>
+            <table class="table table-bordered" style="border: 3px solid black; text-align: center;">
+              <tr>
+                <th style="border: 3px solid black">No</th>
+                <th style="border: 3px solid black">Nama Pembayar</th>
+                <th style="border: 3px solid black">TPS</th>
+                <th style="border: 3px solid black">Keterangan Waktu</th>
+                <th style="border: 3px solid black">Jumlah</th>
+                <th style="border: 3px solid black">Berat Akumulasi (Kg)</th>
+              </tr>
+              <% for(let i=0; i<datas.length; i++) {%>
+                <tr>
+                  <td style="border: 3px solid black">
+                    <%= i+1 %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <% if (datas[i].pembayar != null) { %>
+                      <%= datas[i].pembayar %>
+                    <% } %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <% if (datas[i].tps != null) { %>
+                      <%= datas[i].tps.name %>
+                    <% } %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <% if (datas[i].payment_time) %>
+                      <%= datas[i].payment_time.toLocaleString('id-ID', {timeZone: 'Asia/jakarta',month: 'long',year: 'numeric',}) %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <%= datas[i].price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }) %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    nyusul
+                  </td>
+                </tr>
+              <% } %>
+            </table>
+          </div>
+        </body>
+      </html>
+      `,
+      {
+        datas: datas,
+      }
+    );
+
+    const options = {
+      format: 'A4',
+      orientation: 'landscape',
+      border: '10mm',
+      footer: {
+        height: '10mm',
+        contents: {
+          default:
+            '<span style="color: #444; text-align: right">Page {{page}}</span> of <span>{{pages}}</span>',
+          last: `<table>
+          <tr>
+            <td><img src=${dirLogo} alt="Logo-Samter"></td>
+            <td><strong>SAMTER SALATIGA</strong> <br> Versi 1.0</td>
+          </tr>
+        </table>`,
+        },
+      },
+    };
+
+    pdf.create(html, options).toStream(async (err, stream) => {
+      if (err) {
+        //error handling
+        console.log(err);
+      }
+      res.writeHead(200, {
+        'Content-Type': 'application/force-download',
+        'Content-disposition': `attachment; filename=${fileName}`,
+      });
+      stream.pipe(res);
+    });
+  } catch (err) {
+    return next(err);
   }
 };
