@@ -26,11 +26,35 @@ exports.updateStatus = base.updateOne(Tagihan, 'status', 'description');
 exports.delete = base.deleteOne(Tagihan);
 
 exports.getMyTagihan = async (req, res, next) => {
-  req.filter = { tps: req.user.tps };
+  try {
+    const features = new APIFeatures(
+      Tagihan.find({ tps: req.user.tps }),
+      req.query
+    )
+      .filter()
+      .sort('-payment_time')
+      .limit()
+      .paginate()
+      .search(['status', 'qr_id', 'pembayar', 'payment_method']);
 
-  next();
+    const docs = await features.query.populate([
+      { path: 'pickup', select: 'load' },
+      { path: 'tps', select: 'name' },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        results: docs.length,
+        tagihan: docs,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
-
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {

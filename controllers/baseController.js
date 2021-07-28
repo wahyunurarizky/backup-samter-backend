@@ -134,51 +134,7 @@ exports.getAll =
         .paginate()
         .search(search);
 
-      // console.log(popOptions);
       const docs = await features.query.populate(popOptions);
-      // const docs = await Model.fuzzySearch('cipu');
-
-      // const docs = await features.query.explain();
-
-      // docs.forEach((e) => {
-      //   if (e.pickup_time) {
-      //     console.log(e.pickup_time.toLocaleString());
-      //   }
-      // });
-
-      // console.log(docs);
-      // const qstr = req.originalUrl.split('?')[1];
-      // const md = await Model.find();
-      // const total_count = md.length;
-
-      // if (!req.query.page) {
-      //   req.query.page = 1;
-      // }
-      // if (!req.query.limit) {
-      //   req.query.limit = 100;
-      // }
-
-      // const self = req.originalUrl;
-      // const first = `${req.originalUrl.split('?')[0]}?page=1&limit=${
-      //   req.query.limit
-      // }${qstr ? '&' + qstr : ''}`;
-      // const previous =
-      //   req.query.page == 1
-      //     ? null
-      //     : `${req.originalUrl.split('?')[0]}?page=${
-      //         req.query.page * 1 - 1
-      //       }&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
-
-      // const nextt =
-      //   req.query.page == Math.ceil(total_count / req.query.limit)
-      //     ? null
-      //     : `${req.originalUrl.split('?')[0]}?page=${
-      //         req.query.page * 1 + 1
-      //       }&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
-
-      // const last = `${req.originalUrl.split('?')[0]}?page=${Math.ceil(
-      //   total_count / req.query.limit
-      // )}&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
 
       res.status(200).json({
         success: true,
