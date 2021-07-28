@@ -18,7 +18,8 @@ exports.getAll = base.getAll(
     { path: 'pickup', select: 'load' },
     { path: 'tps', select: 'name' },
   ],
-  ['status', 'qr_id', 'pembayar', 'payment_method']
+  ['status', 'qr_id', 'pembayar', 'payment_method'],
+  '-payment_time'
 );
 exports.get = base.getOne(Tagihan);
 exports.updateStatus = base.updateOne(Tagihan, 'status', 'description');
