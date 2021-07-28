@@ -5,7 +5,6 @@ const ejs = require('ejs');
 
 const Tagihan = require('../models/tagihanModel');
 const Pickup = require('../models/pickupModel');
-const Tps = require('../models/tpsModel');
 const base = require('./baseController');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
@@ -174,7 +173,7 @@ exports.createTagihanMonthly = async () => {
 
     const pckp = [];
 
-    for (let p of pickup) {
+    for (const p of pickup) {
       const tagihan = await Tagihan.findOne({
         tps: p.tps,
         payment_month: p.payment_month,
