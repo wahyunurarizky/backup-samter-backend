@@ -337,7 +337,9 @@ exports.exportPdf = async (req, res, next) => {
                     <%= datas[i].price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }) %>
                   </td>
                   <td style="border: 3px solid black">
-                    nyusul
+                    <% if (datas[i].total_load != null) { %>
+                      <%= datas[i].total_load %>
+                    <% } %>
                   </td>
                 </tr>
               <% } %>
