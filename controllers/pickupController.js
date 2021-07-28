@@ -113,7 +113,7 @@ exports.getMyPickup = async (req, res, next) => {
   next();
 };
 
-exports.getAll = base.getAll(Pickup, [], ['qr_id', 'status']);
+exports.getAll = base.getAll(Pickup, [], ['qr_id', 'status'], '-pickup_time');
 exports.get = base.getOne(Pickup);
 exports.updateStatus = async (req, res, next) => {
   try {
