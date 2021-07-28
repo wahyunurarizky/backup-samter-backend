@@ -16,8 +16,7 @@ router
   .route('/getMyPickup')
   .get(
     authController.restrictTo('petugas', 'koordinator ksm', 'operator tpa'),
-    pickupController.getMyPickup,
-    pickupController.getAll
+    pickupController.getMyPickup
   );
 router
   .route('/createPickupManual')

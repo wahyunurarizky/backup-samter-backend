@@ -110,7 +110,28 @@ exports.getMyPickup = async (req, res, next) => {
     req.filter = { tps: req.user.tps };
   }
 
-  next();
+  try {
+    const features = new APIFeatures(Pickup.find(req.filter), req.query)
+      .filter()
+      .sort('-pickup_time')
+      .limit()
+      .paginate()
+      .search(['qr_id', 'status']);
+
+    const docs = await features.query.populate();
+
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        results: docs.length,
+        pickup: docs,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 exports.getAll = base.getAll(Pickup, [], ['qr_id', 'status'], '-pickup_time');
