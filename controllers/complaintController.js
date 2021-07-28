@@ -47,7 +47,12 @@ exports.create = async (req, res, next) => {
     next(err);
   }
 };
-exports.getAll = base.getAll(Complaint);
+exports.getAll = base.getAll(
+  Complaint,
+  [],
+  ['name', 'kecamatan', 'kelurahan', 'nik', 'address'],
+  '-time'
+);
 exports.get = base.getOne(Complaint);
 // exports.update = base.updateOne(Complaint, 'status', 'solution', 'endTime');
 

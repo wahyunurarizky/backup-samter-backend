@@ -27,35 +27,6 @@ class APIFeatures {
 
     const now = new Date(Date.now());
 
-    // const timeType = ['pickup_time', 'payment_time']
-
-    // if (pars.pickup_time) {
-    //   if (pars.pickup_time === 'last7') {
-    //     pars.pickup_time = {
-    //       $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    //     };
-    //   } else if (pars.pickup_time === 'last14') {
-    //     pars.pickup_time = {
-    //       $gt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    //     };
-    //   } else if (pars.pickup_time === 'last30') {
-    //     pars.pickup_time = {
-    //       $gt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    //     };
-    //   } else if (pars.pickup_time === 'this-month') {
-    //     pars.pickup_time = {
-    //       $gte: new Date(now.getFullYear(), now.getMonth()),
-    //     };
-    //   } else if (pars.pickup_time === 'today') {
-    //     pars.pickup_time = {
-    //       $gte: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    //     };
-    //   }
-    //   if (pars.pickup_time.$lte) {
-    //     const x = new Date(pars.pickup_time.$lte);
-    //     pars.pickup_time.$lte = new Date(x.getTime() + 24 * 60 * 60 * 1000);
-    //   }
-    // }
     if (pars.pickup_time)
       pars.pickup_time = this.timeFilter(pars.pickup_time, now);
     if (pars.payment_time)
@@ -69,7 +40,7 @@ class APIFeatures {
     return this;
   }
 
-  sort() {
+  sort(sort) {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(',').join(' ');
       // Tour.find().chain().chain()
@@ -79,7 +50,7 @@ class APIFeatures {
 
       // sort('price ratingsAverage')
     } else {
-      this.query = this.query.sort('name');
+      this.query = this.query.sort(sort);
     }
     return this;
   }
@@ -110,48 +81,20 @@ class APIFeatures {
     return this;
   }
 
-  search() {
+  search(keys) {
     if (this.queryString.search) {
-      this.query = this.query.find({
-        $text: { $search: this.queryString.search },
+      const arrSearch = [];
+
+      // this.query = this.s
+      const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
+
+      keys.forEach((e) => {
+        arrSearch.push({ [e]: regex });
       });
-      // const regex = new RegExp(this.escapeRegex(this.queryString.search), 'gi');
-      // this.query = this.query.find({
-      //   $or: [
-      //     { status: regex },
-      //     { nik: regex },
-      //     { name: regex },
-      //     { qr_id: regex },
-      //     { golongan: regex },
-      //     { jabatan: regex },
-      //     { email: regex },
-      //     { phone: regex },
-      //     { NIP: regex },
-      //   ],
-      // });
-      // this.fuzzySearch('ciput').then(console.log).catch(console.error);
-      // Item.aggregate(
-      //   [
-      //     { "$lookup": {
-      //       "from": ItemTags.collection.name,
-      //       "localField": "tags",
-      //       "foreignField": "_id",
-      //       "as": "tags"
-      //     }},
-      //     { "$unwind": "$tags" },
-      //     { "$match": { "tags.tagName": { "$in": [ "funny", "politics" ] } } },
-      //     { "$group": {
-      //       "_id": "$_id",
-      //       "dateCreated": { "$first": "$dateCreated" },
-      //       "title": { "$first": "$title" },
-      //       "description": { "$first": "$description" },
-      //       "tags": { "$push": "$tags" }
-      //     }}
-      //   ],
-      //   function(err, result) {
-      //     // "tags" is now filtered by condition and "joined"
-      //   }
-      // )
+
+      this.query = this.query.find({
+        $or: arrSearch,
+      });
     }
     return this;
   }

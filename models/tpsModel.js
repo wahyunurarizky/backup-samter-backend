@@ -64,7 +64,14 @@ const tpsSchema = new mongoose.Schema(
   }
 );
 
-tpsSchema.index({ '$**': 'text' });
+tpsSchema.index({
+  name: 1,
+  tps_type: 1,
+  qr_id: 1,
+  payment_method: 1,
+  tps_status_ownership: 1,
+  koordinator: 1,
+});
 
 tpsSchema.pre('save', function (next) {
   const id = this._id;

@@ -104,57 +104,16 @@ exports.createPickup = async (req, res, next) => {
 };
 
 exports.getMyPickup = async (req, res, next) => {
-  try {
-    let pickup;
-    if (req.user.role === 'petugas') {
-      const features = new APIFeatures(
-        Pickup.find({ petugas: req.user._id }),
-        req.query
-      )
-        .filter()
-        .sort()
-        .limit()
-        .paginate();
-      pickup = await features.query.populate();
-    } else if (req.user.role === 'koordinator ksm') {
-      const features = new APIFeatures(
-        Pickup.find({ tps: req.user.tps }),
-        req.query
-      )
-        .filter()
-        .sort()
-        .limit()
-        .paginate();
-      pickup = await features.query.populate();
-    } else if (req.user.role === 'operator tpa') {
-      const features = new APIFeatures(
-        Pickup.find({ tpa: req.user.tpa }),
-        req.query
-      )
-        .filter()
-        .sort()
-        .limit()
-        .paginate();
-      pickup = await features.query.populate();
-    }
-
-    if (!pickup)
-      return next(new AppError('tidak ada data pickup untukmu', 404));
-    res.status(201).json({
-      success: true,
-      code: '201',
-      message: 'OK',
-      data: {
-        results: pickup.length,
-        pickup,
-      },
-    });
-  } catch (err) {
-    next(err);
+  if (req.user.role === 'petugas') {
+    req.filter = { petugas: req.user._id };
+  } else if (req.user.role === 'koordinator ksm') {
+    req.filter = { tps: req.user.tps };
   }
+
+  next();
 };
 
-exports.getAll = base.getAll(Pickup);
+exports.getAll = base.getAll(Pickup, [], ['qr_id', 'status']);
 exports.get = base.getOne(Pickup);
 exports.updateStatus = async (req, res, next) => {
   try {

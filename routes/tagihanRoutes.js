@@ -15,7 +15,8 @@ router
   .route('/getMyTagihan')
   .get(
     authController.restrictTo('koordinator ksm'),
-    tagihanController.getMyTagihan
+    tagihanController.getMyTagihan,
+    tagihanController.getAll
   );
 
 router

@@ -57,7 +57,15 @@ const complaintSchema = new mongoose.Schema({
   },
 });
 
-complaintSchema.index({ '$**': 'text' });
+complaintSchema.index({
+  status: 1,
+  time: 1,
+  nik: 1,
+  name: 1,
+  kelurahan: 1,
+  kecamatan: 1,
+  address: 1,
+});
 
 complaintSchema.pre('save', function (next) {
   const date = new Date(Date.now());

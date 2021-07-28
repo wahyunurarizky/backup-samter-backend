@@ -15,7 +15,11 @@ exports.create = base.createOne(
   'koordinator',
   'qr_id'
 );
-exports.getAll = base.getAll(Tpa);
+exports.getAll = base.getAll(
+  Tpa,
+  [],
+  ['name', 'tpa_type', 'qr_id', 'koordinator']
+);
 exports.get = base.getOne(Tpa);
 exports.update = base.updateOne(Tpa);
 // exports.delete = base.deleteOne(Tpa);

@@ -124,87 +124,72 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
   }
 };
 
-exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
-  try {
-    const features = new APIFeatures(Model.find(filter), req.query)
-      .filter()
-      .sort()
-      .limit()
-      .paginate()
-      .search();
+exports.getAll =
+  (Model, popOptions, search, sort) => async (req, res, next) => {
+    try {
+      const features = new APIFeatures(Model.find(req.filter), req.query)
+        .filter()
+        .sort(sort)
+        .limit()
+        .paginate()
+        .search(search);
 
-    // console.log(popOptions);
-    const docs = await features.query.populate(popOptions);
-    // const docs = await Model.fuzzySearch('cipu');
+      // console.log(popOptions);
+      const docs = await features.query.populate(popOptions);
+      // const docs = await Model.fuzzySearch('cipu');
 
-    // const docs = await features.query.explain();
+      // const docs = await features.query.explain();
 
-    // docs.forEach((e) => {
-    //   if (e.pickup_time) {
-    //     console.log(e.pickup_time.toLocaleString());
-    //   }
-    // });
-    const qstr = req.originalUrl.split('?')[1];
-    const md = await Model.find();
-    const total_count = md.length;
+      // docs.forEach((e) => {
+      //   if (e.pickup_time) {
+      //     console.log(e.pickup_time.toLocaleString());
+      //   }
+      // });
 
-    if (!req.query.page) {
-      req.query.page = 1;
-    }
-    if (!req.query.limit) {
-      req.query.limit = 100;
-    }
-    // let strq = '';
-    // Object.keys(req.query).forEach((el) => {
-    //   if (el !== 'page' && el !== 'limit')
-    //     strq += `${el}=${req.query['pickup_time[gte]']}`;
-    // });
-    // console.log(strq);
-    const self = req.originalUrl;
-    const first = `${req.originalUrl.split('?')[0]}?page=1&limit=${
-      req.query.limit
-    }${qstr ? '&' + qstr : ''}`;
-    const previous =
-      req.query.page == 1
-        ? null
-        : `${req.originalUrl.split('?')[0]}?page=${
-            req.query.page * 1 - 1
-          }&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
+      // console.log(docs);
+      // const qstr = req.originalUrl.split('?')[1];
+      // const md = await Model.find();
+      // const total_count = md.length;
 
-    const nextt =
-      req.query.page == Math.ceil(total_count / req.query.limit)
-        ? null
-        : `${req.originalUrl.split('?')[0]}?page=${
-            req.query.page * 1 + 1
-          }&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
+      // if (!req.query.page) {
+      //   req.query.page = 1;
+      // }
+      // if (!req.query.limit) {
+      //   req.query.limit = 100;
+      // }
 
-    const last = `${req.originalUrl.split('?')[0]}?page=${Math.ceil(
-      total_count / req.query.limit
-    )}&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
+      // const self = req.originalUrl;
+      // const first = `${req.originalUrl.split('?')[0]}?page=1&limit=${
+      //   req.query.limit
+      // }${qstr ? '&' + qstr : ''}`;
+      // const previous =
+      //   req.query.page == 1
+      //     ? null
+      //     : `${req.originalUrl.split('?')[0]}?page=${
+      //         req.query.page * 1 - 1
+      //       }&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
 
-    res.status(200).json({
-      success: true,
-      code: '200',
-      message: 'OK',
-      data: {
-        results: docs.length,
-        metadata: {
-          page: req.query.page * 1 || 1,
-          per_page: req.query.limit * 1,
-          page_count: Math.ceil(total_count / req.query.limit),
-          total_count,
-          links: {
-            self,
-            first,
-            previous,
-            next: nextt,
-            last,
-          },
+      // const nextt =
+      //   req.query.page == Math.ceil(total_count / req.query.limit)
+      //     ? null
+      //     : `${req.originalUrl.split('?')[0]}?page=${
+      //         req.query.page * 1 + 1
+      //       }&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
+
+      // const last = `${req.originalUrl.split('?')[0]}?page=${Math.ceil(
+      //   total_count / req.query.limit
+      // )}&limit=${req.query.limit}${qstr ? '&' + qstr : ''}`;
+
+      res.status(200).json({
+        success: true,
+        code: '200',
+        message: 'OK',
+        data: {
+          results: docs.length,
+          docs,
         },
-        docs,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      });
+    } catch (error) {
+      next(error);
+    }
+  };

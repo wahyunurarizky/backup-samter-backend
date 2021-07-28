@@ -14,7 +14,18 @@ exports.create = base.createOne(
   'tps_area',
   'tps_status_ownership'
 );
-exports.getAll = base.getAll(Tps);
+exports.getAll = base.getAll(
+  Tps,
+  [],
+  [
+    'name',
+    'tps_type',
+    'qr_id',
+    'payment_method',
+    'tps_status_ownership',
+    'koordinator',
+  ]
+);
 exports.get = base.getOne(Tps);
 exports.update = base.updateOne(
   Tps,

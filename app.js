@@ -29,7 +29,7 @@ const AppError = require('./utils/appError');
 const app = express();
 
 new CronJob(
-  '1-10 1 1 * *',
+  '1 1 1 1 * *',
   tagihanController.createTagihanMonthly,
   null,
   true,

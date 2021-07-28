@@ -9,7 +9,7 @@ exports.create = base.createOne(
   'empty_weight',
   'max_load_weight'
 );
-exports.getAll = base.getAll(JenisKendaraan);
+exports.getAll = base.getAll(JenisKendaraan, [], ['type']);
 exports.get = base.getOne(JenisKendaraan);
 exports.update = base.updateOne(
   JenisKendaraan,

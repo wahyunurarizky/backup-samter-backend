@@ -57,7 +57,8 @@ mongoose
 
 const deleteData = async () => {
   try {
-    await Tagihan.deleteMany({ payment_method: 'perbulan' });
+    await Tagihan.deleteMany({ payment_method: 'perangkut' });
+    await Pickup.deleteMany({ payment_method: 'perangkut' });
 
     console.log('data successfully deleted');
   } catch (e) {

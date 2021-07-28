@@ -12,38 +12,22 @@ const AppError = require('../utils/appError');
 // const bus = require('../utils/eventBus');
 
 // exports.create = base.createOne(Tagihan, 'total', 'bukti', 'waktu', 'status');
-exports.getAll = base.getAll(Tagihan, [
-  { path: 'pickup', select: 'load' },
-  { path: 'tps', select: 'name' },
-]);
+exports.getAll = base.getAll(
+  Tagihan,
+  [
+    { path: 'pickup', select: 'load' },
+    { path: 'tps', select: 'name' },
+  ],
+  ['status', 'qr_id', 'pembayar', 'payment_method']
+);
 exports.get = base.getOne(Tagihan);
 exports.updateStatus = base.updateOne(Tagihan, 'status', 'description');
 exports.delete = base.deleteOne(Tagihan);
 
 exports.getMyTagihan = async (req, res, next) => {
-  try {
-    const features = new APIFeatures(
-      Tagihan.find({ tps: req.user.tps }),
-      req.query
-    )
-      .filter()
-      .sort()
-      .limit()
-      .paginate();
-    const tagihan = await features.query;
+  req.filter = { tps: req.user.tps };
 
-    res.status(200).json({
-      success: true,
-      code: '200',
-      message: 'OK',
-      data: {
-        results: tagihan.length,
-        tagihan,
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
+  next();
 };
 
 const multerStorage = multer.memoryStorage();
@@ -130,8 +114,8 @@ exports.createTagihanMonthly = async () => {
         $match: {
           payment_method: 'perbulan',
           arrival_time: {
-            $gte: new Date(m.getFullYear(), m.getMonth()),
-            $lt: new Date(m.getFullYear(), m.getMonth() + 1),
+            $gte: new Date(m.getFullYear(), m.getMonth() - 1),
+            $lt: new Date(m.getFullYear(), m.getMonth()),
           },
         },
       },
@@ -146,8 +130,8 @@ exports.createTagihanMonthly = async () => {
           tps: '$_id',
           status: 'belum terbayar',
           payment_method: 'perbulan',
-          payment_month: new Date(m.getFullYear(), m.getMonth(), 2),
-          payment_time: new Date(m.getFullYear(), m.getMonth(), 2),
+          payment_month: new Date(m.getFullYear(), m.getMonth() - 1, 2),
+          payment_time: new Date(m.getFullYear(), m.getMonth() - 1, 2),
           price: {
             // penting perlu dihiung berat truknya juga
             $multiply: ['$total_load', process.env.DEFAULT_PRICE_PER_KG * 1],

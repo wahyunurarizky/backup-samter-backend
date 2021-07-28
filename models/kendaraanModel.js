@@ -34,7 +34,7 @@ const kendaraanSchema = new mongoose.Schema(
     collection: 'kendaraan',
   }
 );
-kendaraanSchema.index({ '$**': 'text' });
+kendaraanSchema.index({ work_unit: 1, year: 1, plat: 1, qr_id: 1 });
 
 kendaraanSchema.pre('save', function (next) {
   const date = this._id;

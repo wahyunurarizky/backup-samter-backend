@@ -3,7 +3,7 @@ const Bak = require('../models/bakModel');
 const base = require('./baseController');
 
 exports.create = base.createOne(Bak, 'empty_weight', 'max_weight');
-exports.getAll = base.getAll(Bak);
+exports.getAll = base.getAll(Bak, [], ['qr_id']);
 exports.get = base.getOne(Bak);
 exports.update = base.updateOne(Bak);
 exports.delete = base.deleteOne(Bak);

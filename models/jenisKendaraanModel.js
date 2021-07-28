@@ -25,7 +25,7 @@ const jenisKendaraanSchema = new mongoose.Schema(
     collection: 'jenisKendaraan',
   }
 );
-jenisKendaraanSchema.index({ '$**': 'text' });
+jenisKendaraanSchema.index({ type: 1 });
 
 jenisKendaraanSchema.pre(/^find/, function (next) {
   // this points to the current query
