@@ -563,8 +563,7 @@ exports.download = async (req, res, next) => {
           .isi {
             padding-top: 20px;
             display: flex;
-            padding-left: 20px;
-            padding-right: 20px;
+            padding-left: 30px;
           }
           .isi i {
             color: green;
@@ -574,7 +573,9 @@ exports.download = async (req, res, next) => {
           .card {
             display: flex;
             flex-wrap: wrap;
+            flex-direction: column;
             justify-content: space-around;
+            margin-bottom: 20px;
           }
           .text {
             text-transform: uppercase;
