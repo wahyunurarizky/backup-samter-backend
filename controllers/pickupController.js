@@ -863,7 +863,7 @@ exports.exportPdf = async (req, res, next) => {
     );
 
     const options = {
-      format: 'A4',
+      format: 'A3',
       orientation: 'landscape',
       border: '10mm',
       footer: {
