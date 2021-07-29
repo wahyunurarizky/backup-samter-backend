@@ -44,10 +44,23 @@ exports.updateMe = async (req, res, next) => {
 };
 
 // restrict to pegawai dan superadmin
-exports.getAllUsers = base.getAll(User, [
-  { path: 'tps', select: 'name' },
-  { path: 'tpa', select: 'name' },
-]);
+exports.getAllUsers = base.getAll(
+  User,
+  [
+    { path: 'tps', select: 'name' },
+    { path: 'tpa', select: 'name' },
+  ],
+  [
+    'role',
+    'email',
+    'name',
+    'address',
+    'golongan',
+    'jabatan',
+    'work_unit',
+    'NIP',
+  ]
+);
 exports.getUser = base.getOne(User, [
   { path: 'tps', select: '-__v' },
   { path: 'tpa', select: '-__v' },

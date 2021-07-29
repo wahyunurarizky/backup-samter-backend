@@ -31,7 +31,7 @@ const tpaSchema = new mongoose.Schema(
     isDeleted: {
       type: Boolean,
       default: false,
-      select: true,
+      select: false,
     },
   },
   {
@@ -39,7 +39,7 @@ const tpaSchema = new mongoose.Schema(
   }
 );
 
-tpaSchema.index({ '$**': 'text' });
+tpaSchema.index({ name: 1, qr_id: 1, tpa_type: 1, koordinator: 1 });
 
 tpaSchema.pre('save', function (next) {
   const id = this._id;

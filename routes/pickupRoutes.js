@@ -70,9 +70,10 @@ router
   .get(authController.restrictTo('pegawai'), pickupController.get)
   .patch(authController.restrictTo('pegawai'), pickupController.updateStatus);
 
-router
-  .route('/download/:id')
-  .get(authController.restrictTo('petugas'), pickupController.download);
+router.route('/download/:id').get(
+  // authController.restrictTo('petugas', 'koordinator ksm'),
+  pickupController.download
+);
 router
   .route('/inputLoad/:id')
   .patch(authController.restrictTo('operator tpa'), pickupController.inputLoad);

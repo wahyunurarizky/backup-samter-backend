@@ -1,4 +1,5 @@
 const path = require('path');
+// const EventEmitter = require('events');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -7,8 +8,9 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
 const compression = require('compression');
-const schedule = require('node-schedule');
+// const schedule = require('node-schedule');
 
+const CronJob = require('cron').CronJob;
 const userRoutes = require('./routes/userRoutes');
 const jenisKendaraanRoutes = require('./routes/jenisKendaraanRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
@@ -26,7 +28,13 @@ const AppError = require('./utils/appError');
 
 const app = express();
 
-schedule.scheduleJob('1 42 17 6 * *', tagihanController.createTagihanMonthly);
+new CronJob(
+  '1 1 1 1 * *',
+  tagihanController.createTagihanMonthly,
+  null,
+  true,
+  'Asia/Jakarta'
+);
 
 // Allow Cross-Origin requests
 app.use(cors());

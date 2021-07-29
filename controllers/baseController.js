@@ -124,36 +124,28 @@ exports.getOne = (Model, popOptions) => async (req, res, next) => {
   }
 };
 
-exports.getAll = (Model, popOptions, filter) => async (req, res, next) => {
-  try {
-    const features = new APIFeatures(Model.find(filter), req.query)
-      .filter()
-      .sort()
-      .limit()
-      .paginate()
-      .search();
+exports.getAll =
+  (Model, popOptions, search, sort) => async (req, res, next) => {
+    try {
+      const features = new APIFeatures(Model.find(req.filter), req.query)
+        .filter()
+        .sort(sort)
+        .limit()
+        .paginate()
+        .search(search);
 
-    // console.log(popOptions);
-    const docs = await features.query.populate(popOptions);
-    // const docs = await Model.fuzzySearch('cipu');
+      const docs = await features.query.populate(popOptions);
 
-    // const docs = await features.query.explain();
-
-    // docs.forEach((e) => {
-    //   if (e.pickup_time) {
-    //     console.log(e.pickup_time.toLocaleString());
-    //   }
-    // });
-    res.status(200).json({
-      success: true,
-      code: '200',
-      message: 'OK',
-      data: {
-        results: docs.length,
-        docs,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      res.status(200).json({
+        success: true,
+        code: '200',
+        message: 'OK',
+        data: {
+          results: docs.length,
+          docs,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };

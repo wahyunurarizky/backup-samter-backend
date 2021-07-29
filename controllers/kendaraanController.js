@@ -11,7 +11,12 @@ exports.create = base.createOne(
   'kendaraan_type',
   'qr_id'
 );
-exports.getAll = base.getAll(Kendaraan, { path: 'jenis_kendaraan_id' });
+exports.getAll = base.getAll(Kendaraan, { path: 'jenis_kendaraan_id' }, [
+  'work_unit',
+  'year',
+  'plat',
+  'qr_id',
+]);
 exports.get = base.getOne(Kendaraan);
 exports.update = base.updateOne(
   Kendaraan,

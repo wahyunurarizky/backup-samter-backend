@@ -14,6 +14,7 @@ const base = require('./baseController');
 
 exports.create = async (req, res, next) => {
   try {
+    console.log('wkwk');
     // ini kalo mau ngakalin timezone jakarta
     // const wib_time = moment
     //   .tz('Asia/Calcutta')
@@ -46,7 +47,12 @@ exports.create = async (req, res, next) => {
     next(err);
   }
 };
-exports.getAll = base.getAll(Complaint);
+exports.getAll = base.getAll(
+  Complaint,
+  [],
+  ['name', 'kecamatan', 'kelurahan', 'nik', 'address'],
+  '-time'
+);
 exports.get = base.getOne(Complaint);
 // exports.update = base.updateOne(Complaint, 'status', 'solution', 'endTime');
 
@@ -109,6 +115,8 @@ exports.resizeComplaintPhoto = async (req, res, next) => {
   try {
     if (!req.file) return next();
 
+    console.log(req.file);
+
     req.file.filename = `complaint-${Date.now()}.jpeg`;
 
     await sharp(req.file.buffer)
@@ -116,6 +124,7 @@ exports.resizeComplaintPhoto = async (req, res, next) => {
       .jpeg({ quality: 90 })
       .toFile(`public/img/complaint/${req.file.filename}`);
 
+    console.log('wkwk');
     next();
   } catch (err) {
     next(err);
@@ -158,6 +167,50 @@ exports.exportPdf = async (req, res, next) => {
 
     // const logoSrc = 'file:///projects/sampah-project/public/img/logo/Logo.png';
 
+    const timeTemp = {};
+
+    if (req.query.time.gte) {
+      timeTemp.gte = req.query.time.gte;
+      timeTemp.gte = new Date(timeTemp.gte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.gteReq = true;
+    }
+    console.log(timeTemp.gte);
+
+    if (req.query.time.lte) {
+      timeTemp.lte = req.query.time.lte;
+      timeTemp.lte = new Date(timeTemp.lte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.lteReq = true;
+    }
+    console.log(timeTemp.lte);
+
+    if (req.query.time) {
+      timeTemp.thisMonth = date.toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.thisMonthReq = true;
+    }
+    console.log(timeTemp.thisMonth);
+
+    const dateTemp = date.toLocaleString('id-ID', {
+      timeZone: 'Asia/jakarta',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    console.log(dateTemp);
+
     const html = ejs.render(
       `<!DOCTYPE html>
     <html>
@@ -179,6 +232,14 @@ exports.exportPdf = async (req, res, next) => {
     
       <body>
         <h1 style="text-align: center">Laporan Pengaduan Sampah</h1>
+        <% if (${timeTemp.gteReq} && ${timeTemp.lteReq}) { %>
+          <h3 style="text-align: center">${timeTemp.gte} - ${timeTemp.lte}</h3>
+        <% } else if (${timeTemp.gteReq}) { %>
+          <h3 style="text-align: center">${timeTemp.gte} -  ${dateTemp}</h3>
+        <% } else if (${timeTemp.thisMonthReq}) { %>
+          <h3 style="text-align: center">${timeTemp.thisMonth}</h3>
+        <% } %>
+        <br>
         <div class="container">
           <table>
             <tr>

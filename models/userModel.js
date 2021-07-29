@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema({
   isDeleted: {
     type: Boolean,
     default: false,
-    select: true,
+    select: false,
   },
   NIP: {
     type: String,
@@ -101,8 +101,16 @@ const userSchema = new mongoose.Schema({
   device_model: String,
 });
 
-userSchema.index({ role: 1, pns: 1 });
-userSchema.index({ '$**': 'text' });
+userSchema.index({
+  role: 1,
+  email: 1,
+  name: 1,
+  address: 1,
+  golongan: 1,
+  jabatan: 1,
+  work_unit: 1,
+  NIP: 1,
+});
 
 // encrypt the password using 'bcryptjs'
 // Mongoose -> Document Middleware

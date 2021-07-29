@@ -1,17 +1,25 @@
 const multer = require('multer');
 const sharp = require('sharp');
+const pdf = require('html-pdf');
+const ejs = require('ejs');
+
 const Tagihan = require('../models/tagihanModel');
 const Pickup = require('../models/pickupModel');
-const Tps = require('../models/tpsModel');
 const base = require('./baseController');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
+// const bus = require('../utils/eventBus');
 
 // exports.create = base.createOne(Tagihan, 'total', 'bukti', 'waktu', 'status');
-exports.getAll = base.getAll(Tagihan, [
-  { path: 'pickup', select: 'load' },
-  { path: 'tps', select: 'name' },
-]);
+exports.getAll = base.getAll(
+  Tagihan,
+  [
+    { path: 'pickup', select: 'load' },
+    { path: 'tps', select: 'name' },
+  ],
+  ['status', 'qr_id', 'pembayar', 'payment_method'],
+  '-payment_time'
+);
 exports.get = base.getOne(Tagihan);
 exports.updateStatus = base.updateOne(Tagihan, 'status', 'description');
 exports.delete = base.deleteOne(Tagihan);
@@ -23,25 +31,29 @@ exports.getMyTagihan = async (req, res, next) => {
       req.query
     )
       .filter()
-      .sort()
+      .sort('-payment_time')
       .limit()
-      .paginate();
-    const tagihan = await features.query;
+      .paginate()
+      .search(['status', 'qr_id', 'pembayar', 'payment_method']);
+
+    const docs = await features.query.populate([
+      { path: 'pickup', select: 'load' },
+      { path: 'tps', select: 'name' },
+    ]);
 
     res.status(200).json({
       success: true,
       code: '200',
       message: 'OK',
       data: {
-        results: tagihan.length,
-        tagihan,
+        results: docs.length,
+        tagihan: docs,
       },
     });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
-
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
@@ -80,8 +92,10 @@ exports.resizePaymentPhoto = async (req, res, next) => {
 };
 exports.pay = async (req, res, next) => {
   const tagihan = await Tagihan.findById(req.params.id);
-  console.log(tagihan.tps._id);
-  console.log(req.user.tps);
+  if (!tagihan) {
+    return new AppError('id tagihan tidak ada', 400);
+  }
+
   if (tagihan.tps._id.toString() !== req.user.tps.toString()) {
     return next(
       new AppError('kamu tidak bisa membayar tagihan orang lain', 403)
@@ -119,14 +133,12 @@ exports.pay = async (req, res, next) => {
 exports.createTagihanMonthly = async () => {
   try {
     const m = new Date(Date.now());
-
-    let pickup = await Pickup.aggregate([
+    const pickup = await Pickup.aggregate([
       {
         $match: {
           payment_method: 'perbulan',
           arrival_time: {
-            // PENTING {GANTI}
-            $gte: new Date(m.getFullYear() - 1, m.getMonth() - 1),
+            $gte: new Date(m.getFullYear(), m.getMonth() - 1),
             $lt: new Date(m.getFullYear(), m.getMonth()),
           },
         },
@@ -134,7 +146,7 @@ exports.createTagihanMonthly = async () => {
       {
         $group: {
           _id: '$tps',
-          totalLoad: { $sum: '$load' },
+          total_load: { $sum: '$load' },
         },
       },
       {
@@ -142,10 +154,11 @@ exports.createTagihanMonthly = async () => {
           tps: '$_id',
           status: 'belum terbayar',
           payment_method: 'perbulan',
-          payment_month: new Date(m.getFullYear(), m.getMonth()),
-          payment_time: new Date(m.getFullYear(), m.getMonth()),
+          payment_month: new Date(m.getFullYear(), m.getMonth() - 1, 2),
+          payment_time: new Date(m.getFullYear(), m.getMonth() - 1, 2),
           price: {
-            $multiply: ['$totalLoad', process.env.DEFAULT_PRICE_PER_KG * 1],
+            // penting perlu dihiung berat truknya juga
+            $multiply: ['$total_load', process.env.DEFAULT_PRICE_PER_KG * 1],
           },
         },
       },
@@ -156,56 +169,244 @@ exports.createTagihanMonthly = async () => {
         },
       },
     ]);
-
-    const neObj = [];
-
-    pickup.forEach((e) => {
-      const x = {
-        _id: {
-          $ne: e.tps,
-        },
-      };
-      neObj.push(x);
-    });
-
-    let tps;
-    if (!neObj.length) {
-      tps = await Tps.find();
-    } else {
-      tps = await Tps.find({
-        $and: neObj,
-      });
-    }
-
-    tps.forEach((e) => {
-      pickup.push({
-        tps: e._id,
-        totalLoad: 0,
-        price: 0,
-        status: 'terverifikasi',
-        payment_method: 'perbulan',
-        payment_month: new Date(m.getFullYear(), m.getMonth()),
-        payment_time: new Date(m.getFullYear(), m.getMonth()),
-      });
-    });
-
-    const tagihan = await Tagihan.find({
-      payment_month: new Date(m.getFullYear(), m.getMonth()),
-    });
-
-    pickup = pickup.filter((e) => {
-      // console.log(tagihan);
-      if (tagihan.filter((y) => `${y.tps._id}` === `${e.tps}`).length > 0) {
-        return false;
-      }
-      return true;
-    });
     console.log(pickup);
 
-    pickup.forEach(async (e) => {
-      await Tagihan.create(e);
-    });
+    const pckp = [];
+
+    for (const p of pickup) {
+      const tagihan = await Tagihan.findOne({
+        tps: p.tps,
+        payment_month: p.payment_month,
+      });
+      if (!tagihan) {
+        pckp.push(p);
+      }
+    }
+
+    console.log(pckp);
+
+    await Tagihan.create(pckp);
   } catch (err) {
     console.log(err);
+  }
+};
+
+exports.exportPdf = async (req, res, next) => {
+  try {
+    const date = new Date(Date.now());
+    const features = new APIFeatures(Tagihan.find(), req.query)
+      .filter()
+      .sort()
+      .limit()
+      .paginate()
+      .search();
+
+    const datas = await features.query.populate();
+
+    const mil = date.getMilliseconds();
+    const sec = date.getSeconds();
+    const min = date.getMinutes();
+    const hou = date.getHours();
+    const day = date.getDay();
+    const mon = date.getMonth();
+    const yea = date.getFullYear();
+    const fileName = `tagihan-${yea}${mon}${day}${hou}${min}${sec}${mil}.pdf`;
+    const tanggal = date.toLocaleString('id-ID', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    const waktu = `${hou}:${min}:${sec}`;
+
+    let dirLogo = '\\public\\img\\logo\\Logo.png';
+    dirLogo = process.cwd() + dirLogo;
+
+    // const logoSrc = 'file:///projects/sampah-project/public/img/logo/Logo.png';
+    if (req.query.tps) {
+      req.query.tps = true;
+    }
+
+    const timeTemp = {};
+
+    if (req.query.payment_time.gte) {
+      timeTemp.gte = req.query.payment_time.gte;
+      timeTemp.gte = new Date(timeTemp.gte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.gteReq = true;
+    }
+    console.log(timeTemp.gte);
+
+    if (req.query.payment_time.lte) {
+      timeTemp.lte = req.query.payment_time.lte;
+      timeTemp.lte = new Date(timeTemp.lte).toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.lteReq = true;
+    }
+    console.log(timeTemp.lte);
+
+    if (req.query.payment_time) {
+      timeTemp.thisMonth = date.toLocaleString('id-ID', {
+        timeZone: 'Asia/jakarta',
+        month: 'long',
+        year: 'numeric',
+      });
+      timeTemp.thisMonthReq = true;
+    }
+    console.log(timeTemp.thisMonth);
+
+    const dateTemp = date.toLocaleString('id-ID', {
+      timeZone: 'Asia/jakarta',
+      month: 'long',
+      year: 'numeric',
+    });
+    console.log(dateTemp);
+
+    if (req.query.payment_method) {
+      if (req.query.payment_method === 'perbulan') {
+        timeTemp.paymentMethod = 'Bulanan';
+        timeTemp.paymentMethodReq = true;
+      } else if (req.query.payment_method === 'perangkut') {
+        timeTemp.paymentMethod = 'Angkutan';
+        timeTemp.paymentMethodReq = true;
+      }
+    }
+
+    const html = ejs.render(
+      `<!DOCTYPE html>
+      <html>
+        <head>
+          <mate charest="utf-8" />
+          <title>Laporan Pengaduan</title>
+          <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+          />
+          <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"
+          ></script>
+        </head>
+      
+        <body>
+          <div class="container">
+            <% if (${timeTemp.paymentMethodReq}) { %>
+              <h1 style="text-align: center">Laporan Retribusi Sampah (${timeTemp.paymentMethod})</h1>
+            <% } else { %>
+              <h1 style="text-align: center">Laporan Retribusi Sampah</h1>
+            <% } %>
+
+            <% if (${req.query.tps}) { %>
+              <% if (datas[0].tps != null) { %>
+                <h3 style="text-align: center"><%= datas[0].tps.name %></h3>
+              <% } %>
+            <% } %>
+
+            <% if (${timeTemp.gteReq} && ${timeTemp.lteReq}) { %>
+              <h3 style="text-align: center">${timeTemp.gte} - ${timeTemp.lte}</h3>
+            <% } else if (${timeTemp.gteReq}) { %>
+              <h3 style="text-align: center">${timeTemp.gte} -  ${dateTemp}</h3>
+            <% } else if (${timeTemp.thisMonthReq}) { %>
+              <h3 style="text-align: center">${timeTemp.thisMonth}</h3>
+            <% } %>
+            <br>
+            <table>
+              <tr>
+                <td>Tanggal</td>
+                <td>: ${tanggal}</td>
+              </tr>
+              <tr>
+                <td>Waktu</td>
+                <td>: ${waktu}</td>
+              </tr>
+            </table>
+            <table class="table table-bordered" style="border: 3px solid black; text-align: center;">
+              <tr>
+                <th style="border: 3px solid black">No</th>
+                <th style="border: 3px solid black">Nama Pembayar</th>
+                <th style="border: 3px solid black">TPS</th>
+                <th style="border: 3px solid black">Keterangan Waktu</th>
+                <th style="border: 3px solid black">Jumlah</th>
+                <th style="border: 3px solid black">Berat Akumulasi (Kg)</th>
+              </tr>
+              <% for(let i=0; i<datas.length; i++) {%>
+                <tr>
+                  <td style="border: 3px solid black">
+                    <%= i+1 %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <% if (datas[i].pembayar != null) { %>
+                      <%= datas[i].pembayar %>
+                    <% } %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <% if (datas[i].tps != null) { %>
+                      <%= datas[i].tps.name %>
+                    <% } %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <% if (datas[i].payment_time) %>
+                      <%= datas[i].payment_time.toLocaleString('id-ID', {timeZone: 'Asia/jakarta',month: 'long',year: 'numeric',}) %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <%= datas[i].price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }) %>
+                  </td>
+                  <td style="border: 3px solid black">
+                    <% if (datas[i].total_load != null) { %>
+                      <%= datas[i].total_load %>
+                    <% } %>
+                  </td>
+                </tr>
+              <% } %>
+            </table>
+          </div>
+        </body>
+      </html>
+      `,
+      {
+        datas: datas,
+      }
+    );
+
+    const options = {
+      format: 'A4',
+      orientation: 'landscape',
+      border: '10mm',
+      footer: {
+        height: '10mm',
+        contents: {
+          default:
+            '<span style="color: #444; text-align: right">Page {{page}}</span> of <span>{{pages}}</span>',
+          last: `<table>
+          <tr>
+            <td><img src=${dirLogo} alt="Logo-Samter"></td>
+            <td><strong>SAMTER SALATIGA</strong> <br> Versi 1.0</td>
+          </tr>
+        </table>`,
+        },
+      },
+    };
+
+    pdf.create(html, options).toStream(async (err, stream) => {
+      if (err) {
+        //error handling
+        console.log(err);
+      }
+      res.writeHead(200, {
+        'Content-Type': 'application/force-download',
+        'Content-disposition': `attachment; filename=${fileName}`,
+      });
+      stream.pipe(res);
+    });
+  } catch (err) {
+    return next(err);
   }
 };

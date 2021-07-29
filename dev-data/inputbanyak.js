@@ -30,37 +30,35 @@ mongoose
     console.log('DB connection Successfully!');
   });
 
-// READ JSON FILE
-const jenis = JSON.parse(
-  fs.readFileSync(`${__dirname}/jenis_kendaraan.json`, 'utf-8')
-);
-console.log(jenis);
-const kendaraan = JSON.parse(
-  fs.readFileSync(`${__dirname}/kendaraan.json`, 'utf-8')
-);
-console.log(kendaraan);
-const tps = JSON.parse(fs.readFileSync(`${__dirname}/tps.json`, 'utf-8'));
-const user = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
+// // READ JSON FILE
+// const jenis = JSON.parse(
+//   fs.readFileSync(`${__dirname}/jenis_kendaraan.json`, 'utf-8')
+// );
+// console.log(jenis);
+// const kendaraan = JSON.parse(
+//   fs.readFileSync(`${__dirname}/kendaraan.json`, 'utf-8')
+// );
+// console.log(kendaraan);
+// const tps = JSON.parse(fs.readFileSync(`${__dirname}/tps.json`, 'utf-8'));
+// const user = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
 
-const importData = async () => {
-  try {
-    await JenisKendaraan.create(jenis, { validateBeforeSave: false });
-    await Kendaraan.create(kendaraan, { validateBeforeSave: false });
-    await Tps.create(tps, { validateBeforeSave: false });
-    await User.create(user, { validateBeforeSave: false });
-    console.log('data successfully loaded');
-  } catch (e) {
-    console.log(e);
-  }
-  process.exit();
-};
+// const importData = async () => {
+//   try {
+//     await JenisKendaraan.create(jenis, { validateBeforeSave: false });
+//     await Kendaraan.create(kendaraan, { validateBeforeSave: false });
+//     await Tps.create(tps, { validateBeforeSave: false });
+//     await User.create(user, { validateBeforeSave: false });
+//     console.log('data successfully loaded');
+//   } catch (e) {
+//     console.log(e);
+//   }
+//   process.exit();
+// };
 
 const deleteData = async () => {
   try {
-    await Kendaraan.deleteMany();
-    await JenisKendaraan.deleteMany();
-    await Tps.deleteMany();
-    await User.deleteMany();
+    await Tagihan.deleteMany({ payment_method: 'perangkut' });
+    await Pickup.deleteMany({ payment_method: 'perangkut' });
 
     console.log('data successfully deleted');
   } catch (e) {
