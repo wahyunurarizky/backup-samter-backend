@@ -69,7 +69,7 @@ exports.delete = async (req, res, next) => {
 exports.generateQr = async function generate(req, res, next) {
   try {
     const doc = await Tps.findById(req.params.id);
-    const stringdata = JSON.stringify(doc._id);
+    const stringdata = doc.qr_id;
 
     QRCode.toString(stringdata, { type: 'terminal' }, (err, QRcode) => {
       if (err) return console.log('error occurred');

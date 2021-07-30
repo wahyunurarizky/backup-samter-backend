@@ -79,7 +79,7 @@ exports.createPickup = async (req, res, next) => {
     await User.findByIdAndUpdate(req.user._id, { allowedPick: false });
     // await Tagihan.create({});
 
-    const stringdata = JSON.stringify(pickup.qr_id);
+    const stringdata = pickup.qr_id;
 
     QRCode.toDataURL(stringdata, (err, imgUrl) => {
       const qrdata = {
