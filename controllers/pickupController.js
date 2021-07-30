@@ -2,7 +2,7 @@ const QRCode = require('qrcode');
 // const moment = require('moment-timezone');
 const pdf = require('html-pdf');
 const ejs = require('ejs');
-const nodeHtmlToImage = require('node-html-to-image');
+// const nodeHtmlToImage = require('node-html-to-image');
 
 const Pickup = require('../models/pickupModel');
 const Tps = require('../models/tpsModel');
@@ -473,203 +473,206 @@ exports.createPickupByTPA = async (req, res, next) => {
   }
 };
 
-exports.download = async (req, res, next) => {
-  const query = Pickup.findById(req.params.id);
-  query.populate();
-  const doc = await query.select('-__v');
+// exports.download = async (req, res, next) => {
+//   const query = Pickup.findById(req.params.id);
+//   query.populate();
+//   const doc = await query.select('-__v');
 
-  // console.log(doc);
-  if (!doc) {
-    return next(
-      new AppError('tidak ada dokumen yang ditemukan dengan id tersebut', 404)
-    );
-  }
+//   // console.log(doc);
+//   if (!doc) {
+//     return next(
+//       new AppError('tidak ada dokumen yang ditemukan dengan id tersebut', 404)
+//     );
+//   }
 
-  let pickup_time_local_temp = '';
-  pickup_time_local_temp = doc.pickup_time.toLocaleString('id-ID', {
-    timeZone: 'Asia/jakarta',
-  });
-  pickup_time_local_temp = pickup_time_local_temp.slice(9, 17);
-  pickup_time_local_temp = pickup_time_local_temp.replace('.', ':');
-  pickup_time_local_temp = pickup_time_local_temp.replace('.', ':');
+//   let pickup_time_local_temp = '';
+//   pickup_time_local_temp = doc.pickup_time.toLocaleString('id-ID', {
+//     timeZone: 'Asia/jakarta',
+//   });
+//   pickup_time_local_temp = pickup_time_local_temp.slice(9, 17);
+//   pickup_time_local_temp = pickup_time_local_temp.replace('.', ':');
+//   pickup_time_local_temp = pickup_time_local_temp.replace('.', ':');
 
-  let arrival_time_local_temp = '';
-  arrival_time_local_temp = doc.arrival_time.toLocaleString('id-ID', {
-    timeZone: 'Asia/jakarta',
-  });
-  arrival_time_local_temp = arrival_time_local_temp.slice(9, 17);
-  arrival_time_local_temp = arrival_time_local_temp.replace('.', ':');
-  arrival_time_local_temp = arrival_time_local_temp.replace('.', ':');
+//   let arrival_time_local_temp = '';
+//   arrival_time_local_temp = doc.arrival_time.toLocaleString('id-ID', {
+//     timeZone: 'Asia/jakarta',
+//   });
+//   arrival_time_local_temp = arrival_time_local_temp.slice(9, 17);
+//   arrival_time_local_temp = arrival_time_local_temp.replace('.', ':');
+//   arrival_time_local_temp = arrival_time_local_temp.replace('.', ':');
 
-  const image = await nodeHtmlToImage({
-    html: `
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Karla:wght@300&display=swap"
-          rel="stylesheet"
-        />
-        <script
-          src="https://kit.fontawesome.com/d32f06ea3a.js"
-          crossorigin="anonymous"
-        ></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <style>
-          * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
-          body {
-            font-family: 'karla', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #e5e5e5;
-          }
-          .container {
-            width: 300px;
-            background-color: white;
-            min-height: 70vh;
-          }
-          .label-r {
-            margin-top: 5px;
-            text-align: center;
-          }
-          .img-label {
-            display: flex;
-            align-items: center;
-          }
-          .img-label .text {
-            margin-top: 30px;
-            margin-left: 20px;
-            font-size: 14px;
-          }
-          .img-label img {
-            margin-top: 30px;
-            margin-left: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: solid #e5e5e5;
-          }
+//   console.log('loading..');
 
-          .isi {
-            padding-top: 20px;
-            display: flex;
-            padding-left: 30px;
-          }
-          .isi i {
-            color: green;
-            padding-right: 5px;
-            padding-top: 3px;
-          }
-          .card {
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: column;
-            justify-content: space-around;
-            margin-bottom: 20px;
-          }
-          .text {
-            text-transform: uppercase;
-          }
-        </style>
-        <title>Document</title>
-      </head>
-      <body>
-        <div class="container">
-          <h3 class="label-r">Riwayat</h3>
+//   const image = await nodeHtmlToImage({
+//     html: `
+//     <!DOCTYPE html>
+//     <html lang="en">
+//       <head>
+//         <meta charset="UTF-8" />
+//         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+//         <link rel="preconnect" href="https://fonts.googleapis.com" />
+//         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+//         <link
+//           href="https://fonts.googleapis.com/css2?family=Karla:wght@300&display=swap"
+//           rel="stylesheet"
+//         />
+//         <script
+//           src="https://kit.fontawesome.com/d32f06ea3a.js"
+//           crossorigin="anonymous"
+//         ></script>
+//         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+//         <style>
+//           * {
+//             margin: 0;
+//             padding: 0;
+//             box-sizing: border-box;
+//           }
+//           body {
+//             font-family: 'karla', sans-serif;
+//             min-height: 100vh;
+//             display: flex;
+//             align-items: center;
+//             justify-content: center;
+//             background-color: #e5e5e5;
+//           }
+//           .container {
+//             width: 300px;
+//             background-color: white;
+//             min-height: 70vh;
+//           }
+//           .label-r {
+//             margin-top: 5px;
+//             text-align: center;
+//           }
+//           .img-label {
+//             display: flex;
+//             align-items: center;
+//           }
+//           .img-label .text {
+//             margin-top: 30px;
+//             margin-left: 20px;
+//             font-size: 14px;
+//           }
+//           .img-label img {
+//             margin-top: 30px;
+//             margin-left: 30px;
+//             width: 60px;
+//             height: 60px;
+//             border-radius: 50%;
+//             border: solid #e5e5e5;
+//           }
 
-          <div class="img-label">
-            <img src="/img.png" alt="" />
-            <div class="text">
-              <p>nama: ${doc.petugas.name}</p>
-              <p>id: ${doc.petugas.NIP}</p>
-              <p>id pickup: ${doc.qr_id}</p>
-            </div>
-          </div>
-          <div class="card">
-            <div class="isi">
-              <i class="fas fa-shopping-basket"></i>
-              <div class="text">
-                <p>TPS</p>
-                <p>ID : ${doc.tps.qr_id}</p>
-              </div>
-            </div>
-            <div class="isi">
-              <i class="fas fa-clock"></i>
-              <div class="text">
-                <p>Lokasi TPS</p>
-                <p>${doc.tps.location.city}</p>
-              </div>
-            </div>
-            <div class="isi">
-              <i class="fas fa-map-pin"></i>
-              <div class="text">
-                <p>No. Kendaraan</p>
-                <p>${doc.kendaraan.plat}</p>
-              </div>
-            </div>
-            <div class="isi">
-              <i class="fas fa-clock"></i>
-              <div class="text">
-                <p>Bak Sampah</p>
-                <p>ID : ${doc.bak.qr_id}</p>
-              </div>
-            </div>
-            <div class="isi">
-              <i class="fas fa-truck-moving"></i>
-              <div class="text">
-                <p>Waktu Pengangkutan</p>
-                <p>${pickup_time_local_temp}</p>
-              </div>
-            </div>
-            <div class="isi">
-              <i class="fas fa-balance-scale"></i>
-              <div class="text">
-                <p>Waktu Bongkar Muat</p>
-                <p>${arrival_time_local_temp}</p>
-              </div>
-            </div>
-            <div class="isi">
-              <i class="fas fa-shopping-basket"></i>
-              <div class="text">
-                <p>Muatan Bongkar Muat</p>
-                <p>${doc.load} kg</p>
-              </div>
-            </div>
-            <div class="isi">
-              <i class="fas fa-balance-scale"></i>
-              <div class="text">
-                <p>Muatan MAX</p>
-                <p>${doc.kendaraan.kendaraan_type.max_load_weight} kg</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </body>
-    </html>`,
-  });
-  const base64Image = new Buffer.from(image).toString('base64');
-  const dataURI = `data:image/jpeg;base64,${base64Image}`;
+//           .isi {
+//             padding-top: 20px;
+//             display: flex;
+//             padding-left: 30px;
+//           }
+//           .isi i {
+//             color: green;
+//             padding-right: 5px;
+//             padding-top: 3px;
+//           }
+//           .card {
+//             display: flex;
+//             flex-wrap: wrap;
+//             flex-direction: column;
+//             justify-content: space-around;
+//             margin-bottom: 20px;
+//           }
+//           .text {
+//             text-transform: uppercase;
+//           }
+//         </style>
+//         <title>Document</title>
+//       </head>
+//       <body>
+//         <div class="container">
+//           <h3 class="label-r">Riwayat</h3>
 
-  res.status(200).json({
-    success: true,
-    code: '200',
-    message: 'OK',
-    data: {
-      id: req.params.id,
-      image: dataURI,
-    },
-  });
-};
+//           <div class="img-label">
+//             <img src="/img.png" alt="" />
+//             <div class="text">
+//               <p>nama: ${doc.petugas.name}</p>
+//               <p>id: ${doc.petugas.NIP}</p>
+//               <p>id pickup: ${doc.qr_id}</p>
+//             </div>
+//           </div>
+//           <div class="card">
+//             <div class="isi">
+//               <i class="fas fa-shopping-basket"></i>
+//               <div class="text">
+//                 <p>TPS</p>
+//                 <p>ID : ${doc.tps.qr_id}</p>
+//               </div>
+//             </div>
+//             <div class="isi">
+//               <i class="fas fa-clock"></i>
+//               <div class="text">
+//                 <p>Lokasi TPS</p>
+//                 <p>${doc.tps.location.city}</p>
+//               </div>
+//             </div>
+//             <div class="isi">
+//               <i class="fas fa-map-pin"></i>
+//               <div class="text">
+//                 <p>No. Kendaraan</p>
+//                 <p>${doc.kendaraan.plat}</p>
+//               </div>
+//             </div>
+//             <div class="isi">
+//               <i class="fas fa-clock"></i>
+//               <div class="text">
+//                 <p>Bak Sampah</p>
+//                 <p>ID : ${doc.bak.qr_id}</p>
+//               </div>
+//             </div>
+//             <div class="isi">
+//               <i class="fas fa-truck-moving"></i>
+//               <div class="text">
+//                 <p>Waktu Pengangkutan</p>
+//                 <p>${pickup_time_local_temp}</p>
+//               </div>
+//             </div>
+//             <div class="isi">
+//               <i class="fas fa-balance-scale"></i>
+//               <div class="text">
+//                 <p>Waktu Bongkar Muat</p>
+//                 <p>${arrival_time_local_temp}</p>
+//               </div>
+//             </div>
+//             <div class="isi">
+//               <i class="fas fa-shopping-basket"></i>
+//               <div class="text">
+//                 <p>Muatan Bongkar Muat</p>
+//                 <p>${doc.load} kg</p>
+//               </div>
+//             </div>
+//             <div class="isi">
+//               <i class="fas fa-balance-scale"></i>
+//               <div class="text">
+//                 <p>Muatan MAX</p>
+//                 <p>${doc.kendaraan.kendaraan_type.max_load_weight} kg</p>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </body>
+//     </html>`,
+//   });
+//   const base64Image = new Buffer.from(image).toString('base64');
+//   const dataURI = `data:image/jpeg;base64,${base64Image}`;
+//   console.log('end loading');
+
+//   res.status(200).json({
+//     success: true,
+//     code: '200',
+//     message: 'OK',
+//     data: {
+//       id: req.params.id,
+//       image: dataURI,
+//     },
+//   });
+// };
 
 exports.exportPdf = async (req, res, next) => {
   try {
@@ -860,7 +863,7 @@ exports.exportPdf = async (req, res, next) => {
     );
 
     const options = {
-      format: 'A4',
+      format: 'A3',
       orientation: 'landscape',
       border: '10mm',
       footer: {
