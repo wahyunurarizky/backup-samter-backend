@@ -5,15 +5,16 @@ const jenisKendaraanController = require('../controllers/jenisKendaraanControlle
 const authController = require('../controllers/authController');
 
 router.use(authController.protect);
+router.use(authController.restrictTo('pegawai', 'superadmin'));
 
 router
   .route('/')
-  .get(jenisKendaraanController.getAll)
+  .get(authController.restrictTo('pimpinan'), jenisKendaraanController.getAll)
   .post(jenisKendaraanController.create);
 
 router
   .route('/:id')
-  .get(jenisKendaraanController.get)
+  .get(authController.restrictTo('pimpinan'), jenisKendaraanController.get)
   .patch(jenisKendaraanController.update)
   .delete(jenisKendaraanController.delete);
 

@@ -5,14 +5,17 @@ const tpsController = require('../controllers/tpsController');
 const authController = require('../controllers/authController');
 
 router.use(authController.protect);
-router.use(authController.restrictTo('pegawai', 'pimpinan', 'superadmin'));
+router.use(authController.restrictTo('pegawai', 'superadmin'));
 
-router.route('/').get(tpsController.getAll).post(tpsController.create);
+router
+  .route('/')
+  .get(authController.restrictTo('pimpinan'), tpsController.getAll)
+  .post(tpsController.create);
 router.route('/get-tps-total').get(tpsController.getTotalTps);
 router.route('/:id/generate-qr-code').get(tpsController.generateQr);
 router
   .route('/:id')
-  .get(tpsController.get)
+  .get(authController.restrictTo('pimpinan'), tpsController.get)
   .patch(tpsController.update)
   .delete(tpsController.delete);
 

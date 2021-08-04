@@ -5,12 +5,16 @@ const tpaController = require('../controllers/tpaController');
 const authController = require('../controllers/authController');
 
 router.use(authController.protect);
+router.use(authController.restrictTo('pegawai', 'superadmin'));
 
-router.route('/').get(tpaController.getAll).post(tpaController.create);
+router
+  .route('/')
+  .get(authController.restrictTo('pimpinan'), tpaController.getAll)
+  .post(tpaController.create);
 router.route('/:id/generate-qr-code').get(tpaController.generateQr);
 router
   .route('/:id')
-  .get(tpaController.get)
+  .get(authController.restrictTo('pimpinan'), tpaController.get)
   .patch(tpaController.update)
   .delete(tpaController.delete);
 

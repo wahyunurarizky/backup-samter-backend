@@ -42,13 +42,23 @@ router
 router
   .route('/monthly-data/:month/:year')
   .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'koordinator ksm'),
+    authController.restrictTo(
+      'pegawai',
+      'pimpinan',
+      'koordinator ksm',
+      'superadmin'
+    ),
     pickupController.getAverage
   );
 router
   .route('/monthly-data')
   .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'koordinator ksm'),
+    authController.restrictTo(
+      'pegawai',
+      'pimpinan',
+      'koordinator ksm',
+      'superadmin'
+    ),
     pickupController.getAverage
   );
 

@@ -389,13 +389,18 @@ exports.getAverage = async (req, res, next) => {
       },
     ]);
     console.log(pickupThisMonth);
+
+    const tps = await Tps.find();
+
     res.status(200).json({
       success: true,
       code: '200',
       message: 'OK',
       data: {
-        avgLoadWeek,
-        totalLoad: pickupThisMonth[0] ? pickupThisMonth[0].total : null,
+        tps: tps.length,
+        avgLoadDay: 1000,
+        avgLoadWeek: 3000,
+        avgLoadMonth: 5000,
       },
     });
   } catch (err) {

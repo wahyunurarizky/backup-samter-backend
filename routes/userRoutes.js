@@ -23,7 +23,7 @@ router.use(authController.restrictTo('pegawai', 'superadmin'));
 
 router
   .route('/')
-  .get(userController.getAllUsers)
+  .get(authController.restrictTo('pimpinan'), userController.getAllUsers)
   .post(
     userController.uploadUserPhoto,
     userController.resizeUserPhoto,
@@ -32,7 +32,7 @@ router
 
 router
   .route('/:id')
-  .get(userController.getUser)
+  .get(authController.restrictTo('pimpinan'), userController.getUser)
   .patch(
     userController.uploadUserPhoto,
     userController.resizeUserPhoto,
