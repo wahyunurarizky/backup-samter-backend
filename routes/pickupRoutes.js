@@ -11,7 +11,10 @@ router.use(authController.protect);
 router
   .route('/')
   .post(authController.restrictTo('petugas'), pickupController.createPickup)
-  .get(authController.restrictTo('pegawai'), pickupController.getAll);
+  .get(
+    authController.restrictTo('pegawai', 'pimpinan', 'superadmin'),
+    pickupController.getAll
+  );
 router
   .route('/getMyPickup')
   .get(
@@ -77,7 +80,7 @@ router
 
 router
   .route('/:id')
-  .get(authController.restrictTo('pegawai'), pickupController.get)
+  .get(authController.restrictTo('pegawai', 'pimpinan'), pickupController.get)
   .patch(authController.restrictTo('pegawai'), pickupController.updateStatus);
 
 // router.route('/download/:id').get(
