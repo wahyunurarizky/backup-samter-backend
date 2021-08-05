@@ -5,18 +5,27 @@ const kendaraanController = require('../controllers/kendaraanController');
 const authController = require('../controllers/authController');
 
 router.use(authController.protect);
-router.use(authController.restrictTo('pegawai', 'admin'));
+router.use(authController.restrictTo('pegawai', 'superadmin', 'pimpinan'));
 router
   .route('/')
-  .get(authController.restrictTo('pimpinan'), kendaraanController.getAll)
-  .post(kendaraanController.create);
+  .get(kendaraanController.getAll)
+  .post(
+    authController.restrictTo('superadmin', 'pegawai'),
+    kendaraanController.create
+  );
 
 router.route('/:id/generate-qr-code').get(kendaraanController.generateQr);
 
 router
   .route('/:id')
-  .get(authController.restrictTo('pimpinan'), kendaraanController.get)
-  .patch(kendaraanController.update)
-  .delete(kendaraanController.delete);
+  .get(kendaraanController.get)
+  .patch(
+    authController.restrictTo('superadmin', 'pegawai'),
+    kendaraanController.update
+  )
+  .delete(
+    authController.restrictTo('superadmin', 'pegawai'),
+    kendaraanController.delete
+  );
 
 module.exports = router;

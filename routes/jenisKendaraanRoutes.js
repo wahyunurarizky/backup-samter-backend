@@ -5,17 +5,26 @@ const jenisKendaraanController = require('../controllers/jenisKendaraanControlle
 const authController = require('../controllers/authController');
 
 router.use(authController.protect);
-router.use(authController.restrictTo('pegawai', 'superadmin'));
+router.use(authController.restrictTo('pegawai', 'superadmin', 'pimpinan'));
 
 router
   .route('/')
-  .get(authController.restrictTo('pimpinan'), jenisKendaraanController.getAll)
-  .post(jenisKendaraanController.create);
+  .get(jenisKendaraanController.getAll)
+  .post(
+    authController.restrictTo('superadmin', 'pegawai'),
+    jenisKendaraanController.create
+  );
 
 router
   .route('/:id')
-  .get(authController.restrictTo('pimpinan'), jenisKendaraanController.get)
-  .patch(jenisKendaraanController.update)
-  .delete(jenisKendaraanController.delete);
+  .get(jenisKendaraanController.get)
+  .patch(
+    authController.restrictTo('superadmin', 'pegawai'),
+    jenisKendaraanController.update
+  )
+  .delete(
+    authController.restrictTo('superadmin', 'pegawai'),
+    jenisKendaraanController.delete
+  );
 
 module.exports = router;

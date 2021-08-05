@@ -23,7 +23,10 @@ router
 
 router
   .route('/:id')
-  .get(tagihanController.get)
+  .get(
+    authController.restrictTo('pegawai', 'pimpinan', 'superadmin'),
+    tagihanController.get
+  )
   .patch(
     authController.restrictTo('pegawai', 'superadmin'),
     tagihanController.updateStatus

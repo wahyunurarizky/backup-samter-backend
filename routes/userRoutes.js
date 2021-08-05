@@ -19,12 +19,13 @@ router.delete('/deleteMe', userController.deleteMe);
 router.patch('/updateMyPassword', authController.updatePassword);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo('pegawai', 'superadmin'));
+router.use(authController.restrictTo('pegawai', 'superadmin', 'pimpinan'));
 
 router
   .route('/')
-  .get(authController.restrictTo('pimpinan'), userController.getAllUsers)
+  .get(userController.getAllUsers)
   .post(
+    authController.restrictTo('superadmin', 'pegawai'),
     userController.uploadUserPhoto,
     userController.resizeUserPhoto,
     userController.createUser
@@ -32,15 +33,27 @@ router
 
 router
   .route('/:id')
-  .get(authController.restrictTo('pimpinan'), userController.getUser)
+  .get(
+    authController.restrictTo('pimpinan', 'superadmin', 'pegawai'),
+    userController.getUser
+  )
   .patch(
+    authController.restrictTo('superadmin', 'pegawai'),
     userController.uploadUserPhoto,
     userController.resizeUserPhoto,
     userController.updateUser
   )
-  .delete(userController.deleteUser);
+  .delete(
+    authController.restrictTo('superadmin', 'pegawai'),
+    userController.deleteUser
+  );
 
-router.route('/:id/resetPassword').patch(userController.resetUserPassword);
+router
+  .route('/:id/resetPassword')
+  .patch(
+    authController.restrictTo('superadmin', 'pegawai'),
+    userController.resetUserPassword
+  );
 
 // router.route('/qr/:qrid').get(userController.getPetugasByQrId);
 
