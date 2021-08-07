@@ -124,11 +124,20 @@ exports.updateUser = async (req, res, next) => {
     const filteredBody = filterObj(req.body, [
       'name',
       'email',
-      'pns',
+      'password',
+      'passwordConfirm',
+      'passwordChangedAt',
+      'role',
       'address',
       'NIP',
       'phone',
-      'role',
+      'photo',
+      'tpa',
+      'tps',
+      'jumlah_penarikan',
+      'jabatan',
+      'golongan',
+      'work_unit',
     ]);
     if (req.file)
       filteredBody.photo = `${process.env.URL}img/users/${req.file.filename}`;

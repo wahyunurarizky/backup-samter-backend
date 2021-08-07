@@ -401,6 +401,7 @@ exports.getAverage = async (req, res, next) => {
         avgLoadDay: 1000,
         avgLoadWeek: 3000,
         avgLoadMonth: 5000,
+        totalLoadThisMonth: 10000,
       },
     });
   } catch (err) {
