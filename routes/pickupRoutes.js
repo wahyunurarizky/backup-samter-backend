@@ -5,6 +5,7 @@ const pickupController = require('../controllers/pickupController');
 const authController = require('../controllers/authController');
 
 router.route('/export').get(pickupController.exportPdf);
+router.route('/download/:id').get(pickupController.download);
 
 router.use(authController.protect);
 
