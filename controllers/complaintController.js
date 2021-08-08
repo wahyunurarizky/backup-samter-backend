@@ -53,6 +53,7 @@ exports.notArchived = (req, res, next) => {
   }
   next();
 };
+
 exports.getAll = base.getAll(
   Complaint,
   [],
@@ -71,6 +72,39 @@ exports.update = async (req, res, next) => {
         status: req.body.status,
         solution: req.body.solution,
         endTime: Date.now(),
+      },
+      {
+        // jangan lupa run validators pada update
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!updatedDoc) {
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        doc: updatedDoc,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateUnArchived = async (req, res, next) => {
+  try {
+    // const filteredBody = filterObj(req.body, fields);
+    const updatedDoc = await Complaint.findByIdAndUpdate(
+      req.params.id,
+      {
+        isArchived: false,
       },
       {
         // jangan lupa run validators pada update
