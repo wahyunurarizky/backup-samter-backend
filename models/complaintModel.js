@@ -70,12 +70,13 @@ complaintSchema.index({
   kelurahan: 1,
   kecamatan: 1,
   address: 1,
+  isArchived: 1,
 });
-complaintSchema.pre(/^find/, function (next) {
-  // this points to the current query
-  this.find({ isArchived: { $ne: true } });
-  next();
-});
+// complaintSchema.pre(/^find/, function (next) {
+//   // this points to the current query
+//   this.find({ isArchived: { $ne: true } });
+//   next();
+// });
 
 complaintSchema.pre('save', function (next) {
   const date = new Date(Date.now());

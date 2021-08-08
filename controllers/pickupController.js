@@ -71,12 +71,17 @@ exports.createPickup = async (req, res, next) => {
       payment_method: tps.payment_method,
     });
 
+    const jumlahPenarikan = await Pickup.find({ petugas }).count();
+
     if (req.user.role === 'operator tpa') {
       req.pickup = pickup;
       return next();
     }
 
-    await User.findByIdAndUpdate(req.user._id, { allowedPick: false });
+    await User.findByIdAndUpdate(req.user._id, {
+      allowedPick: false,
+      jumlahPenarikan,
+    });
     // await Tagihan.create({});
 
     const stringdata = pickup.qr_id;
@@ -375,6 +380,7 @@ exports.getAverage = async (req, res, next) => {
       sum += num.total;
     });
     console.log(pickupEachWeek);
+    // eslint-disable-next-line no-unused-vars
     const avgLoadWeek = sum / pickupEachWeek.length;
 
     const pickupThisMonth = await Pickup.aggregate([

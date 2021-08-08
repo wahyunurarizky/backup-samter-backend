@@ -47,6 +47,12 @@ exports.create = async (req, res, next) => {
     next(err);
   }
 };
+exports.notArchived = (req, res, next) => {
+  if (!req.query.isArchived) {
+    req.query.isArchived = { ne: true };
+  }
+  next();
+};
 exports.getAll = base.getAll(
   Complaint,
   [],
