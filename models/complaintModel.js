@@ -55,6 +55,11 @@ const complaintSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  isArchived: {
+    type: Boolean,
+    default: false,
+    select: false,
+  },
 });
 
 complaintSchema.index({
@@ -65,6 +70,11 @@ complaintSchema.index({
   kelurahan: 1,
   kecamatan: 1,
   address: 1,
+});
+complaintSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ isArchived: { $ne: true } });
+  next();
 });
 
 complaintSchema.pre('save', function (next) {

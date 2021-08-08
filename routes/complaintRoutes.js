@@ -20,6 +20,7 @@ router
     authController.protect,
     authController.restrictTo('pegawai'),
     complaintController.update
-  );
+  )
+  .delete(authController.protect, complaintController.deletOne);
 
 module.exports = router;
