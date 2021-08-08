@@ -380,6 +380,7 @@ exports.getAverage = async (req, res, next) => {
       sum += num.total;
     });
     console.log(pickupEachWeek);
+    // eslint-disable-next-line no-unused-vars
     const avgLoadWeek = sum / pickupEachWeek.length;
 
     const pickupThisMonth = await Pickup.aggregate([
