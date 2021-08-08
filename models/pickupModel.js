@@ -53,7 +53,13 @@ const pickupSchema = new mongoose.Schema({
   },
 });
 
-pickupSchema.index({ pickup_time: 1, arrival_time: 1, status: 1, qr_id: 1 });
+pickupSchema.index({
+  pickup_time: 1,
+  arrival_time: 1,
+  status: 1,
+  qr_id: 1,
+  petugas: 1,
+});
 
 pickupSchema.pre('save', function (next) {
   const date = this._id;
