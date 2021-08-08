@@ -21,7 +21,17 @@ exports.getAll = base.getAll(
   ['name', 'tpa_type', 'qr_id', 'koordinator']
 );
 exports.get = base.getOne(Tpa);
-exports.update = base.updateOne(Tpa);
+exports.update = base.updateOne(
+  Tpa,
+  'name',
+  'location',
+  'tpa_type',
+  'tpa_area',
+  'capacity',
+  'tonase',
+  'koordinator',
+  'qr_id'
+);
 // exports.delete = base.deleteOne(Tpa);
 exports.delete = async (req, res, next) => {
   try {

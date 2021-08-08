@@ -30,9 +30,7 @@ exports.delete = base.deleteOne(Kendaraan);
 exports.generateQr = async function generate(req, res, next) {
   try {
     const doc = await Kendaraan.findById(req.params.id);
-    console.log(doc._id);
-    const stringdata = JSON.stringify(doc.qr_id);
-    console.log(stringdata);
+    const stringdata = doc.qr_id;
 
     QRCode.toString(stringdata, { type: 'terminal' }, (err, QRcode) => {
       if (err) return next(new AppError('Error Occured', 400));

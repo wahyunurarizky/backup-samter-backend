@@ -227,28 +227,29 @@ exports.exportPdf = async (req, res, next) => {
     }
 
     const timeTemp = {};
+    if (req.query.payment_time) {
+      if (req.query.payment_time.gte) {
+        timeTemp.gte = req.query.payment_time.gte;
+        timeTemp.gte = new Date(timeTemp.gte).toLocaleString('id-ID', {
+          timeZone: 'Asia/jakarta',
+          month: 'long',
+          year: 'numeric',
+        });
+        timeTemp.gteReq = true;
+      }
+      console.log(timeTemp.gte);
 
-    if (req.query.payment_time.gte) {
-      timeTemp.gte = req.query.payment_time.gte;
-      timeTemp.gte = new Date(timeTemp.gte).toLocaleString('id-ID', {
-        timeZone: 'Asia/jakarta',
-        month: 'long',
-        year: 'numeric',
-      });
-      timeTemp.gteReq = true;
+      if (req.query.payment_time.lte) {
+        timeTemp.lte = req.query.payment_time.lte;
+        timeTemp.lte = new Date(timeTemp.lte).toLocaleString('id-ID', {
+          timeZone: 'Asia/jakarta',
+          month: 'long',
+          year: 'numeric',
+        });
+        timeTemp.lteReq = true;
+      }
+      console.log(timeTemp.lte);
     }
-    console.log(timeTemp.gte);
-
-    if (req.query.payment_time.lte) {
-      timeTemp.lte = req.query.payment_time.lte;
-      timeTemp.lte = new Date(timeTemp.lte).toLocaleString('id-ID', {
-        timeZone: 'Asia/jakarta',
-        month: 'long',
-        year: 'numeric',
-      });
-      timeTemp.lteReq = true;
-    }
-    console.log(timeTemp.lte);
 
     if (req.query.payment_time) {
       timeTemp.thisMonth = date.toLocaleString('id-ID', {

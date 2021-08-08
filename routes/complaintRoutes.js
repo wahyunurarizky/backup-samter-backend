@@ -6,7 +6,7 @@ const authController = require('../controllers/authController');
 
 router
   .route('/')
-  .get(complaintController.getAll)
+  .get(complaintController.notArchived, complaintController.getAll)
   .post(
     complaintController.uploadComplaintPhoto,
     complaintController.resizeComplaintPhoto,
@@ -20,6 +20,7 @@ router
     authController.protect,
     authController.restrictTo('pegawai'),
     complaintController.update
-  );
+  )
+  .delete(authController.protect, complaintController.deletOne);
 
 module.exports = router;

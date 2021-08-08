@@ -47,6 +47,12 @@ exports.create = async (req, res, next) => {
     next(err);
   }
 };
+exports.notArchived = (req, res, next) => {
+  if (!req.query.isArchived) {
+    req.query.isArchived = { ne: true };
+  }
+  next();
+};
 exports.getAll = base.getAll(
   Complaint,
   [],
@@ -350,5 +356,26 @@ exports.exportPdf = async (req, res, next) => {
     });
   } catch (err) {
     return next(err);
+  }
+};
+
+exports.deletOne = async (req, res, next) => {
+  try {
+    const doc = await Complaint.findByIdAndUpdate(req.params.id, {
+      isArchived: true,
+    });
+    if (!doc) {
+      return next(
+        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+      );
+    }
+    res.status(204).json({
+      success: true,
+      code: '204',
+      message: 'OK',
+      data: null,
+    });
+  } catch (error) {
+    next(error);
   }
 };

@@ -10,7 +10,10 @@ router.use(authController.protect);
 
 router
   .route('/')
-  .get(authController.restrictTo('pegawai'), tagihanController.getAll);
+  .get(
+    authController.restrictTo('pegawai', 'pimpinan', 'superadmin'),
+    tagihanController.getAll
+  );
 router
   .route('/getMyTagihan')
   .get(
@@ -20,9 +23,18 @@ router
 
 router
   .route('/:id')
-  .get(tagihanController.get)
-  .patch(authController.restrictTo('pegawai'), tagihanController.updateStatus)
-  .delete(tagihanController.delete);
+  .get(
+    authController.restrictTo('pegawai', 'pimpinan', 'superadmin'),
+    tagihanController.get
+  )
+  .patch(
+    authController.restrictTo('pegawai', 'superadmin'),
+    tagihanController.updateStatus
+  )
+  .delete(
+    authController.restrictTo('pegawai', 'superadmin'),
+    tagihanController.delete
+  );
 
 router
   .route('/pay/:id')

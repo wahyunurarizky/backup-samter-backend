@@ -5,13 +5,17 @@ const pickupController = require('../controllers/pickupController');
 const authController = require('../controllers/authController');
 
 router.route('/export').get(pickupController.exportPdf);
+router.route('/download/:id').get(pickupController.download);
 
 router.use(authController.protect);
 
 router
   .route('/')
   .post(authController.restrictTo('petugas'), pickupController.createPickup)
-  .get(authController.restrictTo('pegawai'), pickupController.getAll);
+  .get(
+    authController.restrictTo('pegawai', 'pimpinan', 'superadmin'),
+    pickupController.getAll
+  );
 router
   .route('/getMyPickup')
   .get(
@@ -42,13 +46,23 @@ router
 router
   .route('/monthly-data/:month/:year')
   .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'koordinator ksm'),
+    authController.restrictTo(
+      'pegawai',
+      'pimpinan',
+      'koordinator ksm',
+      'superadmin'
+    ),
     pickupController.getAverage
   );
 router
   .route('/monthly-data')
   .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'koordinator ksm'),
+    authController.restrictTo(
+      'pegawai',
+      'pimpinan',
+      'koordinator ksm',
+      'superadmin'
+    ),
     pickupController.getAverage
   );
 
@@ -67,7 +81,7 @@ router
 
 router
   .route('/:id')
-  .get(authController.restrictTo('pegawai'), pickupController.get)
+  .get(authController.restrictTo('pegawai', 'pimpinan'), pickupController.get)
   .patch(authController.restrictTo('pegawai'), pickupController.updateStatus);
 
 // router.route('/download/:id').get(
