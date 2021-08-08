@@ -22,5 +22,12 @@ router
     complaintController.update
   )
   .delete(authController.protect, complaintController.deletOne);
+router
+  .route('/:id/unArchived')
+  .patch(
+    authController.protect,
+    authController.restrictTo('pegawai'),
+    complaintController.updateUnArchived
+  );
 
 module.exports = router;
