@@ -90,7 +90,10 @@ router
 
 router
   .route('/inputLoad/:id')
-  .patch(authController.restrictTo('operator tpa'), pickupController.inputLoad);
+  .patch(
+    authController.restrictTo('operator tpa', 'petugas'),
+    pickupController.inputLoad
+  );
 // belom belom buat
 
 module.exports = router;

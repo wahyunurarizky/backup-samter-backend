@@ -51,6 +51,10 @@ const pickupSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  id_load: {
+    type: String,
+    default: 'operatortpa',
+  },
 });
 
 pickupSchema.index({
@@ -59,6 +63,7 @@ pickupSchema.index({
   status: 1,
   qr_id: 1,
   petugas: 1,
+  id_load: 1,
 });
 
 pickupSchema.pre('save', function (next) {
@@ -103,7 +108,7 @@ pickupSchema.post(/^find/, (result) => {
           'en-GB',
           { timeZone: 'Asia/jakarta', hour12: false }
         );
-      } else {
+      } else if (result._doc) {
         result._doc.arrival_time_local = null;
       }
     }

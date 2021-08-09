@@ -223,9 +223,24 @@ exports.inputLoad = async (req, res, next) => {
     } else {
       checkPickup = await Pickup.findById(req.params.id);
     }
-
+    if (req.user.role === 'petugas') {
+      if (!req.body.id_load) {
+        return next(new AppError('harap masukkan id load', 404));
+      }
+      const idSudahDipakai = await Pickup.exists({ id_load: req.body.id_load });
+      if (idSudahDipakai) {
+        return next(
+          new AppError('id load telah digunakan di pickup lain', 401)
+        );
+      }
+      if (checkPickup.petugas._id.toString() !== req.user._id.toString()) {
+        return next(new AppError('user dan pickup tidak cocok', 401));
+      }
+    }
     if (checkPickup.status === 'selesai')
       return next(new AppError('id pickup telah selesai digunakan', 400));
+
+    // cek apakah id load belum pernah digunakan
 
     const updatedPickup = await Pickup.findByIdAndUpdate(
       req.params.id,
@@ -235,6 +250,7 @@ exports.inputLoad = async (req, res, next) => {
         arrival_time: Date.now(),
         operator_tpa: req.user._id,
         tpa: req.user.tpa,
+        id_load: req.body.id_load || 'operatortpa',
       },
       { new: true, runValidators: true }
     );
