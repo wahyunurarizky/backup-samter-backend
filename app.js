@@ -10,7 +10,7 @@ const cors = require('cors');
 const compression = require('compression');
 // const schedule = require('node-schedule');
 
-const CronJob = require('cron').CronJob;
+const { CronJob } = require('cron');
 const userRoutes = require('./routes/userRoutes');
 const jenisKendaraanRoutes = require('./routes/jenisKendaraanRoutes');
 const kendaraanRoutes = require('./routes/kendaraanRoutes');
@@ -28,6 +28,7 @@ const AppError = require('./utils/appError');
 
 const app = express();
 
+// eslint-disable-next-line no-new
 new CronJob(
   '1 1 1 1 * *',
   tagihanController.createTagihanMonthly,
