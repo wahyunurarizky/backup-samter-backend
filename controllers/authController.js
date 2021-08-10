@@ -212,15 +212,14 @@ exports.forgotPassword = async (req, res, next) => {
     // const message = `Forgot your password ? submit a patch request with yout new password and passwordConfirm to : ${resetURL}.\nif you didn't forget your password please ignore this email`;
 
     try {
-      const resetURL = `${req.protocol}://${req.get(
-        'host'
-      )}/api/v1/users/resetPassword/${resetToken}`;
+      const resetURL = `http://samter.mandiritunasmuda.co.id/reset_password/${resetToken}`;
       await new Email(user, resetURL).sendPasswordReset();
 
       res.status(200).json({
         success: true,
         code: '200',
-        message: 'token sent to email',
+        message:
+          'link reset password terkirim!, silahkan cek email mu atau jika tidak muncul dalam beberapa saat, cek spam folder',
       });
     } catch (err) {
       user.passwordResetToken = undefined;
@@ -256,7 +255,12 @@ exports.resetPassword = async (req, res, next) => {
 
     // if token has not expired, and there is use, set the new Password
     if (!user) {
-      return next(new AppError('Token invalid atau telah expired', 400));
+      return next(
+        new AppError(
+          'Token invalid atau telah expired, silahkan request token baru di halaman forgot password',
+          400
+        )
+      );
     }
     user.password = req.body.password;
     user.passwordConfirm = req.body.passwordConfirm;
@@ -268,6 +272,43 @@ exports.resetPassword = async (req, res, next) => {
 
     // 4) log in the user and send jwt
     createSendToken(user, 200, req, res);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.cekToken = async (req, res, next) => {
+  try {
+    // get user based on the token
+    const hashedtoken = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+
+    const user = await User.findOne({
+      passwordResetToken: hashedtoken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+
+    // if token has not expired, and there is use, set the new Password
+    if (!user) {
+      return next(
+        new AppError(
+          'Token invalid atau telah expired, silahkan request token baru di halaman forgot password',
+          400
+        )
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      code: `${200}`,
+      message: 'OK',
+      data: {
+        email: user.email,
+        token_reset: req.params.token,
+      },
+    });
   } catch (err) {
     next(err);
   }
