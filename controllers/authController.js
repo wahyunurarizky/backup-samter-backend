@@ -220,6 +220,7 @@ exports.forgotPassword = async (req, res, next) => {
         code: '200',
         message:
           'link reset password terkirim!, silahkan cek email mu atau jika tidak muncul dalam beberapa saat, cek spam folder',
+        data: null,
       });
     } catch (err) {
       user.passwordResetToken = undefined;

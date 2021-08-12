@@ -24,7 +24,12 @@ router
 router
   .route('/:id')
   .get(
-    authController.restrictTo('pegawai', 'pimpinan', 'superadmin'),
+    authController.restrictTo(
+      'pegawai',
+      'pimpinan',
+      'superadmin',
+      'koordinator ksm'
+    ),
     tagihanController.get
   )
   .patch(
