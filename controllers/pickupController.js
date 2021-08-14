@@ -256,7 +256,7 @@ exports.inputLoad = async (req, res, next) => {
     );
     if (!updatedPickup) {
       return next(
-        new AppError('tidak ada dokumen yang ditemukan dengan di tersebut', 404)
+        new AppError('tidak ada dokumen yang ditemukan dengan id tersebut', 404)
       );
     }
     await User.findByIdAndUpdate(updatedPickup.petugas, {

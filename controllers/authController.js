@@ -212,7 +212,7 @@ exports.forgotPassword = async (req, res, next) => {
     // const message = `Forgot your password ? submit a patch request with yout new password and passwordConfirm to : ${resetURL}.\nif you didn't forget your password please ignore this email`;
 
     try {
-      const resetURL = `http://samter.mandiritunasmuda.co.id/reset_password/${resetToken}`;
+      const resetURL = `https://samter.mandiritunasmuda.co.id/reset_password/${resetToken}`;
       await new Email(user, resetURL).sendPasswordReset();
 
       res.status(200).json({
@@ -226,7 +226,7 @@ exports.forgotPassword = async (req, res, next) => {
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       await user.save({ validateBeforeSave: false });
-
+      console.log(err);
       return next(
         new AppError(
           'terjadi kesalahan saat mengirim email, coba lagi beberapa saat',

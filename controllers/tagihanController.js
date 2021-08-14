@@ -173,7 +173,9 @@ exports.createTagihanMonthly = async () => {
 
     const pckp = [];
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const p of pickup) {
+      // eslint-disable-next-line no-await-in-loop
       const tagihan = await Tagihan.findOne({
         tps: p.tps,
         payment_month: p.payment_month,
