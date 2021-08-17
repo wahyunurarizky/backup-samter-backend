@@ -557,7 +557,7 @@ exports.notificationCheckout = async (req, res, next) => {
       serverKey: 'SB-Mid-server-kyQCjeU8EZJQYb_NDoLmt19q',
       clientKey: 'SB-Mid-client-TnDd7DdTmVrqeia4',
     });
-
+    console.log(req.body);
     const mockNotificationJson = {
       currency: 'IDR',
       fraud_status: 'accept',
