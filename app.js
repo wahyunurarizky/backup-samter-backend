@@ -73,6 +73,8 @@ app.use(hpp({ whitelist: ['pickup_time, arrival_time', 'status', 'time'] }));
 
 app.use(compression());
 
+app.post('/handling-midtrans', tagihanController.notificationCheckout);
+
 // Routes
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/jenis-kendaraan', jenisKendaraanRoutes);

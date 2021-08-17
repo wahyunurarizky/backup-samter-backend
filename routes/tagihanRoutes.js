@@ -49,4 +49,11 @@ router
     tagihanController.resizePaymentPhoto,
     tagihanController.pay
   );
+
+router.route('/handling').post((req, res, next) => {
+  console.log(req.body);
+});
+router
+  .route('/transaction/:tagihanId')
+  .get(tagihanController.getTransactionToken);
 module.exports = router;

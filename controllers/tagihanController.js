@@ -2,6 +2,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const pdf = require('html-pdf');
 const ejs = require('ejs');
+const midtransClient = require('midtrans-client');
 
 const Tagihan = require('../models/tagihanModel');
 const Pickup = require('../models/pickupModel');
@@ -411,5 +412,207 @@ exports.exportPdf = async (req, res, next) => {
     });
   } catch (err) {
     return next(err);
+  }
+};
+
+exports.getTransactionToken = async (req, res, next) => {
+  try {
+    // 1) Get the currently booked tour
+    const tagihan = await Tagihan.findById(req.params.tagihanId);
+    // console.log(tour);
+    if (!tagihan) {
+      return next(new AppError('tidak ada tagihan dengan id tersebut', 404));
+    }
+
+    const snap = new midtransClient.Snap({
+      // Set to true if you want Production Environment (accept real transaction).
+      isProduction: false,
+      serverKey: 'SB-Mid-server-kyQCjeU8EZJQYb_NDoLmt19q',
+    });
+
+    const parameter = {
+      transaction_details: {
+        order_id: tagihan._id,
+        gross_amount: 1000000,
+      },
+      customer_details: {
+        first_name: 'Wahyu',
+        last_name: 'Watson',
+        email: 'test@example.com',
+        phone: '+628123456',
+        billing_address: {
+          first_name: 'John',
+          last_name: 'Watson',
+          email: 'test@example.com',
+          phone: '081 2233 44-55',
+          address: 'Sudirman',
+          city: 'Jakarta',
+          postal_code: '12190',
+          country_code: 'IDN',
+        },
+        shipping_address: {
+          first_name: 'John',
+          last_name: 'Watson',
+          email: 'test@example.com',
+          phone: '0 8128-75 7-9338',
+          address: 'Sudirman',
+          city: 'Jakarta',
+          postal_code: '12190',
+          country_code: 'IDN',
+        },
+      },
+      enabled_payments: [
+        'credit_card',
+        'mandiri_clickpay',
+        'cimb_clicks',
+        'bca_klikbca',
+        'bca_klikpay',
+        'bri_epay',
+        'echannel',
+        'mandiri_ecash',
+        'permata_va',
+        'bca_va',
+        'bni_va',
+        'other_va',
+        'gopay',
+        'indomaret',
+        'alfamart',
+        'danamon_online',
+        'akulaku',
+      ],
+      credit_card: {
+        secure: true,
+        bank: 'bca',
+        installment: {
+          required: false,
+          terms: {
+            bni: [3, 6, 12],
+            mandiri: [3, 6, 12],
+            cimb: [3],
+            bca: [3, 6, 12],
+            offline: [6, 12],
+          },
+        },
+        whitelist_bins: ['48111111', '41111111'],
+      },
+      bca_va: {
+        va_number: '12345678911',
+        sub_company_code: '00000',
+        free_text: {
+          inquiry: [
+            {
+              en: 'text in English',
+              id: 'text in Bahasa Indonesia',
+            },
+          ],
+          payment: [
+            {
+              en: 'text in English',
+              id: 'text in Bahasa Indonesia',
+            },
+          ],
+        },
+      },
+      bni_va: {
+        va_number: '12345678',
+      },
+      permata_va: {
+        va_number: '1234567890',
+        recipient_name: 'SUDARSONO',
+      },
+      expiry: {
+        start_time: '2021-12-13 18:11:08 +0700',
+        unit: 'minutes',
+        duration: 1,
+      },
+      callbacks: {
+        finish: 'https://rifil-samter.herokuapp.com/handling-midtrans',
+      },
+      custom_field1: 'custom field 1 content',
+      custom_field2: 'custom field 2 content',
+      custom_field3: 'custom field 3 content',
+    };
+
+    const transaction = await snap.createTransaction(parameter);
+
+    console.log(transaction);
+
+    return res.status(200).json({
+      success: true,
+      code: '200',
+      message: 'OK',
+      data: {
+        ...transaction,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.notificationCheckout = async (req, res, next) => {
+  try {
+    const apiClient = new midtransClient.Snap({
+      isProduction: false,
+      serverKey: 'SB-Mid-server-kyQCjeU8EZJQYb_NDoLmt19q',
+      clientKey: 'SB-Mid-client-TnDd7DdTmVrqeia4',
+    });
+
+    const mockNotificationJson = {
+      currency: 'IDR',
+      fraud_status: 'accept',
+      gross_amount: '24145.00',
+      order_id: 'test-transaction-321',
+      payment_type: 'bank_transfer',
+      status_code: '201',
+      status_message: 'Success, Bank Transfer transaction is created',
+      transaction_id: '6ee793df-9b1d-4343-8eda-cc9663b4222f',
+      transaction_status: 'pending',
+      transaction_time: '2018-10-24 15:34:33',
+      va_numbers: [{ bank: 'bca', va_number: '490526303019299' }],
+    };
+
+    const statusResponse = await apiClient.transaction.notification(
+      mockNotificationJson
+    );
+
+    console.log(statusResponse);
+    // .then((statusResponse) => {
+    //   const orderId = statusResponse.order_id;
+    //   const transactionStatus = statusResponse.transaction_status;
+    //   const fraudStatus = statusResponse.fraud_status;
+
+    //   console.log(
+    //     `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
+    //   );
+
+    //   // Sample transactionStatus handling logic
+
+    //   if (transactionStatus === 'capture') {
+    //     // capture only applies to card transaction, which you need to check for the fraudStatus
+    //     if (fraudStatus === 'challenge') {
+    //       // TODO set transaction status on your databaase to 'challenge'
+    //     } else if (fraudStatus === 'accept') {
+    //       // TODO set transaction status on your databaase to 'success'
+    //     }
+    //   } else if (transactionStatus === 'settlement') {
+    //     // TODO set transaction status on your databaase to 'success'
+    //   } else if (transactionStatus === 'deny') {
+    //     // TODO you can ignore 'deny', because most of the time it allows payment retries
+    //     // and later can become success
+    //   } else if (
+    //     transactionStatus === 'cancel' ||
+    //     transactionStatus === 'expire'
+    //   ) {
+    //     // TODO set transaction status on your databaase to 'failure'
+    //   } else if (transactionStatus === 'pending') {
+    //     // TODO set transaction status on your databaase to 'pending' / waiting payment
+    //   }
+    // });
+    res.status(200).json({
+      test: 'asdasd',
+    });
+  } catch (err) {
+    next(err);
   }
 };

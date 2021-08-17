@@ -27,6 +27,7 @@
     "html-pdf": "^3.0.1",
     "html-to-text": "^8.0.0",
     "jsonwebtoken": "^8.5.1",
+    "midtrans-client": "^1.2.4",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
     "mongoose": "^5.13.0",
