@@ -12,7 +12,8 @@ exports.create = base.createOne(
   'koordinator',
   'tps_type',
   'tps_area',
-  'tps_status_ownership'
+  'tps_status_ownership',
+  'payment_method'
 );
 exports.getAll = base.getAll(
   Tps,
@@ -35,7 +36,8 @@ exports.update = base.updateOne(
   'koordinator',
   'tps_type',
   'tps_area',
-  'tps_status_ownership'
+  'tps_status_ownership',
+  'payment_method'
 );
 // exports.delete = base.deleteOne(Tps);
 exports.delete = async (req, res, next) => {
