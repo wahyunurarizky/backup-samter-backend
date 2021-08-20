@@ -525,9 +525,7 @@ exports.getTransactionToken = async (req, res, next) => {
         unit: 'minutes',
         duration: 1,
       },
-      callbacks: {
-        finish: 'https://rifil-samter.herokuapp.com/handling-midtrans',
-      },
+
       custom_field1: 'custom field 1 content',
       custom_field2: 'custom field 2 content',
       custom_field3: 'custom field 3 content',

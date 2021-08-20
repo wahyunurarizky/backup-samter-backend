@@ -15,7 +15,27 @@
       var payButton = document.getElementById('pay-button');
       // For example trigger on button clicked, or any time you need
       payButton.addEventListener('click', function () {
-        window.snap.pay('2310d5af-43d5-4072-95c5-70babb5b8453'); // Replace it with your transaction token
+        window.snap.pay('f5a4ade0-ae61-4697-a351-705e1a1c27fd', {
+          onSuccess: function (result) {
+            /* You may add your own implementation here */
+            alert('payment success!');
+            console.log(result);
+          },
+          onPending: function (result) {
+            /* You may add your own implementation here */
+            alert('wating your payment!');
+            console.log(result);
+          },
+          onError: function (result) {
+            /* You may add your own implementation here */
+            alert('payment failed!');
+            console.log(result);
+          },
+          onClose: function () {
+            /* You may add your own implementation here */
+            alert('you closed the popup without finishing the payment');
+          },
+        }); // Replace it with your transaction token
       });
     </script>
   </body>
