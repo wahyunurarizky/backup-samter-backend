@@ -76,10 +76,10 @@ app.use(compression());
 
 app.post('/handling-midtrans', tagihanController.notificationCheckout);
 
-app.get('/img/:key([^/]+/[^/]+)', (req, res) => {
+app.get('/img/:key([^/]+/[^/]+)', (req, res, next) => {
   const readStream = getFileStream(req.params.key);
 
-  readStream.pipe(res);
+  readStream.on('error', (err) => next(err)).pipe(res);
 });
 
 // Routes
