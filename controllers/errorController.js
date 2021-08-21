@@ -36,11 +36,7 @@ const sendErrorDev = (err, req, res) => {
       stack: err.stack,
     });
   } else {
-    // console.error('ERROR', err);
-    // res.status(err.statusCode).render('main/error', {
-    //   title: 'something went wrong',
-    //   message: err.message,
-    // });
+    res.send(err.message);
   }
 };
 const sendErrorProd = (err, req, res) => {
@@ -65,19 +61,13 @@ const sendErrorProd = (err, req, res) => {
     });
   }
   if (err.isOperational) {
-    return res.status(err.statusCode).render('main/error', {
-      title: 'something went wrong',
-      msg: err.message,
-    });
+    return res.send(err.message);
   }
   // supaya bisa tampil di hosting kita
   console.error('ERROR', err);
 
   // programming or other unknown error
-  return res.status(err.statusCode).render('main/error', {
-    title: 'something went wrong',
-    msg: 'please try again later',
-  });
+  return res.send(err.message);
 };
 
 // express will know that is error handling midleware by defining 4 params
@@ -88,6 +78,7 @@ module.exports = (err, req, res, next) => {
 
   if (process.env.NODE_ENV === 'development') {
     // error yang tampil saat development
+    console.log('blok');
     sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     // error yang terjadi saat mode production, lebih simpel, agar user tidak bingung dan tidak perlu mengetahui

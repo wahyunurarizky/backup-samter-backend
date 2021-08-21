@@ -8,9 +8,10 @@ const ejs = require('ejs');
 const AppError = require('../utils/appError');
 const APIFeatures = require('../utils/apiFeatures');
 const Complaint = require('../models/complaintModel');
+const { uploadFile } = require('../utils/s3UploadClient');
 const base = require('./baseController');
 
-// Read HTML Template
+// Read HTML Templat
 
 exports.create = async (req, res, next) => {
   try {
@@ -159,12 +160,10 @@ exports.resizeComplaintPhoto = async (req, res, next) => {
 
     req.file.filename = `complaint-${Date.now()}.jpeg`;
 
-    await sharp(req.file.buffer)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/complaint/${req.file.filename}`);
+    const img = await sharp(req.file.buffer).jpeg({ quality: 90 }).toBuffer();
 
-    console.log('wkwk');
+    const result = await uploadFile(img, `complaint/${req.file.filename}`);
+    console.log(result);
     next();
   } catch (err) {
     next(err);

@@ -22,6 +22,7 @@ const tagihanRoutes = require('./routes/tagihanRoutes');
 const bankRoutes = require('./routes/bankRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
 
+const { getFileStream } = require('./utils/s3UploadClient');
 const tagihanController = require('./controllers/tagihanController');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -74,6 +75,12 @@ app.use(hpp({ whitelist: ['pickup_time, arrival_time', 'status', 'time'] }));
 app.use(compression());
 
 app.post('/handling-midtrans', tagihanController.notificationCheckout);
+
+app.get('/img/:key([^/]+/[^/]+)', (req, res) => {
+  const readStream = getFileStream(req.params.key);
+
+  readStream.pipe(res);
+});
 
 // Routes
 app.use('/api/v1/users', userRoutes);
