@@ -461,7 +461,7 @@ exports.getTransactionToken = async (req, res, next) => {
       message: 'OK',
       data: {
         ...transaction,
-        tagihan,
+        // tagihan,
       },
     });
   } catch (err) {
@@ -496,7 +496,7 @@ exports.notificationCheckout = async (req, res, next) => {
       if (fraudStatus === 'challenge') {
         // TODO set transaction status on your databaase to 'challenge'
       } else if (fraudStatus === 'accept') {
-        tagihan.status('terverifikasi');
+        tagihan.status = 'terverifikasi';
         await tagihan.save();
         // TODO set transaction status on your databaase to 'success'
       }
