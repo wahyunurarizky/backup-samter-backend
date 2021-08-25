@@ -495,13 +495,27 @@ exports.notificationCheckout = async (req, res, next) => {
       // capture only applies to card transaction, which you need to check for the fraudStatus
       if (fraudStatus === 'challenge') {
         // TODO set transaction status on your databaase to 'challenge'
-      } else if (fraudStatus === 'accept') {
+        tagihan.status = 'belum terverifikasi';
+        await tagihan.save();
+        return res.status(200).json({
+          status: 'belum terverifikasi',
+        });
+      }
+      if (fraudStatus === 'accept') {
+        // TODO set transaction status on your databaase to 'success'
         tagihan.status = 'terverifikasi';
         await tagihan.save();
-        // TODO set transaction status on your databaase to 'success'
+        return res.status(200).json({
+          status: 'terverifikasi',
+        });
       }
     } else if (transactionStatus === 'settlement') {
       // TODO set transaction status on your databaase to 'success'
+      tagihan.status = 'terverifikasi';
+      await tagihan.save();
+      return res.status(200).json({
+        status: 'terverifikasi',
+      });
     } else if (transactionStatus === 'deny') {
       // TODO you can ignore 'deny', because most of the time it allows payment retries
       // and later can become success
@@ -510,8 +524,18 @@ exports.notificationCheckout = async (req, res, next) => {
       transactionStatus === 'expire'
     ) {
       // TODO set transaction status on your databaase to 'failure'
+      tagihan.status = 'tidak terverifikasi';
+      await tagihan.save();
+      return res.status(200).json({
+        status: 'tidak terverifikasi',
+      });
     } else if (transactionStatus === 'pending') {
       // TODO set transaction status on your databaase to 'pending' / waiting payment
+      tagihan.status = 'belum terbayar';
+      await tagihan.save();
+      return res.status(200).json({
+        status: 'belum terbayar',
+      });
     }
     // .then((statusResponse) => {
     //   const orderId = statusResponse.order_id;
