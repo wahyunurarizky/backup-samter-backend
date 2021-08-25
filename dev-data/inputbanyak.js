@@ -10,6 +10,7 @@ const Pickup = require('../models/pickupModel');
 const Kendaraan = require('../models/kendaraanModel');
 const JenisKendaraan = require('../models/jenisKendaraanModel');
 const Tps = require('../models/tpsModel');
+const Complaint = require('../models/complaintModel');
 
 dotenv.config({ path: 'config.env' });
 
@@ -57,8 +58,8 @@ mongoose
 
 const deleteData = async () => {
   try {
-    await Tagihan.deleteMany({ payment_method: 'perangkut' });
-    await Pickup.deleteMany({ payment_method: 'perangkut' });
+    await Complaint.deleteMany();
+    // await Pickup.deleteMany({ payment_method: 'perangkut' });
 
     console.log('data successfully deleted');
   } catch (e) {

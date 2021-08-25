@@ -26,6 +26,7 @@ const handleJWTError = () =>
 const handleJWTExpired = () =>
   new AppError('Your token is expired. please login again', 401);
 
+// const handleMidtransError = () => new AppError('sadad', 404);
 const sendErrorDev = (err, req, res) => {
   if (req.originalUrl.startsWith('/api')) {
     console.error('ERROR', err);
@@ -74,7 +75,6 @@ const sendErrorProd = (err, req, res) => {
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
-  console.log('ERROORR COKKKK', err);
 
   if (process.env.NODE_ENV === 'development') {
     // error yang tampil saat development

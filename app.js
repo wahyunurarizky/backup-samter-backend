@@ -31,7 +31,7 @@ const app = express();
 
 // eslint-disable-next-line no-new
 new CronJob(
-  '1 1 14 20 * *',
+  '1 1 1 1 * *',
   tagihanController.createTagihanMonthly,
   null,
   true,
