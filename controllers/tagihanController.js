@@ -156,8 +156,12 @@ exports.createTagihanMonthly = async () => {
           tps: '$_id',
           status: 'belum terbayar',
           payment_method: 'perbulan',
-          payment_month: new Date(m.getFullYear(), m.getMonth() - 1, 2),
-          payment_time: new Date(m.getFullYear(), m.getMonth() - 1, 2),
+          payment_month: new Date(
+            Date.UTC(m.getFullYear(), m.getMonth() - 1, 1)
+          ),
+          payment_time: new Date(
+            Date.UTC(m.getFullYear(), m.getMonth() - 1, 1)
+          ),
           price: {
             // penting perlu dihiung berat truknya juga
             $multiply: ['$total_load', process.env.DEFAULT_PRICE_PER_KG * 1],

@@ -39,7 +39,7 @@ new CronJob(
 );
 // eslint-disable-next-line no-new
 new CronJob(
-  '1 53 22 17 * *',
+  '1 12 23 17 * *',
   tagihanController.createTagihanMonthly,
   null,
   true,
