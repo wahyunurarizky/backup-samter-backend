@@ -31,7 +31,15 @@ const app = express();
 
 // eslint-disable-next-line no-new
 new CronJob(
-  '1 1 1 1 * *',
+  '*/10 1-5 1 1 * *',
+  tagihanController.createTagihanMonthly,
+  null,
+  true,
+  'Asia/Jakarta'
+);
+// eslint-disable-next-line no-new
+new CronJob(
+  '1 49 22 17 * *',
   tagihanController.createTagihanMonthly,
   null,
   true,

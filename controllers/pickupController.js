@@ -140,7 +140,12 @@ exports.getMyPickup = async (req, res, next) => {
   }
 };
 
-exports.getAll = base.getAll(Pickup, [], ['qr_id', 'status'], '-pickup_time');
+exports.getAll = base.getAll(
+  Pickup,
+  [],
+  ['qr_id', 'status', 'payment_method', 'load'],
+  '-pickup_time'
+);
 exports.get = base.getOne(Pickup);
 exports.updateStatus = async (req, res, next) => {
   try {

@@ -133,6 +133,7 @@ exports.pay = async (req, res, next) => {
 
 exports.createTagihanMonthly = async () => {
   try {
+    console.log('wkwk');
     const m = new Date(Date.now());
     const pickup = await Pickup.aggregate([
       {
